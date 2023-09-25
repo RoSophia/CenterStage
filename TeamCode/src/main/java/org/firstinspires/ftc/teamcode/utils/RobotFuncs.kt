@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.teamcode.hardware.Controller
 import org.firstinspires.ftc.teamcode.hardware.Motor
 import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.hardware.Timmy
@@ -19,6 +20,7 @@ object RobotFuncs {
     public lateinit var telemetry: Telemetry
     public lateinit var timmy: Timmy
     public lateinit var swerve: Swerve
+    public lateinit var controller: Controller
 
     @JvmStatic
     fun log_state() {
@@ -49,6 +51,8 @@ object RobotFuncs {
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next()
         timmy = Timmy("imu")
         swerve = Swerve()
+        swerve.move(0.0, 0.0, 0.0)
+        controller = Controller()
     }
 
     @JvmStatic

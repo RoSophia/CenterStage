@@ -24,16 +24,16 @@ class Swerve {
         rb.speed = turnPower
     }
 
-    fun move(direction: Double, speed: Double, turnPower: Double) {
-        if (epsEq(speed, 0.0)) {
+    fun move(speed: Double, angle: Double, turnPower: Double) {
+        if (epsEq(speed, 0.0) && !epsEq(turnPower, 0.0)) {
             turn(turnPower)
         } else {
             val turnAngle = turnPower * 45.0
 
-            lf.angle = direction + if (angDiff(direction, PI * 3 / 4) >= PI / 2) turnAngle else -turnAngle
-            lb.angle = direction + if (angDiff(direction, PI * 5 / 4) > PI / 2) turnAngle else -turnAngle
-            rf.angle = direction + if (angDiff(direction, PI * 1 / 4) > PI / 2) turnAngle else -turnAngle
-            rb.angle = direction + if (angDiff(direction, PI * 7 / 4) >= PI / 2) turnAngle else -turnAngle
+            lf.angle = angle + if (angDiff(angle, PI * 3 / 4) >= PI / 2) turnAngle else -turnAngle
+            lb.angle = angle + if (angDiff(angle, PI * 5 / 4) > PI / 2) turnAngle else -turnAngle
+            rf.angle = angle + if (angDiff(angle, PI * 1 / 4) > PI / 2) turnAngle else -turnAngle
+            rb.angle = angle + if (angDiff(angle, PI * 7 / 4) >= PI / 2) turnAngle else -turnAngle
 
             lf.speed = speed
             lb.speed = speed
