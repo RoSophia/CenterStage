@@ -16,6 +16,7 @@ class Pose(val x: Double, val y: Double, val h: Double) {
     operator fun div(pose: Pose) = Pose(x / pose.x, y / pose.y, h / pose.h)
 
     operator fun times(pose: Pose) = Pose(x * pose.x, y * pose.y, h * pose.h)
+    operator fun times(s: Double) = Pose(x * s, y * s, h * s)
 }
 
 class Vec2d(val x: Double, val y: Double) {
@@ -30,6 +31,7 @@ class Vec2d(val x: Double, val y: Double) {
     operator fun div(vec: Vec2d) = Vec2d(x / vec.x, y / vec.y)
 
     operator fun times(vec: Vec2d) = Vec2d(x * vec.x, y * vec.y)
+    operator fun times(s: Double) = Vec2d(x * s, y * s)
 
     fun polar() = Vec2d(x * cos(y), y * sin(y))
 }
