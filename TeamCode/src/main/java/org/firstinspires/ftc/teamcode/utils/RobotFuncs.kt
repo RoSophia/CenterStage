@@ -12,15 +12,16 @@ import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.hardware.Timmy
 import org.firstinspires.ftc.teamcode.utils.RobotVars.pcoef
 
+@Suppress("MemberVisibilityCanBePrivate")
 object RobotFuncs {
-    public lateinit var batteryVoltageSensor: VoltageSensor
-    public lateinit var dashboard: FtcDashboard
-    public lateinit var hardwareMap: HardwareMap
-    public lateinit var lom: LinearOpMode
-    public lateinit var telemetry: Telemetry
-    public lateinit var timmy: Timmy
-    public lateinit var swerve: Swerve
-    public lateinit var controller: Controller
+    lateinit var batteryVoltageSensor: VoltageSensor
+    lateinit var dashboard: FtcDashboard
+    lateinit var hardwareMap: HardwareMap
+    lateinit var lom: LinearOpMode
+    lateinit var telemetry: Telemetry
+    lateinit var timmy: Timmy
+    lateinit var swerve: Swerve
+    lateinit var controller: Controller
 
     @JvmStatic
     fun log_state() {
