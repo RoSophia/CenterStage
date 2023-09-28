@@ -2,10 +2,15 @@ package org.firstinspires.ftc.teamcode.pp
 
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 @Suppress("MemberVisibilityCanBePrivate")
 class Pose(val x: Double, val y: Double, val h: Double) {
     constructor() : this(0.0, 0.0, 0.0)
+
+    fun dist2(): Double = x * 2 + y * 2
+    fun dist(): Double = sqrt(dist2())
+    fun v2d(): Vec2d = Vec2d(x, y)
 
     operator fun unaryMinus() = Pose(-x, -y, -h)
 
@@ -21,6 +26,10 @@ class Pose(val x: Double, val y: Double, val h: Double) {
 
 class Vec2d(val x: Double, val y: Double) {
     constructor() : this(0.0, 0.0)
+
+    fun dist2(): Double = x * 2 + y * 2
+    fun dist(): Double = sqrt(dist2())
+    fun pose(): Pose = Pose(x, y, 0.0)
 
     operator fun unaryMinus() = Vec2d(-x, -y)
 

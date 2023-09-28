@@ -4,7 +4,7 @@ import kotlin.math.PI
 import kotlin.math.abs
 
 object Util {
-    private const val eps = 0.001
+    const val eps = 0.001
     @JvmStatic
     fun epsEq(o1: Double, o2: Double): Boolean {
         return abs(o1 - o2) < eps
