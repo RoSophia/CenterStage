@@ -5,7 +5,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 @Suppress("MemberVisibilityCanBePrivate")
-class Pose(val x: Double, val y: Double, val h: Double) {
+data class Pose(val x: Double, val y: Double, val h: Double) {
     constructor() : this(0.0, 0.0, 0.0)
 
     fun dist2(): Double = x * 2 + y * 2
@@ -26,7 +26,7 @@ class Pose(val x: Double, val y: Double, val h: Double) {
     override fun toString() = String.format("(%.3f, %.3f, %.3f)", x, y, h)
 }
 
-class Vec2d(val x: Double, val y: Double) {
+data class Vec2d(val x: Double, val y: Double) {
     constructor() : this(0.0, 0.0)
 
     fun dist2(): Double = x * 2 + y * 2
