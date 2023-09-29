@@ -4,8 +4,9 @@ import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_ACC
 import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_DEC
 import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_VEL
+import org.firstinspires.ftc.teamcode.utils.Pose
+import org.firstinspires.ftc.teamcode.utils.Vec2d
 import kotlin.math.min
-import kotlin.math.sqrt
 
 class CubicBezierCurve(
         private val c0: Double,

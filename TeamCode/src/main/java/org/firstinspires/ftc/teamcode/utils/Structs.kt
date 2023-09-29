@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pp
+package org.firstinspires.ftc.teamcode.utils
 
 import kotlin.math.cos
 import kotlin.math.sin
@@ -22,6 +22,8 @@ class Pose(val x: Double, val y: Double, val h: Double) {
 
     operator fun times(pose: Pose) = Pose(x * pose.x, y * pose.y, h * pose.h)
     operator fun times(s: Double) = Pose(x * s, y * s, h * s)
+
+    override fun toString() = String.format("(%.3f, %.3f, %.3f)", x, y, h)
 }
 
 class Vec2d(val x: Double, val y: Double) {
@@ -43,4 +45,6 @@ class Vec2d(val x: Double, val y: Double) {
     operator fun times(s: Double) = Vec2d(x * s, y * s)
 
     fun polar() = Vec2d(x * cos(y), y * sin(y))
+
+    override fun toString() = String.format("(%.3f, %.3f)", x, y)
 }

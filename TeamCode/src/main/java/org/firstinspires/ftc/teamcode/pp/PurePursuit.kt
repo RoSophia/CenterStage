@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import org.firstinspires.ftc.teamcode.hardware.Swerve
+import org.firstinspires.ftc.teamcode.utils.Pose
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.eps
 import kotlin.math.abs
@@ -48,13 +50,14 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
     var ctraj = Trajectory()
     var lastIndex = 0
+    var haveTraj = false // Only doing this since making ctraj null would be a lot of hassle
     var done = false
     var error = false
 
-
-    fun followTrajAsync(t: Trajectory) {
-        ctraj = t
-    }
+    val busy: Boolean
+        get() {
+            return haveTraj && !done && !error
+        }
 
     fun closer(o1: Pose, o2: Pose, ed: Pose): Pose {
         val o11 = ed - o1
@@ -125,12 +128,13 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         canvas.strokeCircle(p.x * SCALE, p.y * SCALE, lookaheadRadius)
         canvas.setStroke("#FFFF00")
         canvas.fillCircle(lk.x * SCALE, lk.y * SCALE, lkr)
-        canvas.setStrokeWidth(tspeed * TSC)
         canvas.setStroke("#40FF22")
         canvas.strokeLine(p.x * SCALE, p.y * SCALE, (p.x + speed * cos(angle) * SPC) * SCALE, (p.y + speed * sin(angle) * SPC) * SCALE)
+        canvas.setStrokeWidth(3)
+        canvas.setStroke("#78B00A0")
+        canvas.strokeLine(100.0, 1.0, 100.0 + tspeed * TSC, 1.0)
 
-
-        FtcDashboard.getInstance().sendTelemetryPacket(tp)
+        dashboard.sendTelemetryPacket(tp)
     }
 
     fun startFollowTraj(t: Trajectory) {
@@ -138,6 +142,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         lastIndex = 0
         done = false
         error = false
+        haveTraj = true
     }
 
     fun gangle(o1: Pose, o2: Pose): Double {
@@ -145,21 +150,22 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         return atan(o12.y / o12.x)
     }
 
-    fun update() {
-        val cp = localizer.getPose()
-        val cv = localizer.getPoseVel()
+    fun update() { /// TODO: Add bump detection
+        if (busy) {
+            val cp = localizer.getPose()
+            val cv = localizer.getPoseVel()
 
-        val lk = lookahead(cp)
+            val lk = lookahead(cp)
 
-        val d = (lk - cp).dist() /// TODO: This code is just shit
-        if ((ctraj.end - cp).dist() < HAPPY_DIST && cv.dist() < HAPPY_VEL) {
-            done = true;
+            val d = (lk - cp).dist() /// TODO: This code is just shit
+            if ((ctraj.end - cp).dist() < HAPPY_DIST && cv.dist() < HAPPY_VEL) {
+                done = true
+            }
+            val speed = ctraj.getSpeed(lastIndex * ctraj.checkLen).v2d().dist() + (d * PV)
+            val ang = gangle(cp, lk)
+            val tspeed = angDiff(ctraj[lastIndex * ctraj.checkLen].h, cp.h) * PH
+            swerve.move(speed, ang, tspeed)
+            draw(ctraj, cp, lk, speed, ang, tspeed)
         }
-        val speed = ctraj.getSpeed(lastIndex * ctraj.checkLen).v2d().dist() + (d * PV)
-        val ang = gangle(cp, lk)
-        val tspeed = angDiff(ctraj[lastIndex * ctraj.checkLen].h, cp.h) * PH
-        swerve.move(speed, ang, tspeed)
-        draw(ctraj, cp, lk, speed, ang, tspeed)
-
     }
 }

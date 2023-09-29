@@ -7,10 +7,10 @@ import kotlin.math.PI
 
 
 class Swerve {
-    private val lf = SwerveModule("LF")
-    private val lb = SwerveModule("LB")
-    private val rf = SwerveModule("RF")
-    private val rb = SwerveModule("RB")
+    val lf = SwerveModule("LF")
+    val lb = SwerveModule("LB")
+    val rf = SwerveModule("RF")
+    val rb = SwerveModule("RB")
 
     fun turn(turnPower: Double) {
         lf.angle = PI * 3 / 4
@@ -24,7 +24,19 @@ class Swerve {
         rb.speed = turnPower
     }
 
+    var speed = 0.0
+    var angle = 0.0
+    var turnPower = 0.0
+
     fun move(speed: Double, angle: Double, turnPower: Double) {
+        if (epsEq(this.speed, speed) && epsEq(this.angle, angle) && epsEq(this.turnPower, turnPower)) {
+            return
+        }
+
+        this.speed = speed
+        this.angle = angle
+        this.turnPower = turnPower
+
         if (epsEq(speed, 0.0) && !epsEq(turnPower, 0.0)) {
             turn(turnPower)
         } else {

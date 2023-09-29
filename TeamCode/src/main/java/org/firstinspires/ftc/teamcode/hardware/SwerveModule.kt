@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
+import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import org.firstinspires.ftc.teamcode.utils.Util.mod
 import kotlin.math.PI
 import kotlin.math.abs
@@ -15,7 +16,7 @@ class SwerveModule(name: String) {
 
     var angle: Double = 0.0
         set(v) {
-            if (v != field) {
+            if (!epsEq(v, field)) {
                 val ov = mod(v + PI, PI * 2)
                 if (abs(angDiff(v, field)) < abs(angDiff(ov, field))) {
                     s.pt = v
@@ -30,7 +31,7 @@ class SwerveModule(name: String) {
 
     var speed: Double = 0.0
         set(v) {
-            if (v != field) {
+            if (!epsEq(v, field)) {
                 m.power = v
                 field = v
             }
