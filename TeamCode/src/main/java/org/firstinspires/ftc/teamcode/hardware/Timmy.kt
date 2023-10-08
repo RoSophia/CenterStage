@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.hardware.IMU
+import com.qualcomm.robotcore.util.ElapsedTime
 import kotlinx.coroutines.sync.Mutex
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import java.lang.Thread.sleep
 
-class Timmy(name: String) {
-    private val imu: IMU
+class Timmy(val name: String) {
+    private val imu: IMU = RobotFuncs.hardwareMap.get(IMU::class.java, name)
     private val t: Thread
     private var trunning: Boolean = false
     private var initialized: Boolean = false
@@ -26,21 +30,31 @@ class Timmy(name: String) {
     private val yawm = Mutex()
 
     init {
-        imu = RobotFuncs.hardwareMap.get(IMU::class.java, name)
-        imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)))
+        imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)))
         initialized = true
         imu.resetYaw()
 
         t = Thread {
+            val ep = ElapsedTime()
+            ep.reset()
             while (trunning) {
                 val y = imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
+                /*
                 while (yawm.tryLock()) {
                     sleep(1)
                 }
                 yaw = y
                 yawm.unlock()
+                 */
+                val tp = TelemetryPacket()
+                tp.put("IMU_yaw", y)
+                tp.put("IMU_CycleTime", ep.seconds())
+                ep.reset()
+                dashboard.sendTelemetryPacket(tp)
             }
         }
+
+        log("Timmy_${name}_Status", "Init")
     }
 
     fun initThread() {
@@ -48,6 +62,7 @@ class Timmy(name: String) {
             trunning = true
             t.start()
         }
+        log("Timmy_${name}_Status", "InitT")
     }
 
     fun closeThread() {
@@ -55,6 +70,7 @@ class Timmy(name: String) {
             trunning = false
             t.join()
         }
+        log("Timmy_${name}_Status", "CloseT")
     }
 
     fun close() {
@@ -63,6 +79,7 @@ class Timmy(name: String) {
             imu.close()
             initialized = false
         }
+        log("Timmy_${name}_Status", "Close")
     }
 
 

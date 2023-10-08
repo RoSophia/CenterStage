@@ -15,6 +15,15 @@ public class RobotVars {
     public static boolean RER = true;
     public static boolean FER = true;
 
+    public static double OFFLF = -1.18;
+    public static double OFFLB = -2.4;
+    public static double OFFRF = -2.8;
+    public static double OFFRB = 0.87;
+
+    public static boolean canInvertMotor = true;
+
+    public static double SERVO_GEAR_RATIO = 1.36;
+
      /*
      * Expansion:
      *     Motors:

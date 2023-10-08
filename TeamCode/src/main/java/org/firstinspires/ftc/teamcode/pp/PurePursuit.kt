@@ -152,8 +152,8 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
     fun update() { /// TODO: Add bump detection
         if (busy) {
-            val cp = localizer.getPose()
-            val cv = localizer.getPoseVel()
+            val cp = localizer.pose
+            val cv = localizer.poseVel
 
             val lk = lookahead(cp)
 

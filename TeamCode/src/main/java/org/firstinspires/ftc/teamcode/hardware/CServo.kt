@@ -1,30 +1,47 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.hardware.CRServo
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.hardware.CSP.f
+import org.firstinspires.ftc.teamcode.hardware.CSP.d
+import org.firstinspires.ftc.teamcode.hardware.CSP.i
+import org.firstinspires.ftc.teamcode.hardware.CSP.p
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
+import org.firstinspires.ftc.teamcode.utils.RobotVars
+import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_TELE
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 
-class CServo(sname: String, ename: String) {
-    private val s: CRServo
-    private val e: AbsEnc
+@Config
+object CSP {
+    @JvmField
+    var p = 0.5
+
+    @JvmField
+    var i = 0.0
+
+    @JvmField
+    var d = 0.0
+
+    @JvmField
+    var f = 0.0
+}
+
+
+class CServo(val name: String, eoff: Double) {
+    private val s: CRServo = RobotFuncs.hardwareMap.get(CRServo::class.java, name + "S")
+    private val e: AbsEnc = AbsEnc(name + "E", eoff)
 
     private val pid: Thread
     private var pidRunning: Boolean = false
 
-    @Config
-    companion object {
-        @JvmField
-        var p = 0.0
-        var i = 0.0
-        var d = 0.0
-        var f = 0.0
-    }
-
     init {
-        s = RobotFuncs.hardwareMap.get(CRServo::class.java, sname)
-        e = AbsEnc(ename)
+        s.direction = DcMotorSimple.Direction.FORWARD
 
         pid = Thread {
             var err: Double
@@ -44,6 +61,13 @@ class CServo(sname: String, ename: String) {
                 lastErr = err
 
                 s.power = f + err * p + der * d + int * i
+                if (USE_TELE) {
+                    val tp = TelemetryPacket()
+                    tp.put("CServo_${name}_Enc", e.pos)
+                    tp.put("CServo_${name}_Tar", pt)
+                    tp.put("CServo_${name}_Pow", s.power)
+                    dashboard.sendTelemetryPacket(tp)
+                }
             }
         }
     }
@@ -53,10 +77,12 @@ class CServo(sname: String, ename: String) {
     fun initPid() {
         pidRunning = true
         pid.start()
+        log("CServo_${name}_PID_Status", "Init")
     }
 
     fun joinPid() {
         pidRunning = false
         pid.join()
+        log("CServo_${name}_PID_Status", "Close")
     }
 }

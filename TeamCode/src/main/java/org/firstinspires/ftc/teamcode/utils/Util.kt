@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.utils
 
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.floor
 
 object Util {
     const val eps = 0.001
@@ -16,7 +17,17 @@ object Util {
     }
 
     @JvmStatic
+    fun floatMod(o1: Double, o2: Double): Double {
+        return o1 - floor(o1 / o2) * o2
+    }
+
+    @JvmStatic
+    fun angNorm(o1: Double): Double {
+        return floatMod(o1, 2 * PI)
+    }
+
+    @JvmStatic
     fun angDiff(o1: Double, o2: Double): Double {
-        return mod(o2 - o1 + PI, PI * 2) - PI
+        return floatMod(o2 - o1 + PI, PI * 2) - PI
     }
 }

@@ -1,16 +1,25 @@
 package org.firstinspires.ftc.teamcode.hardware
 
-import android.R.attr
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLB
+import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLF
+import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRB
+import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRF
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import kotlin.math.PI
 
-
 class Swerve {
-    val lf = SwerveModule("LF")
-    val lb = SwerveModule("LB")
-    val rf = SwerveModule("RF")
-    val rb = SwerveModule("RB")
+    val lf = SwerveModule("LF", OFFLF)
+    val lb = SwerveModule("LB", OFFLB)
+    val rf = SwerveModule("RF", OFFRF)
+    val rb = SwerveModule("RB", OFFRB)
+
+    init {
+        log("Swerve_Status", "Init");
+    }
 
     fun turn(turnPower: Double) {
         lf.angle = PI * 3 / 4
@@ -29,36 +38,39 @@ class Swerve {
     var turnPower = 0.0
 
     fun move(speed: Double, angle: Double, turnPower: Double) {
+        log("Swerve_Movement", "${speed}@${angle} tp: $turnPower")
         if (epsEq(this.speed, speed) && epsEq(this.angle, angle) && epsEq(this.turnPower, turnPower)) {
             return
         }
 
-        this.speed = speed
-        this.angle = angle
         this.turnPower = turnPower
+        this.speed = speed
+        lf.speed = speed
+        lb.speed = speed
+        rf.speed = speed
+        rb.speed = speed
 
-        if (epsEq(speed, 0.0) && !epsEq(turnPower, 0.0)) {
-            turn(turnPower)
-        } else {
+        if (!epsEq(speed, 0.0)) {
             val turnAngle = turnPower * 45.0
 
+            this.angle = angle
             lf.angle = angle + if (angDiff(angle, PI * 3 / 4) >= PI / 2) turnAngle else -turnAngle
             lb.angle = angle + if (angDiff(angle, PI * 5 / 4) > PI / 2) turnAngle else -turnAngle
             rf.angle = angle + if (angDiff(angle, PI * 1 / 4) > PI / 2) turnAngle else -turnAngle
             rb.angle = angle + if (angDiff(angle, PI * 7 / 4) >= PI / 2) turnAngle else -turnAngle
-
-            lf.speed = speed
-            lb.speed = speed
-            rf.speed = speed
-            rb.speed = speed
+        } else if (!epsEq(turnPower, 0.0)) {
+            turn(turnPower)
         }
     }
 
     fun close() {
+        log("Swerve_Status", "InitClose");
         lf.close()
         lb.close()
         rf.close()
         rb.close()
+
+        log("Swerve_Status", "FinishClose");
     }
 
 }
