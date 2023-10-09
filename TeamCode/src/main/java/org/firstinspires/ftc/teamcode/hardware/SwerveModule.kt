@@ -9,7 +9,7 @@ import kotlin.math.PI
 import kotlin.math.abs
 
 class SwerveModule(val name: String, eoff: Double) {
-    private val s = CServo(name, eoff)
+    val s = CServo(name, eoff)
     private val m = Motor(name + "M", encoder = false, rev = false, overdrive = true)
 
     init {

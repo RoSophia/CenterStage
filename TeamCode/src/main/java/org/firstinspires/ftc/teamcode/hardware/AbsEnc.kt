@@ -25,7 +25,7 @@ class AbsEnc(private val name: String, private val off: Double) {
             }
             lv = cv
 
-            log("AbsEnc_${name}_Volt", "${enc.voltage}")
+            log("AbsEnc_${name}_Volt", "$cv")
             log("AbsEnc_${name}_NT", "$nturns")
 
             val c01 = cv / maxVoltage

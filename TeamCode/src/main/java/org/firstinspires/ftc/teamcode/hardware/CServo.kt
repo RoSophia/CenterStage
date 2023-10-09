@@ -35,7 +35,7 @@ object CSP {
 
 class CServo(val name: String, eoff: Double) {
     private val s: CRServo = RobotFuncs.hardwareMap.get(CRServo::class.java, name + "S")
-    private val e: AbsEnc = AbsEnc(name + "E", eoff)
+    val e: AbsEnc = AbsEnc(name + "E", eoff)
 
     private val pid: Thread
     private var pidRunning: Boolean = false
