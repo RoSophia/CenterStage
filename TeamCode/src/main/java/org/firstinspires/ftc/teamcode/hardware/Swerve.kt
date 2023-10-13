@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLF
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRF
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
+import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import kotlin.math.PI
 
@@ -18,14 +20,14 @@ class Swerve {
     val rb = SwerveModule("RB", OFFRB)
 
     init {
-        log("Swerve_Status", "Init");
+        logs("Swerve_Status", "Init");
     }
 
     fun turn(turnPower: Double) {
-        lf.angle = PI * 3 / 4
-        lb.angle = PI * 1 / 4
-        rf.angle = PI * 7 / 4
-        rb.angle = PI * 5 / 4
+        lf.angle = angNorm(PI * (1 + 4) / 4)
+        lb.angle = angNorm(PI * (3 + 0) / 4)
+        rf.angle = angNorm(PI * (7 + 0) / 4)
+        rb.angle = angNorm(PI * (5 + 4) / 4)
 
         lf.speed = turnPower
         lb.speed = turnPower
@@ -64,13 +66,13 @@ class Swerve {
     }
 
     fun close() {
-        log("Swerve_Status", "InitClose");
+        logs("Swerve_Status", "InitClose");
         lf.close()
         lb.close()
         rf.close()
         rb.close()
 
-        log("Swerve_Status", "FinishClose");
+        logs("Swerve_Status", "FinishClose");
     }
 
 }

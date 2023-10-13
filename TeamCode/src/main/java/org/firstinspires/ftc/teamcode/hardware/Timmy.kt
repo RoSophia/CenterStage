@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import java.lang.Thread.sleep
 
 class Timmy(val name: String) {
@@ -54,7 +55,7 @@ class Timmy(val name: String) {
             }
         }
 
-        log("Timmy_${name}_Status", "Init")
+        logs("Timmy_${name}_Status", "Init")
     }
 
     fun initThread() {
@@ -62,7 +63,7 @@ class Timmy(val name: String) {
             trunning = true
             t.start()
         }
-        log("Timmy_${name}_Status", "InitT")
+        logs("Timmy_${name}_Status", "InitT")
     }
 
     fun closeThread() {
@@ -70,7 +71,7 @@ class Timmy(val name: String) {
             trunning = false
             t.join()
         }
-        log("Timmy_${name}_Status", "CloseT")
+        logs("Timmy_${name}_Status", "CloseT")
     }
 
     fun close() {
@@ -79,7 +80,7 @@ class Timmy(val name: String) {
             imu.close()
             initialized = false
         }
-        log("Timmy_${name}_Status", "Close")
+        logs("Timmy_${name}_Status", "Close")
     }
 
 

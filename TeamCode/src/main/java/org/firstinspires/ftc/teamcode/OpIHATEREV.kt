@@ -107,14 +107,15 @@ class OpIHATEREV : OpMode() {
         } else {
             val speed = hypot(gamepad1.left_stick_x, gamepad1.left_stick_y).toDouble()
             val angle = atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4 + timmy.yaw
-            val targetAngle = atan2(gamepad2.left_stick_y, gamepad2.left_stick_x) - Math.PI / 4
+            val targetAngle = atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4
 
             val ae = angDiff(targetAngle, timmy.yaw)
             val ad = (ae - ale) / at.seconds()
             ale = ae
             ai += ae * at.seconds()
 
-            swerve.move(speed, angle, AP * ae + ad * AD + ai * AI + AF)
+            //swerve.move(speed, angle, AP * ae + ad * AD + ai * AI + AF)
+            swerve.move(speed, angle, gamepad1.left_stick_x.toDouble())
             at.reset()
         }
         log_state()

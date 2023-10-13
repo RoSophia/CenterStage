@@ -21,6 +21,9 @@ public class RobotVars {
     public static double OFFRB = 0.87;
 
     public static boolean canInvertMotor = true;
+    public static boolean MOVE_SWERVE = true;
+
+    public static boolean LOG_STATUS = false;
 
     public static double SERVO_GEAR_RATIO = 1.36;
 

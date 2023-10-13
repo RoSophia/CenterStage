@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.hardware.Timmy
 import org.firstinspires.ftc.teamcode.pp.Localizer
 import org.firstinspires.ftc.teamcode.pp.PurePursuit
 import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
+import org.firstinspires.ftc.teamcode.utils.RobotVars.LOG_STATUS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_TELE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.canInvertMotor
 import org.firstinspires.ftc.teamcode.utils.RobotVars.pcoef
@@ -41,6 +43,12 @@ object RobotFuncs {
             dashboard.sendTelemetryPacket(tp)
         }
     }
+
+    @JvmStatic
+    fun log(s: String, v: Any) = log(s, v.toString())
+
+    @JvmStatic
+    fun logs(s: String, v: Any) = if (LOG_STATUS) log(s, v.toString()) else {}
 
     @JvmStatic
     fun log_state() {
@@ -96,20 +104,19 @@ object RobotFuncs {
         log("IMU_CycleTime", "InitVal")
         log("IMU_yaw", "InitVal")
 
-        log("RobotFuncs_Status", "InitVal")
-        log("Timmy_imu_Status", "InitVal")
-
         log("ElapsedTime", "InitVal")
 
-        log("Swerve_Status", "InitVal")
-        log("CServo_LB_PID_Status", "InitVal")
-        log("ServoModule_LB_Status", "InitVal")
-        log("CServo_RF_PID_Status", "InitVal")
-        log("ServoModule_RF_Status", "InitVal")
-        log("CServo_RB_PID_Status", "InitVal")
-        log("ServoModule_RB_Status", "InitVal")
-        log("CServo_LF_PID_Status", "InitVal")
-        log("ServoModule_LF_Status", "InitVal")
+        logs("RobotFuncs_Status", "InitVal")
+        logs("Timmy_imu_Status", "InitVal")
+        logs("Swerve_Status", "InitVal")
+        logs("CServo_LB_PID_Status", "InitVal")
+        logs("ServoModule_LB_Status", "InitVal")
+        logs("CServo_RF_PID_Status", "InitVal")
+        logs("ServoModule_RF_Status", "InitVal")
+        logs("CServo_RB_PID_Status", "InitVal")
+        logs("ServoModule_RB_Status", "InitVal")
+        logs("CServo_LF_PID_Status", "InitVal")
+        logs("ServoModule_LF_Status", "InitVal")
 
 
 
@@ -125,8 +132,9 @@ object RobotFuncs {
     }
 
     @JvmStatic
-    fun initma(lopm: OpMode) { /// Init all hardware info
-        log("RobotFuncs_Status", "StartInitma")
+    fun shutUp(lopm: OpMode) {
+        preinit()
+        MOVE_SWERVE = false
         canInvertMotor = false
         lom = lopm
         hardwareMap = lom.hardwareMap
@@ -134,31 +142,47 @@ object RobotFuncs {
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next()
         timmy = Timmy("imu")
         swerve = Swerve()
+        controller = Controller()
+        localizer = ThreeWheelLocalizer()
+        pp = PurePursuit(swerve, localizer)
+    }
+
+    @JvmStatic
+    fun initma(lopm: OpMode) { /// Init all hardware info
+        logs("RobotFuncs_Status", "StartInitma")
+        canInvertMotor = false
+        lom = lopm
+        hardwareMap = lom.hardwareMap
+        telemetry = lom.telemetry
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next()
+        timmy = Timmy("imu")
+        MOVE_SWERVE = true
+        swerve = Swerve()
         swerve.move(0.0, 0.0, 0.0)
         controller = Controller()
         localizer = ThreeWheelLocalizer()
         pp = PurePursuit(swerve, localizer)
-        log("RobotFuncs_Status", "FinishInitma")
+        logs("RobotFuncs_Status", "FinishInitma")
     }
 
     @JvmStatic
     fun startma() { /// Set all values to their starting ones and start the PID threads
-        log("RobotFuncs_Status", "StartStartma")
+        logs("RobotFuncs_Status", "StartStartma")
         canInvertMotor = true
         pcoef = 12.0 / batteryVoltageSensor.voltage
         timmy.initThread()
         etime.reset()
-        log("RobotFuncs_Status", "FinishStartma")
+        logs("RobotFuncs_Status", "FinishStartma")
     }
 
     @JvmStatic
     fun endma() { /// Shut down the robot
-        log("RobotFuncs_Status", "StartEndma")
+        logs("RobotFuncs_Status", "StartEndma")
         pcoef = 0.0
         batteryVoltageSensor.close()
         swerve.close()
         timmy.closeThread()
         timmy.close()
-        log("RobotFuncs_Status", "FinishEndma")
+        logs("RobotFuncs_Status", "FinishEndma")
     }
 }

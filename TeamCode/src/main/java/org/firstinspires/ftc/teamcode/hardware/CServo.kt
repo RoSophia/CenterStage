@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.hardware.CSP.p
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotVars
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_TELE
@@ -63,7 +64,7 @@ class CServo(val name: String, eoff: Double) {
                 s.power = f + err * p + der * d + int * i
                 if (USE_TELE) {
                     val tp = TelemetryPacket()
-                    tp.put("CServo_${name}_Enc", e.pos)
+                    tp.put("CServo_${name}_Enc", cp)
                     tp.put("CServo_${name}_Tar", pt)
                     tp.put("CServo_${name}_Pow", s.power)
                     dashboard.sendTelemetryPacket(tp)
@@ -77,12 +78,12 @@ class CServo(val name: String, eoff: Double) {
     fun initPid() {
         pidRunning = true
         pid.start()
-        log("CServo_${name}_PID_Status", "Init")
+        logs("CServo_${name}_PID_Status", "Init")
     }
 
     fun joinPid() {
         pidRunning = false
         pid.join()
-        log("CServo_${name}_PID_Status", "Close")
+        logs("CServo_${name}_PID_Status", "Close")
     }
 }
