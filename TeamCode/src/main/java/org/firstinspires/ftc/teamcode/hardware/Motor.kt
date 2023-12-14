@@ -4,9 +4,18 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 
 class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
     private val m: DcMotorEx
+
+    var reverse: Boolean = rev
+        set(v) {
+            field = v
+            m.power = if (field) -power else power
+            reverse
+            field = v
+        }
 
     init {
         m = RobotFuncs.hardwareMap.get(DcMotorEx::class.java, name)
@@ -22,7 +31,7 @@ class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
             m.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
         m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-        m.direction = if (rev) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
+        reverse = rev
         m.power = 0.0
     }
 
@@ -30,15 +39,7 @@ class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
         set(p) {
             if (p != field) {
                 field = p
-                m.power = p
-            }
-        }
-
-    var reverse: Boolean = rev
-        set(v) {
-            if (v != field) {
-                m.direction = if (v) DcMotorSimple.Direction.REVERSE else DcMotorSimple.Direction.FORWARD
-                field = v
+                m.power = if (reverse) -p else p
             }
         }
 }

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.utils
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.VoltageSensor
@@ -72,6 +71,7 @@ object RobotFuncs {
     fun preinit() {
         dashboard = FtcDashboard.getInstance()
 
+        /*
         log("ServoModule_LF_MSpeed", "InitVal")
         log("ServoModule_LF_MRever", "InitVal")
         log("CServo_LF_Enc", "InitVal")
@@ -116,7 +116,7 @@ object RobotFuncs {
         logs("CServo_RB_PID_Status", "InitVal")
         logs("ServoModule_RB_Status", "InitVal")
         logs("CServo_LF_PID_Status", "InitVal")
-        logs("ServoModule_LF_Status", "InitVal")
+        logs("ServoModule_LF_Status", "InitVal")*/
 
 
 
@@ -172,6 +172,7 @@ object RobotFuncs {
         pcoef = 12.0 / batteryVoltageSensor.voltage
         timmy.initThread()
         etime.reset()
+        swerve.start()
         logs("RobotFuncs_Status", "FinishStartma")
     }
 
@@ -183,6 +184,7 @@ object RobotFuncs {
         swerve.close()
         timmy.closeThread()
         timmy.close()
+        swerve.stop()
         logs("RobotFuncs_Status", "FinishEndma")
     }
 }

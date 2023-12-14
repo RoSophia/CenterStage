@@ -26,10 +26,10 @@ class SetVars : OpMode() {
         OFFLB = -swerve.lb.s.e.pos
         OFFRF = -swerve.rf.s.e.pos
         OFFRB = -swerve.rb.s.e.pos
-        log("OFFLF", "$OFFLF")
-        log("OFFLB", "$OFFLB")
-        log("OFFRF", "$OFFRF")
-        log("OFFRB", "$OFFRB")
+        log("public static double OFFLF = $OFFLF;", "")
+        log("public static double OFFLB = $OFFLB;", "")
+        log("public static double OFFRF = $OFFRF;", "")
+        log("public static double OFFRB = $OFFRB;", "")
     }
 
     override fun loop() {}

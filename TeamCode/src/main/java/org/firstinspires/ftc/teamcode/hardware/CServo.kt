@@ -21,13 +21,13 @@ import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 @Config
 object CSP {
     @JvmField
-    var p = 0.5
+    var p = 0.4
 
     @JvmField
     var i = 0.0
 
     @JvmField
-    var d = 0.0
+    var d = 0.01
 
     @JvmField
     var f = 0.0

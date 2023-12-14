@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.canInvertMotor
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
-import org.firstinspires.ftc.teamcode.utils.Util.mod
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -27,14 +26,16 @@ class SwerveModule(val name: String, eoff: Double) {
         set(v) {
             if (MOVE_SWERVE) {
                 val vn = angNorm(v)
-                if (!epsEq(vn, field)) {
-                    val dif = angDiff(vn, angNorm(field))
-                    if (canInvertMotor && abs(dif) > (PI / 2)) {
+                val dif = angDiff(vn, field)
+                if (!epsEq(dif, 0.0)) {
+                    val actualDif = angDiff(vn + off, s.e.pos)
+                    if (canInvertMotor && abs(actualDif) >= (PI / 2)) {
                         m.reverse = !m.reverse
                         off = PI - off
                     }
-                    s.pt = vn + off
-                    field = vn
+                    s.pt = angNorm(vn + off)
+                    field = v
+                    log("ServoModule_${name}_MRever", m.reverse)
                 }
             }
         }

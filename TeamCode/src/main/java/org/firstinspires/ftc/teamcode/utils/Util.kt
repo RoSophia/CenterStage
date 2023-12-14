@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.utils
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 
 object Util {
     const val eps = 0.001
@@ -29,5 +31,10 @@ object Util {
     @JvmStatic
     fun angDiff(o1: Double, o2: Double): Double {
         return floatMod(o2 - o1 + PI, PI * 2) - PI
+    }
+
+    @JvmStatic
+    fun clamp(v: Double, down: Double, up: Double): Double {
+        return min(max(v, down), up)
     }
 }
