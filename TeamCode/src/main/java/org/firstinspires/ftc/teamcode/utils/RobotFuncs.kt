@@ -8,15 +8,22 @@ import com.qualcomm.robotcore.hardware.VoltageSensor
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.hardware.Controller
+import org.firstinspires.ftc.teamcode.hardware.Diffy
+import org.firstinspires.ftc.teamcode.hardware.MServo
+import org.firstinspires.ftc.teamcode.hardware.Motor
 import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.hardware.Timmy
 import org.firstinspires.ftc.teamcode.pp.Localizer
 import org.firstinspires.ftc.teamcode.pp.PurePursuit
 import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
+import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYLD
+import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYRD
+import org.firstinspires.ftc.teamcode.utils.RobotVars.INU
 import org.firstinspires.ftc.teamcode.utils.RobotVars.LOG_STATUS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_TELE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.canInvertMotor
+import org.firstinspires.ftc.teamcode.utils.RobotVars.nrRots
 import org.firstinspires.ftc.teamcode.utils.RobotVars.pcoef
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -31,8 +38,26 @@ object RobotFuncs {
     lateinit var swerve: Swerve
     lateinit var controller: Controller
     lateinit var pp: PurePursuit
+    lateinit var diffy: Diffy
+    lateinit var intake: Motor
+    lateinit var ridIntake: MServo
+    lateinit var funkyL: MServo
+    lateinit var funkyR: MServo
+    var KILLALL: Boolean = false
 
     val etime = ElapsedTime()
+
+    @JvmStatic
+    var tp: TelemetryPacket = TelemetryPacket()
+
+    @JvmStatic
+    fun send_log() {
+        return
+        if (USE_TELE) {
+            dashboard.sendTelemetryPacket(tp)
+        }
+        tp = TelemetryPacket()
+    }
 
     @JvmStatic
     fun log(s: String, v: String) {
@@ -41,13 +66,21 @@ object RobotFuncs {
             tp.put(s, v)
             dashboard.sendTelemetryPacket(tp)
         }
+        return
+        try {
+            tp.put(s, v)
+        } catch (_: Exception) {
+            dashboard = FtcDashboard.getInstance()
+            tp = TelemetryPacket()
+        }
     }
 
     @JvmStatic
     fun log(s: String, v: Any) = log(s, v.toString())
 
     @JvmStatic
-    fun logs(s: String, v: Any) = if (LOG_STATUS) log(s, v.toString()) else {}
+    fun logs(s: String, v: Any) = if (LOG_STATUS) log(s, v.toString()) else {
+    }
 
     @JvmStatic
     fun log_state() {
@@ -70,65 +103,7 @@ object RobotFuncs {
     @JvmStatic
     fun preinit() {
         dashboard = FtcDashboard.getInstance()
-
-        /*
-        log("ServoModule_LF_MSpeed", "InitVal")
-        log("ServoModule_LF_MRever", "InitVal")
-        log("CServo_LF_Enc", "InitVal")
-        log("CServo_LF_Tar", "InitVal")
-        log("CServo_LF_Pow", "InitVal")
-        log("ServoModule_LB_MSpeed", "InitVal")
-        log("ServoModule_LB_MRever", "InitVal")
-        log("CServo_LB_Enc", "InitVal")
-        log("CServo_LB_Tar", "InitVal")
-        log("CServo_LB_Pow", "InitVal")
-        log("ServoModule_RF_MSpeed", "InitVal")
-        log("ServoModule_RF_MRever", "InitVal")
-        log("CServo_RF_Enc", "InitVal")
-        log("CServo_RF_Tar", "InitVal")
-        log("CServo_RF_Pow", "InitVal")
-        log("ServoModule_RB_MSpeed", "InitVal")
-        log("ServoModule_RB_MRever", "InitVal")
-        log("CServo_RB_Enc", "InitVal")
-        log("CServo_RB_Tar", "InitVal")
-        log("CServo_RB_Pow", "InitVal")
-
-        log("Local_Pose", "InitVal")
-        log("Local_Vel", "InitVal")
-
-        log("Swerve_Movement", "InitVal")
-        log("Swerve_Angle", "InitVal")
-        log("Swerve_Speed", "InitVal")
-        log("Swerve_TurnPower", "InitVal")
-
-        log("IMU_CycleTime", "InitVal")
-        log("IMU_yaw", "InitVal")
-
-        log("ElapsedTime", "InitVal")
-
-        logs("RobotFuncs_Status", "InitVal")
-        logs("Timmy_imu_Status", "InitVal")
-        logs("Swerve_Status", "InitVal")
-        logs("CServo_LB_PID_Status", "InitVal")
-        logs("ServoModule_LB_Status", "InitVal")
-        logs("CServo_RF_PID_Status", "InitVal")
-        logs("ServoModule_RF_Status", "InitVal")
-        logs("CServo_RB_PID_Status", "InitVal")
-        logs("ServoModule_RB_Status", "InitVal")
-        logs("CServo_LF_PID_Status", "InitVal")
-        logs("ServoModule_LF_Status", "InitVal")*/
-
-
-
-        // TODO: PhotonCore Currently brokey
-        /*
-        if (USE_PHOTON) {
-            PhotonCore.EXPANSION_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL)
-            PhotonCore.experimental.setMaximumParallelCommands(8)
-            PhotonCore.enable()
-            PhotonCore.EXPANSION_HUB.clearBulkCache()
-        }
-         */
+        KILLALL = false
     }
 
     @JvmStatic
@@ -150,6 +125,9 @@ object RobotFuncs {
     @JvmStatic
     fun initma(lopm: OpMode) { /// Init all hardware info
         logs("RobotFuncs_Status", "StartInitma")
+        if (nrRots == null) {
+            nrRots = HashMap()
+        }
         canInvertMotor = false
         lom = lopm
         hardwareMap = lom.hardwareMap
@@ -161,6 +139,11 @@ object RobotFuncs {
         swerve.move(0.0, 0.0, 0.0)
         controller = Controller()
         localizer = ThreeWheelLocalizer()
+        intake = Motor("Intake", encoder = false, rev = false, overdrive = true)
+        ridIntake = MServo("RidIntake", INU)
+        funkyL = MServo("FunkyL", FUNKYLD)
+        funkyR = MServo("FunkyR", FUNKYRD)
+        diffy = Diffy("Dif")
         pp = PurePursuit(swerve, localizer)
         logs("RobotFuncs_Status", "FinishInitma")
     }
@@ -178,6 +161,7 @@ object RobotFuncs {
 
     @JvmStatic
     fun endma() { /// Shut down the robot
+        KILLALL = true
         logs("RobotFuncs_Status", "StartEndma")
         pcoef = 0.0
         batteryVoltageSensor.close()

@@ -7,16 +7,21 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.shutUp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLF
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRF
+import org.firstinspires.ftc.teamcode.utils.RobotVars.nrRots
 
 @TeleOp(name = "設置變量")
 class SetVars : OpMode() {
     override fun init() {
+        if (nrRots == null) {
+            nrRots = HashMap()
+        }
         OFFLF = 0.0
         OFFLB = 0.0
         OFFRF = 0.0
@@ -30,6 +35,8 @@ class SetVars : OpMode() {
         log("public static double OFFLB = $OFFLB;", "")
         log("public static double OFFRF = $OFFRF;", "")
         log("public static double OFFRB = $OFFRB;", "")
+        nrRots.clear()
+        send_log()
     }
 
     override fun loop() {}

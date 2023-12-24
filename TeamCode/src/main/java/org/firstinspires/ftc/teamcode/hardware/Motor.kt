@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 
@@ -34,6 +35,16 @@ class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
         reverse = rev
         m.power = 0.0
     }
+
+    val currentPosition: Int
+        get() {
+            return m.currentPosition
+        }
+
+    val current: Double
+        get() {
+            return m.getCurrent(CurrentUnit.MILLIAMPS)
+        }
 
     var power: Double = 0.0
         set(p) {

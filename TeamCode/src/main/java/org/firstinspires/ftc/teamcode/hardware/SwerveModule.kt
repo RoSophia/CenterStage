@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
+import org.firstinspires.ftc.teamcode.utils.RobotVars.SERVO_GEAR_RATIO
 import org.firstinspires.ftc.teamcode.utils.RobotVars.canInvertMotor
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
@@ -11,12 +12,12 @@ import kotlin.math.PI
 import kotlin.math.abs
 
 class SwerveModule(val name: String, eoff: Double) {
-    val s = CServo(name, eoff)
+    val s = CServo(name, eoff, SERVO_GEAR_RATIO)
     private val m = Motor(name + "M", encoder = false, rev = false, overdrive = true)
 
     init {
         if (MOVE_SWERVE) {
-            s.initPid()
+            s.init()
         }
         logs("ServoModule_${name}_Status", "Init")
     }
@@ -54,7 +55,7 @@ class SwerveModule(val name: String, eoff: Double) {
 
     fun close() {
         if (MOVE_SWERVE) {
-            s.joinPid()
+            s.close()
         }
         logs("ServoModule_${name}_Status", "Close")
     }

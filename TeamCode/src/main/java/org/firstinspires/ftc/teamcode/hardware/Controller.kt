@@ -9,6 +9,11 @@ class Controller {
 
     private val TRIGGER_THRESHOLD = 0.6
 
+    val JUST_PRESSED = 2
+    val JUST_RELEASED = 1
+    val RELEASED = 0
+    val PRESSED = 3
+
     private var L1A = g1.a
     private var L1B = g1.b
     private var L1X = g1.x

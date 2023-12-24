@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import kotlinx.coroutines.sync.Mutex
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import java.lang.Thread.sleep
@@ -25,14 +26,12 @@ class Timmy(val name: String) {
     }
 
     var yaw: Double = 0.0
-        get() {
-            while (yawm.tryLock()) {
-                sleep(1)
-            }
-            val r = field
-            yawm.unlock()
-            return r
-        }
+        /*get() {
+            //while (yawm.tryLock()) {  sleep(1)  }
+            //val r = field
+            //yawm.unlock()
+            //return r
+        }*/
 
     private val yawm = Mutex()
 
@@ -49,18 +48,17 @@ class Timmy(val name: String) {
         t = Thread {
             val ep = ElapsedTime()
             ep.reset()
-            while (trunning) {
+            while (trunning && !KILLALL) {
                 //val y = imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
                 //val y = imu.angularOrientation.firstAngle
                 val fixed = fixAngOrientation(imu.angularOrientation)
-                val y = fixed.firstAngle
+                val y = fixed.firstAngle.toDouble()
                 /*
                 while (yawm.tryLock()) {
                     sleep(1)
-                }
+                }*/
                 yaw = y
-                yawm.unlock()
-                 */
+                //yawm.unlock()
                 val tp = TelemetryPacket()
                 tp.put("IMU_yaw", y)
                 tp.put("IMU_CycleTime", ep.seconds())
