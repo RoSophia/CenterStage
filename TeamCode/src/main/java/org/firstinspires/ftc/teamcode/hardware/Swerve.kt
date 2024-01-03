@@ -11,8 +11,17 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLF
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRF
+import org.firstinspires.ftc.teamcode.utils.RobotVars.SwerveAngP
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TRACK_WIDTH
 import org.firstinspires.ftc.teamcode.utils.RobotVars.WHEEL_BASE
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelDLB
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelDLF
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelDRB
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelDRF
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelULB
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelULF
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelURB
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelURF
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.firstinspires.ftc.teamcode.utils.Util.clamp
@@ -56,6 +65,7 @@ class Swerve {
                 for (i in 0..3) {
                     modules[i].angle = wa[i]
                     log("AngDiff_$i", angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))
+                    log("PAVER_$i", modules[i].m.current)
                     modules[i].speed =
                             if (maxs > 1.0) {
                                 ws[i] / maxs
@@ -117,7 +127,11 @@ class Swerve {
             wa = doubleArrayOf(PI2, 3 * PI2, 5 * PI2, 7 * PI2)
         } else {
             ws = doubleArrayOf(hypot(b, c), hypot(b, d), hypot(a, d), hypot(a, c))
-            if (!maintainHeading) wa = doubleArrayOf(atan2(b, c), atan2(b, d), atan2(a, d), atan2(a, c))
+            if (!maintainHeading) wa = doubleArrayOf(
+                    atan2(b, c) + if (head > 0.0) WheelULF else WheelDLF,
+                    atan2(b, d) + if (head > 0.0) WheelURF else WheelDRF,
+                    atan2(a, d) + if (head > 0.0) WheelURB else WheelDRB,
+                    atan2(a, c) + if (head > 0.0) WheelULB else WheelDLB)
         }
 
         maxs = max(ws[0], max(ws[1], max(ws[2], ws[3])))
@@ -128,10 +142,11 @@ class Swerve {
             return
         }
         log("Swerve_Movement", "${speed}@${angle} tp: $turnPower")
+        val actAng = angle + turnPower * SwerveAngP
         if (abs(speed) < 0.1 && abs(turnPower) < 0.1) {
             ws = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
         } else {
-            kmskms(Pose(sin(angle) * speed, cos(angle) * speed, turnPower * PI / KMSCONF))
+            kmskms(Pose(sin(actAng) * speed, cos(actAng) * speed, turnPower * PI / KMSCONF))
         }
     }
 

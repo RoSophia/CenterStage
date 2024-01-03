@@ -18,9 +18,10 @@ import org.firstinspires.ftc.teamcode.pp.PurePursuit
 import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
 import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYLD
 import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYRD
-import org.firstinspires.ftc.teamcode.utils.RobotVars.INU
+import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePUp
 import org.firstinspires.ftc.teamcode.utils.RobotVars.LOG_STATUS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
+import org.firstinspires.ftc.teamcode.utils.RobotVars.GhearaSDESCHIS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_TELE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.canInvertMotor
 import org.firstinspires.ftc.teamcode.utils.RobotVars.nrRots
@@ -43,6 +44,7 @@ object RobotFuncs {
     lateinit var ridIntake: MServo
     lateinit var funkyL: MServo
     lateinit var funkyR: MServo
+    lateinit var clown: MServo
     var KILLALL: Boolean = false
 
     val etime = ElapsedTime()
@@ -66,13 +68,6 @@ object RobotFuncs {
             tp.put(s, v)
             dashboard.sendTelemetryPacket(tp)
         }
-        return
-        try {
-            tp.put(s, v)
-        } catch (_: Exception) {
-            dashboard = FtcDashboard.getInstance()
-            tp = TelemetryPacket()
-        }
     }
 
     @JvmStatic
@@ -80,6 +75,15 @@ object RobotFuncs {
 
     @JvmStatic
     fun logs(s: String, v: Any) = if (LOG_STATUS) log(s, v.toString()) else {
+    }
+
+    @JvmStatic
+    fun logst(s: String) {
+        if (USE_TELE) {
+            val tp = TelemetryPacket()
+            tp.addLine(s)
+            dashboard.sendTelemetryPacket(tp)
+        }
     }
 
     @JvmStatic
@@ -116,6 +120,7 @@ object RobotFuncs {
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next()
         timmy = Timmy("imu")
+        diffy = Diffy("Dif")
         swerve = Swerve()
         controller = Controller()
         localizer = ThreeWheelLocalizer()
@@ -140,9 +145,10 @@ object RobotFuncs {
         controller = Controller()
         localizer = ThreeWheelLocalizer()
         intake = Motor("Intake", encoder = false, rev = false, overdrive = true)
-        ridIntake = MServo("RidIntake", INU)
+        ridIntake = MServo("RidIntake", IntakePUp)
         funkyL = MServo("FunkyL", FUNKYLD)
         funkyR = MServo("FunkyR", FUNKYRD)
+        clown = MServo("Clown", GhearaSDESCHIS)
         diffy = Diffy("Dif")
         pp = PurePursuit(swerve, localizer)
         logs("RobotFuncs_Status", "FinishInitma")
@@ -156,6 +162,7 @@ object RobotFuncs {
         timmy.initThread()
         etime.reset()
         swerve.start()
+        diffy.init()
         logs("RobotFuncs_Status", "FinishStartma")
     }
 
@@ -169,6 +176,7 @@ object RobotFuncs {
         timmy.closeThread()
         timmy.close()
         swerve.stop()
+        diffy.close()
         logs("RobotFuncs_Status", "FinishEndma")
     }
 }

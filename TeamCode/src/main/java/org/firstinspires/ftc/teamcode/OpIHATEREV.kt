@@ -2,26 +2,15 @@ package org.firstinspires.ftc.teamcode
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.IHRP.AD
 import org.firstinspires.ftc.teamcode.IHRP.AF
-import org.firstinspires.ftc.teamcode.IHRP.AI
-import org.firstinspires.ftc.teamcode.IHRP.ALB
-import org.firstinspires.ftc.teamcode.IHRP.ALF
 import org.firstinspires.ftc.teamcode.IHRP.AP
-import org.firstinspires.ftc.teamcode.IHRP.ARB
-import org.firstinspires.ftc.teamcode.IHRP.ARF
 import org.firstinspires.ftc.teamcode.IHRP.KILL
 import org.firstinspires.ftc.teamcode.IHRP.OFFSET
-import org.firstinspires.ftc.teamcode.IHRP.SLB
-import org.firstinspires.ftc.teamcode.IHRP.SLF
-import org.firstinspires.ftc.teamcode.IHRP.SRB
-import org.firstinspires.ftc.teamcode.IHRP.SRF
-import org.firstinspires.ftc.teamcode.IHRP.ccswerve
-import org.firstinspires.ftc.teamcode.IHRP.cswerve
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
@@ -45,8 +34,11 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYLD
 import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYLU
 import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYRD
 import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYRU
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IND
-import org.firstinspires.ftc.teamcode.utils.RobotVars.INU
+import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePDown
+import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePUp
+import org.firstinspires.ftc.teamcode.utils.RobotVars.GhearaSDESCHIS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.GearaSINCHIS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePower
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
@@ -152,24 +144,37 @@ class OpIHATEREV : OpMode() {
         }
 
         val speed = hypot(gamepad1.left_stick_x, gamepad1.left_stick_y).toDouble()
-        val angle = angNorm(-atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) + Math.PI / 2  + OFFSET - timmy.yaw)
+        val angle = angNorm(-atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) + Math.PI / 2 + OFFSET - timmy.yaw)
         val correctAngForce = get_angf()
+        val fcoef = 1.0 - gamepad1.right_trigger * 0.6
+        swerve.move(speed * fcoef, angle, correctAngForce * fcoef)
 
-        swerve.move(speed, angle, correctAngForce)
-
-        if (epsEq(ridIntake.position, INU) && controller.C2Y == controller.JUST_PRESSED) {
-            intake.power = 1.0
-            ridIntake.position = IND
-        } else {
-            intake.power = 0.0
-            ridIntake.position = INU
+        if (controller.C2RB == controller.JUST_PRESSED) {
+            if (epsEq(clown.position, GhearaSDESCHIS)) {
+                clown.position = GearaSINCHIS
+            } else {
+                clown.position = GhearaSDESCHIS
+            }
         }
-        if (epsEq(funkyL.position, FUNKYLD) && controller.C2DU == controller.JUST_PRESSED) {
-            funkyL.position = FUNKYLU
-            funkyR.position = FUNKYRU
-        } else {
-            funkyL.position = FUNKYLD
-            funkyR.position = FUNKYRD
+
+        if (controller.C2Y == controller.JUST_PRESSED) {
+            if (epsEq(ridIntake.position, IntakePUp)) {
+                intake.power = IntakePower
+                ridIntake.position = IntakePDown
+            } else {
+                intake.power = 0.0
+                ridIntake.position = IntakePUp
+            }
+        }
+
+        if (controller.C2DU == controller.JUST_PRESSED) {
+            if (epsEq(funkyL.position, FUNKYLD)) {
+                funkyL.position = FUNKYLU
+                funkyR.position = FUNKYRU
+            } else {
+                funkyL.position = FUNKYLD
+                funkyR.position = FUNKYRD
+            }
         }
 
         if (controller.C2A == controller.JUST_PRESSED) {

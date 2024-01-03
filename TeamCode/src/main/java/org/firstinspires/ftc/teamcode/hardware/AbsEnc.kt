@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.nrRots
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import kotlin.math.PI
@@ -34,42 +35,43 @@ class AbsEnc(private val name: String, private val off: Double, gearr: Double) {
 
     private val de = ArrayDeque<tmp>()
 
+    val angle: Double
+        get() {
+        val cv = enc.voltage / maxVoltage
+        de.addLast(tmp(timer.seconds(), cv))
+
+        val ts = timer.seconds()
+        var dl: tmp = de.first()
+        while (true) {
+            if (ts - de.first().time > 0.1 && de.size > 1) {
+                dl = de.first()
+                de.removeFirst()
+            } else {
+                break
+            }
+        }
+
+        if (cv > 0.8 && dl.pos < 0.2) {
+            while (de.first().pos < 0.2) {
+                de.removeFirst()
+            }
+            --cnrpos
+            nrRots[name] = cnrpos
+        } else if (cv < 0.2 && dl.pos > 0.8) {
+            while (de.first().pos > 0.8) {
+                de.removeFirst()
+            }
+            ++cnrpos
+            nrRots[name] = cnrpos
+        }
+
+        logs("AbsEnc_${name}_Volt", cv)
+        logs("AbsEnc_${name}_nrRot", cnrpos)
+        return (cv + cnrpos) * angPer01 + off
+    }
+
     val pos: Double
         get() {
-            val cv = enc.voltage / maxVoltage
-            de.addLast(tmp(timer.seconds(), cv))
-
-            val ts = timer.seconds()
-            var dl: tmp = de.first()
-            while (true) {
-                if (ts - de.first().time > 0.1 && de.size > 1) {
-                    dl = de.first()
-                    de.removeFirst()
-                } else {
-                    break
-                }
-            }
-
-            if (cv > 0.8 && dl.pos < 0.2) {
-                while (de.first().pos < 0.2) {
-                    de.removeFirst()
-                }
-                --cnrpos
-                nrRots[name] = cnrpos
-            } else if (cv < 0.2 && dl.pos > 0.8) {
-                while (de.first().pos > 0.8) {
-                    de.removeFirst()
-                }
-                ++cnrpos
-                nrRots[name] = cnrpos
-            }
-
-            val tp = TelemetryPacket()
-            tp.put("${name}_KILL", cv - dl.pos)
-            dashboard.sendTelemetryPacket(tp)
-            log("AbsEnc_${name}_Volt", cv)
-            log("AbsEnc_${name}_nrRot", cnrpos)
-
-            return angNorm((cv + cnrpos) * angPer01 + off)
+            return angNorm(angle)
         }
 }

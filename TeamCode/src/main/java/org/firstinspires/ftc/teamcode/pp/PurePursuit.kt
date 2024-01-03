@@ -15,7 +15,6 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) {
-    @Config
     companion object {
         @JvmField
         var lookaheadRadius: Double = 1.0
