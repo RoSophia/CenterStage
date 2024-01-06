@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.pp
 import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_ACC
 import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_DEC
+import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_FRACTION
 import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_VEL
 import org.firstinspires.ftc.teamcode.utils.Pose
+import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Vec2d
 import kotlin.math.min
 
@@ -35,10 +37,13 @@ object DriveConstants {
 
     @JvmField
     var MAX_VEL = 20.0
+
+    @JvmField
+    var MAX_FRACTION = 0.7
 }
 
 class Trajectory(val start: Pose, val initVel: Double, val end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h1: Vec2d, val checkpoints: Int) {
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d) : this(sp, initVel, ep, v1e, v2e, h1, 500)
+    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d) : this(sp, initVel, ep, v1e, v2e, h1, 2000)
     constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double, h1x: Double, h1y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(h1x, h1y))
     constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(0.3333, 0.666))
     constructor(sp: Pose, initVel: Double, ep: Pose) : this(sp, initVel, ep, Vec2d(), Vec2d(), Vec2d(0.3333, 0.6666))
@@ -51,13 +56,13 @@ class Trajectory(val start: Pose, val initVel: Double, val end: Pose, val v1e: V
 
     private val cubX = CubicBezierCurve(start.x, v1.x, v2.x, end.x)
     private val cubY = CubicBezierCurve(start.y, v1.y, v2.y, end.y)
-    private val cubH = CubicBezierCurve(0.0, h1.x, h1.y, 1.0)
+    private val cubH = CubicBezierCurve(0.0, h1.x, h1.y, 1.0) // Heading handled in get()
 
-    operator fun get(t: Double) = if (t < 0.0) start else if (t > 1.0) end else Pose(cubX[t], cubY[t], cubH[t])
+    operator fun get(t: Double) = if (t < 0.0) start else if (t > 1.0) end else Pose(cubX[t], cubY[t], start.h + angDiff(start.h, end.h) * cubH[t])
     fun deriv(t: Double) = Pose(cubX.deriv(t), cubY.deriv(t), cubH.deriv(t))
 
     fun getSpeed(t: Double): Pose {
-        val cs = min(MAX_VEL, min(initVel + MAX_ACC * t, (1 - t) * MAX_DEC))
+        val cs = min(MAX_VEL, min(initVel + MAX_ACC * t, (1 - t) * MAX_DEC)) * MAX_FRACTION / MAX_VEL
         val cd = deriv(t)
         return cd * cs
     }

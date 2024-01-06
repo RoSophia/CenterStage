@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.hardware
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import kotlinx.coroutines.sync.Mutex
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
-import java.lang.Thread.sleep
 
 class Timmy(val name: String) {
     //private val imu: IMU = RobotFuncs.hardwareMap.get(IMU::class.java, name)
@@ -26,6 +23,7 @@ class Timmy(val name: String) {
     }
 
     var yaw: Double = 0.0
+    var yawVel: Double = 0.0
         /*get() {
             //while (yawm.tryLock()) {  sleep(1)  }
             //val r = field
@@ -58,13 +56,11 @@ class Timmy(val name: String) {
                     sleep(1)
                 }*/
                 yaw = y
+                yawVel = imu.angularVelocity.xRotationRate.toDouble()
                 //yawm.unlock()
-                val tp = TelemetryPacket()
-                tp.put("IMU_yaw", y)
-                tp.put("IMU_CycleTime", ep.seconds())
-                tp.put("IMU_ango", fixed)
-                ep.reset()
-                dashboard.sendTelemetryPacket(tp)
+                logs("IMU_yaw", y)
+                logs("IMU_CycleTime", ep.seconds())
+                logs("IMU_ango", fixed)
             }
         }
 

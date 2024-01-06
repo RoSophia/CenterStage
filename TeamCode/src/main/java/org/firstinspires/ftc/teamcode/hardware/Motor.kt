@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 
 class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
-    private val m: DcMotorEx
+    private val m: PhotonDcMotor
 
     var reverse: Boolean = rev
         set(v) {
@@ -19,7 +18,7 @@ class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
         }
 
     init {
-        m = RobotFuncs.hardwareMap.get(DcMotorEx::class.java, name)
+        m = RobotFuncs.hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
         if (overdrive) {
             val mconf = m.motorType.clone()
             mconf.achieveableMaxRPMFraction = 1.0

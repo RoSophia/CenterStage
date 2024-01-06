@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
@@ -40,6 +43,7 @@ object PKW {
     var inv2: Boolean = false
 }
 
+@Photon
 @TeleOp
 class Panzerkampfwagen : OpMode() {
     lateinit var imu: BNO055IMU
@@ -52,19 +56,26 @@ class Panzerkampfwagen : OpMode() {
     override fun init() {
         preinit()
         RobotFuncs.hardwareMap = hardwareMap
-        if (type == 1) {
-            crs = hardwareMap.get(CRServo::class.java, string)
-        } else if (type == 2) {
-            abe = AbsEnc(string, 0.0)
-        } else if (type == 3) {
-            mot = Motor(string, false, false, false)
-        } else if (type == 4) {
-            mot = Motor(string, true, false, false)
-        } else if (type == 5) {
-            s = MServo(string, inv)
-        } else if (type == 6) {
-            s = MServo(string, inv)
-            s2 = MServo(string2, inv2)
+        when (type) {
+            1 -> {
+                crs = hardwareMap.get(CRServo::class.java, string)
+            }
+            2 -> {
+                abe = AbsEnc(string, 0.0)
+            }
+            3 -> {
+                mot = Motor(string, false, false, false)
+            }
+            4 -> {
+                mot = Motor(string, true, false, false)
+            }
+            5 -> {
+                s = MServo(string, inv)
+            }
+            6 -> {
+                s = MServo(string, inv)
+                s2 = MServo(string2, inv2)
+            }
         }
     }
 
@@ -84,7 +95,9 @@ class Panzerkampfwagen : OpMode() {
             }
             4 -> {
                 mot.power = PAUER
-                log("pos", mot.currentPosition)
+                val tp = TelemetryPacket()
+                tp.put("POS", mot.currentPosition)
+                FtcDashboard.getInstance().sendTelemetryPacket(tp)
             }
             5 -> {
                 s.position = PAUER

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.hardware
 
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.SERVO_GEAR_RATIO
@@ -87,7 +86,7 @@ class SwerveModule(val name: String, eoff: Double) {
                     }
                     s.pt = angNorm(vn + off)
                     field = v
-                    log("ServoModule_${name}_MRever", m.reverse)
+                    logs("ServoModule_${name}_MRever", m.reverse)
                 }
             }
         }
@@ -96,8 +95,8 @@ class SwerveModule(val name: String, eoff: Double) {
         set(v) {
             if (MOVE_SWERVE) {
                 if (!epsEq(v, field)) {
-                    log("ServoModule_${name}_MSpeed", v)
-                    log("ServoModule_${name}_MRever", m.reverse)
+                    logs("ServoModule_${name}_MSpeed", v)
+                    logs("ServoModule_${name}_MRever", m.reverse)
                     m.power = v
                     field = v
                 }

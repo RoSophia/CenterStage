@@ -5,12 +5,16 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 @Suppress("MemberVisibilityCanBePrivate")
-data class Pose(val x: Double, val y: Double, val h: Double) {
+class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Double) {
+    constructor(v: Vec2d, h: Double) : this(v.x, v.y, h)
     constructor() : this(0.0, 0.0, 0.0)
 
-    fun dist2(): Double = x * 2 + y * 2
+    fun dist2(): Double = x * x + y * y
     fun dist(): Double = sqrt(dist2())
     fun v2d(): Vec2d = Vec2d(x, y)
+
+    fun vec() = Vec2d(x, y)
+    fun headingVec() = Vec2d(cos(h), sin(h))
 
     operator fun unaryMinus() = Pose(-x, -y, -h)
 
@@ -26,12 +30,18 @@ data class Pose(val x: Double, val y: Double, val h: Double) {
     override fun toString() = String.format("(%.3f, %.3f, %.3f)", x, y, h)
 }
 
-data class Vec2d(val x: Double, val y: Double) {
+class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
     constructor() : this(0.0, 0.0)
 
     fun dist2(): Double = x * 2 + y * 2
     fun dist(): Double = sqrt(dist2())
     fun pose(): Pose = Pose(x, y, 0.0)
+
+    fun rotated(angle: Double): Vec2d {
+        val newX = x * cos(angle) - y * sin(angle)
+        val newY = x * sin(angle) + y * cos(angle)
+        return Vec2d(newX, newY)
+    }
 
     operator fun unaryMinus() = Vec2d(-x, -y)
 

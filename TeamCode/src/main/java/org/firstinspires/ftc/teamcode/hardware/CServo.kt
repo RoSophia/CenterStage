@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonCRServo
 import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.LOG_STATUS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_TELE
@@ -22,7 +24,7 @@ class CServo(val name: String, eoff: Double, gearr: Double, private val can360: 
     constructor(name: String, eoff: Double, gearr: Double, can360: Boolean) : this(name, eoff, gearr, can360, PIDFC(0.0, 0.0, 0.0, 0.0))
     constructor(name: String, eoff: Double, gearr: Double) : this(name, eoff, gearr, true)
 
-    private val s: CRServo = RobotFuncs.hardwareMap.get(CRServo::class.java, name + "S")
+    private val s: PhotonCRServo = RobotFuncs.hardwareMap.get(CRServo::class.java, name + "S") as PhotonCRServo
     val e: AbsEnc = AbsEnc(name + "E", eoff, gearr)
 
     private val pid: Thread
@@ -72,19 +74,13 @@ class CServo(val name: String, eoff: Double, gearr: Double, private val can360: 
                     s.power = sign(err) * pd2.f + err * pd2.p + der * pd2.d + int * pd2.i
                 }
 
-                if (USE_TELE) {
-                    val tp = TelemetryPacket()
-                    if (LOG_STATUS) {
-                        tp.put("CServo_${name}_pidf1", "${pd1.f} - ${pd1.p} - ${pd1.d} - ${pd1.i}")
-                        tp.put("CServo_${name}_pidf2", "${pd2.f} - ${pd2.p} - ${pd2.d} - ${pd2.i}")
-                        tp.put("CServo_${name}_der", der)
-                        tp.put("CServo_${name}_Pow", s.power)
-                        tp.put("CServo_${name}_Timer", timer.seconds())
-                    }
-                    tp.put("CServo_${name}_Enc", angNorm(cp))
-                    tp.put("CServo_${name}_Tar", angNorm(pt))
-                    dashboard.sendTelemetryPacket(tp)
-                }
+                logs("CServo_${name}_pidf1", "${pd1.f} - ${pd1.p} - ${pd1.d} - ${pd1.i}")
+                logs("CServo_${name}_pidf2", "${pd2.f} - ${pd2.p} - ${pd2.d} - ${pd2.i}")
+                logs("CServo_${name}_der", der)
+                logs("CServo_${name}_Pow", s.power)
+                logs("CServo_${name}_Timer", timer.seconds())
+                log("CServo_${name}_Enc", angNorm(cp))
+                log("CServo_${name}_Tar", angNorm(pt))
                 timer.reset()
             }
         }

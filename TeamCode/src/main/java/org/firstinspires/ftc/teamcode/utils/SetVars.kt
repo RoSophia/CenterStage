@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.utils
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.hardware.Encoder
 import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
@@ -22,8 +24,10 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLF
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRF
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelsPerpName
 import org.firstinspires.ftc.teamcode.utils.RobotVars.nrRots
 
+@Photon
 @TeleOp(name = "設置變量")
 class SetVars : LinearOpMode() {
     override fun runOpMode() {

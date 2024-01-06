@@ -64,8 +64,8 @@ class Swerve {
             while (trunning && !KILLALL) {
                 for (i in 0..3) {
                     modules[i].angle = wa[i]
-                    log("AngDiff_$i", angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))
-                    log("PAVER_$i", modules[i].m.current)
+                    logs("AngDiff_$i", angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))
+                    //log("PAVER_$i", modules[i].m.current)
                     modules[i].speed =
                             if (maxs > 1.0) {
                                 ws[i] / maxs

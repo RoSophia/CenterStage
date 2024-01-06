@@ -4,21 +4,26 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.DIFGRAT
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DIFLOFF
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DIFROFF
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyPid
+import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_DIFFY
 
 class Diffy(name: String) {
     val LS = CServo(name + "L", DIFLOFF, DIFGRAT, false, DiffyPid)
     val RS = CServo(name + "R", DIFROFF, DIFGRAT, false, DiffyPid)
 
     fun init() {
-        LS.pt = 0.0
-        RS.pt = 0.0
-        LS.init()
-        RS.init()
+        if (USE_DIFFY) {
+            LS.pt = 0.0
+            RS.pt = 0.0
+            LS.init()
+            RS.init()
+        }
     }
 
     fun close() {
-        LS.close()
-        RS.close()
+        if (USE_DIFFY) {
+            LS.close()
+            RS.close()
+        }
     }
 
     /// Since the left servo is not flipped the PIDF coefficients have to be negative,
