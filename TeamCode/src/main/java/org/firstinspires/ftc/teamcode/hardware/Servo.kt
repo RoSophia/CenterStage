@@ -11,6 +11,7 @@ class MServo(name: String, reverse: Boolean, initP: Double?) {
     constructor(n: String, v: Double) : this(n, false, v)
     constructor(n: String, v: Boolean) : this(n, v, null)
     val s: PhotonServo = hardwareMap.get(Servo::class.java, name) as PhotonServo
+    //val s: Servo = hardwareMap.get(Servo::class.java, name)// as PhotonServo
 
     init {
         s.direction = if (reverse) Direction.REVERSE else Direction.FORWARD
@@ -22,7 +23,7 @@ class MServo(name: String, reverse: Boolean, initP: Double?) {
     var position: Double = initP ?: 20.0
         set(v) {
             if (!epsEq(v, field)) {
-                s.position = v
+                //s.position = v
                 field = v
             }
         }

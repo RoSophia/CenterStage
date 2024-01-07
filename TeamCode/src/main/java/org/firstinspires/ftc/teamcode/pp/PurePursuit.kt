@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pp
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.AUTest.AUTO_MOVE
 import org.firstinspires.ftc.teamcode.AUTest.sp
 import org.firstinspires.ftc.teamcode.hardware.PIDFC
 import org.firstinspires.ftc.teamcode.hardware.Swerve
@@ -56,7 +57,7 @@ object PP {
     var TSC: Double = 1.0
 
     @JvmField
-    var SPC: Double = 1.0
+    var SPC: Double = 20.0
 }
 
 class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) {
@@ -120,8 +121,10 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
         canvas.setStroke("#FF00C3")
         canvas.strokeCircle(p.x * SCALE, p.y * SCALE, robotRadius * SCALE)
+        canvas.setStrokeWidth(1)
         canvas.setStroke("#FF00C3A0")
         canvas.strokeCircle(p.x * SCALE, p.y * SCALE, lookaheadRadius * SCALE)
+        canvas.setStrokeWidth(2)
         canvas.setStroke("#FFFF00")
         canvas.fillCircle(lk.x * SCALE, lk.y * SCALE, lkr * SCALE)
         canvas.setStroke("#40FF22")
@@ -192,7 +195,9 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             log("SWERVE_MOVE_A", ang)
             log("SWERVE_MOVE_tspeed", ang)
 
-            swerve.move(speed, ang, tspeed)
+            if (AUTO_MOVE) {
+                swerve.move(speed, ang, tspeed)
+            }
             draw(ctraj, cp, lk, speed, ang, ange)
             ep.reset()
         }

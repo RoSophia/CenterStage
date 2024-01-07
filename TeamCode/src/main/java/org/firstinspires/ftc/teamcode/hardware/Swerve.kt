@@ -47,7 +47,7 @@ class Swerve {
     var maintainHeading = false
     var locked = false
 
-    var motorThread: Thread
+    //var motorThread: Thread
     var trunning = false
     var csp: Double = 0.0
 
@@ -55,8 +55,12 @@ class Swerve {
         return clamp(1.4 - kms, 0.0, 1.0)
     }
 
+    val ep = ElapsedTime()
+
     init {
+        ep.reset()
         logs("Swerve_Status", "Init");
+        /*
         trunning = true
         motorThread = Thread {
             val ep = ElapsedTime()
@@ -73,27 +77,45 @@ class Swerve {
                                 ws[i]
                             }
 
-                    /*
+                    /
                             if (maxs > 1.0) {
                                 getkms(abs(angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))) * ws[i] / maxs
                             } else {
                                 getkms(abs(angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))) * ws[i]
                             }
-                     */
+                     /
                     // modules[i].speed = if (abs(angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle)) <= 0.3) { if (maxs > 1.0) { ws[i] / maxs } else { ws[i] } } else { 0.0 }
                 }
             }
         }
+
+         */
+    }
+
+    fun update() {
+        for (i in 0..3) {
+            modules[i].angle = wa[i]
+            logs("AngDiff_$i", angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))
+            modules[i].speed =
+                    if (maxs > 1.0) {
+                        ws[i] / maxs
+                    } else {
+                        ws[i]
+                    }
+            modules[i].update()
+        }
     }
 
     fun start() {
+        /*
         trunning = true
-        motorThread.start()
+        motorThread.start()*/
     }
 
     fun stop() {
+        /*
         trunning = false
-        motorThread.join()
+        motorThread.join()*/
     }
 
     fun turn(turnPower: Double) {
@@ -107,7 +129,6 @@ class Swerve {
     var speed = 0.0
     var angle = 0.0
     var turnPower = 0.0
-
 
     fun kmskms(pose: Pose) {
         val x: Double = pose.x

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.Encoder
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.timmy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 
 class ThreeWheelLocalizer : Localizer {
@@ -65,7 +66,8 @@ class ThreeWheelLocalizer : Localizer {
                 rawPoseDelta.getEntry(2, 0))
     }
 
-    private val thread = Thread {
+    /*
+    //private val thread = Thread {
         val et = ElapsedTime()
         et.reset()
         while (trunning) {
@@ -73,7 +75,9 @@ class ThreeWheelLocalizer : Localizer {
                     encoders[0].pos * WheelsTicksToCm,
                     encoders[1].pos * WheelsTicksToCm,
                     encoders[2].pos * WheelsTicksToCm)
-            log("WheelPositions", wheelPositions)
+            logs("WheelPosParR", wheelPositions[0])
+            logs("WheelPosParL", wheelPositions[1])
+            logs("WheelPosPerp", wheelPositions[2])
 
             val wheelDeltas = listOf(
                     wheelPositions[0] - lwpos[0],
@@ -91,17 +95,51 @@ class ThreeWheelLocalizer : Localizer {
                     encoders[1].vel * WheelsTicksToCm,
                     encoders[2].vel * WheelsTicksToCm)
             poseVel = calculatePoseDelta(wheelVelocities)
+            logs("WheelVelParR", wheelVelocities[0])
+            logs("WheelVelParL", wheelVelocities[1])
+            logs("WheelVelPerp", wheelVelocities[2])
 
             lwpos = wheelPositions
-            /*
-            log("wheelPositions0", encoders[0].pos* WheelsTicksToCm)
-            log("wheelPositions1", encoders[1].pos* WheelsTicksToCm)
-            log("wheelPositions2", encoders[2].pos* WheelsTicksToCm)*/
-            log("LocalizerRefresh", et.seconds())
+            logs("LocalizerRefresh", et.seconds())
             et.reset()
         }
-    }
+    }*/
     private var trunning: Boolean = false
+
+    val et = ElapsedTime()
+    override fun update() {
+        val wheelPositions = listOf(
+                encoders[0].pos * WheelsTicksToCm,
+                encoders[1].pos * WheelsTicksToCm,
+                encoders[2].pos * WheelsTicksToCm)
+        logs("WheelPosParR", wheelPositions[0])
+        logs("WheelPosParL", wheelPositions[1])
+        logs("WheelPosPerp", wheelPositions[2])
+
+        val wheelDeltas = listOf(
+                wheelPositions[0] - lwpos[0],
+                wheelPositions[1] - lwpos[1],
+                wheelPositions[2] - lwpos[2],
+        )
+        val heading = timmy.yaw
+
+        val robotPoseDelta = calculatePoseDelta(wheelDeltas)
+        val cpose = relativeOdometryUpdate(_pose, robotPoseDelta)
+        _pose = Pose(cpose.x, cpose.y, heading)
+
+        val wheelVelocities = listOf(
+                encoders[0].vel * WheelsTicksToCm,
+                encoders[1].vel * WheelsTicksToCm,
+                encoders[2].vel * WheelsTicksToCm)
+        poseVel = calculatePoseDelta(wheelVelocities)
+        logs("WheelVelParR", wheelVelocities[0])
+        logs("WheelVelParL", wheelVelocities[1])
+        logs("WheelVelPerp", wheelVelocities[2])
+
+        lwpos = wheelPositions
+        logs("LocalizerRefresh", et.seconds())
+        et.reset()
+    }
 
     override fun init(startPos: Pose) {
         if (USE_LOCALIZER) {
@@ -110,9 +148,11 @@ class ThreeWheelLocalizer : Localizer {
                     Encoder(WheelsParRName, WheelsParRDir),
                     Encoder(WheelsPerpName, WheelsPerpDir)
             )
+            et.reset()
         }
     }
 
+    /*
     override fun start() {
         if (USE_LOCALIZER) {
             trunning = true
@@ -120,10 +160,15 @@ class ThreeWheelLocalizer : Localizer {
         }
     }
 
+     */
+
+    /*
     override fun close() {
         if (USE_LOCALIZER) {
             trunning = false
             thread.join()
         }
     }
+
+     */
 }

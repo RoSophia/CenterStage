@@ -10,10 +10,7 @@ class NanoClock {
     var lt = System.nanoTime()
 
     fun seconds(): Double {
-        val ct = System.nanoTime()
-        val dt = (ct - lt) / 1e9
-        lt = ct
-        return dt
+        return (System.nanoTime() - lt) / 1e9
     }
 
     fun reset() {

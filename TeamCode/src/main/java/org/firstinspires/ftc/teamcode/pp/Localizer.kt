@@ -13,8 +13,9 @@ interface Localizer {
 
 
     fun init(startPos: Pose)
-    fun start()
-    fun close()
+    fun update()
+    //fun start()
+    //fun close()
 
     fun relativeOdometryUpdate(fieldPose: Pose, robotPoseDelta: Pose): Pose {
         val dtheta = robotPoseDelta.h

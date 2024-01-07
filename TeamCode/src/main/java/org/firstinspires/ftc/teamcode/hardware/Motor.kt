@@ -7,18 +7,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 
 class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
-    private val m: PhotonDcMotor
+    private val m: PhotonDcMotor = RobotFuncs.hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
 
     var reverse: Boolean = rev
         set(v) {
             field = v
-            m.power = if (field) -power else power
-            reverse
-            field = v
+            //m.power = if (field) -power else power
         }
 
     init {
-        m = RobotFuncs.hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
         if (overdrive) {
             val mconf = m.motorType.clone()
             mconf.achieveableMaxRPMFraction = 1.0
@@ -49,7 +46,7 @@ class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
         set(p) {
             if (p != field) {
                 field = p
-                m.power = if (reverse) -p else p
+                //m.power = if (reverse) -p else p
             }
         }
 }

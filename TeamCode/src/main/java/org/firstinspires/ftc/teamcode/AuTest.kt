@@ -18,16 +18,20 @@ import org.firstinspires.ftc.teamcode.AUTest.v1
 import org.firstinspires.ftc.teamcode.AUTest.v2
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log_state
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
+import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.Vec2d
 
 @Config
@@ -46,44 +50,41 @@ object AUTest {
     var AAAAAAAAAAAAAAAAAAA: Boolean = false
     @JvmField
     var AINt: Int = 0
+
+    @JvmField
+    var AUTO_MOVE: Boolean = false
 }
 
 @Photon
 @Autonomous(name = "我愛修訂")
-class AuTest : OpMode() {
-    override fun init() {
+class AuTest : LinearOpMode() {
+    override fun runOpMode() {
         preinit()
         initma(this)
-    }
-
-    override fun start() {
+        waitForStart()
         startma()
         pp.startFollowTraj(Trajectory(sp, 0.0, ep, v1, v2, h1))
-    }
 
-    override fun loop() {
-        if (pp.done || pp.error) {
-            requestOpModeStop()
+        while (!isStopRequested && !pp.done && !pp.error) {
+            controller.update()
+            if (AAAAAAAAAAAAAAAAAAA) {
+                log("PPINT", pp.intersects(sp, AINt).toString())
+                val tp = TelemetryPacket()
+                val canv = tp.fieldOverlay()
+                canv.setStrokeWidth(10)
+                canv.setStroke("#4CAF50")
+                canv.strokeCircle(sp.x, sp.y, sp.h)
+
+                FtcDashboard.getInstance().sendTelemetryPacket(tp)
+            } else {
+                pp.update()
+                if (MOVE_SWERVE) {
+                    moveSwerve()
+                }
+            }
+            RobotFuncs.update()
         }
 
-        if (AAAAAAAAAAAAAAAAAAA) {
-            log("PPINT", pp.intersects(sp, AINt).toString())
-            val tp = TelemetryPacket()
-            val canv = tp.fieldOverlay()
-            canv.setStrokeWidth(10)
-            canv.setStroke("#4CAF50")
-            canv.strokeCircle(sp.x, sp.y, sp.h)
-
-            FtcDashboard.getInstance().sendTelemetryPacket(tp)
-        } else {
-            pp.update()
-            log_state()
-        }
-        send_log()
-    }
-
-    override fun stop() {
-        KILLALL = true
         endma()
     }
 }

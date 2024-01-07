@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelsPerpName
 import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelsTicksToCm
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 
+/*
 class TwoWheelLocalizer : Localizer {
     private var lwpos = listOf(0.0, 0.0)
     private var _pose = Pose()
@@ -123,3 +124,5 @@ class TwoWheelLocalizer : Localizer {
     }
 
 }
+
+ */

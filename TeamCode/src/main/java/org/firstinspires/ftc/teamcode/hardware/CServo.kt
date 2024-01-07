@@ -24,12 +24,13 @@ class CServo(val name: String, eoff: Double, gearr: Double, private val can360: 
     constructor(name: String, eoff: Double, gearr: Double, can360: Boolean) : this(name, eoff, gearr, can360, PIDFC(0.0, 0.0, 0.0, 0.0))
     constructor(name: String, eoff: Double, gearr: Double) : this(name, eoff, gearr, true)
 
-    private val s: PhotonCRServo = RobotFuncs.hardwareMap.get(CRServo::class.java, name + "S") as PhotonCRServo
-    val e: AbsEnc = AbsEnc(name + "E", eoff, gearr)
+    private val s = MCRServo(name + "S")
+    val e = AbsEnc(name + "E", eoff, gearr)
 
-    private val pid: Thread
+    //private val pid: Thread
     private var pidRunning: Boolean = false
 
+    /*
     init {
         s.direction = DcMotorSimple.Direction.FORWARD
 
@@ -74,29 +75,86 @@ class CServo(val name: String, eoff: Double, gearr: Double, private val can360: 
                     s.power = sign(err) * pd2.f + err * pd2.p + der * pd2.d + int * pd2.i
                 }
 
-                logs("CServo_${name}_pidf1", "${pd1.f} - ${pd1.p} - ${pd1.d} - ${pd1.i}")
-                logs("CServo_${name}_pidf2", "${pd2.f} - ${pd2.p} - ${pd2.d} - ${pd2.i}")
-                logs("CServo_${name}_der", der)
-                logs("CServo_${name}_Pow", s.power)
-                logs("CServo_${name}_Timer", timer.seconds())
-                log("CServo_${name}_Enc", angNorm(cp))
-                log("CServo_${name}_Tar", angNorm(pt))
+                if (USE_TELE) {
+                    val tp = TelemetryPacket()
+                    if (LOG_STATUS) {
+                        logs("CServo_${name}_pidf1", "${pd1.f} - ${pd1.p} - ${pd1.d} - ${pd1.i}")
+                        logs("CServo_${name}_pidf2", "${pd2.f} - ${pd2.p} - ${pd2.d} - ${pd2.i}")
+                        logs("CServo_${name}_der", der)
+                        logs("CServo_${name}_Pow", s.power)
+                        logs("CServo_${name}_Timer", timer.seconds())
+                    }
+                    log("CServo_${name}_Enc", angNorm(cp))
+                    log("CServo_${name}_Tar", angNorm(pt))
+                    dashboard.sendTelemetryPacket(tp)
+                }
                 timer.reset()
             }
         }
+    }
+     */
+
+    var err: Double = 0.0
+    var der: Double = 0.0
+    var cp: Double = 0.0
+    val timer = ElapsedTime()
+
+    var lastErr = 0.0
+    var int = 0.0
+    fun update() {
+        cp = e.angle
+        err = if (can360) {
+            angDiff(pt, cp)
+        } else {
+            pt - cp
+        }
+        if (abs(err) < 0.02) {
+            err = 0.0
+            lastErr = 0.0
+        }
+        der = if (can360) {
+            angDiff(err, lastErr) / timer.seconds()
+        } else {
+            (err - lastErr) / timer.seconds()
+        }
+        int += (err * timer.seconds())
+        lastErr = err
+
+        if (can360 && err > 3.0) {
+            err = 0.0
+            der = 0.0
+            int = 0.0
+        }
+
+        if (err >= 0.0) {
+            s.power = sign(err) * pd1.f + err * pd1.p + der * pd1.d + int * pd1.i
+        } else {
+            s.power = sign(err) * pd2.f + err * pd2.p + der * pd2.d + int * pd2.i
+        }
+
+        logs("CServo_${name}_pidf1", "${pd1.f} - ${pd1.p} - ${pd1.d} - ${pd1.i}")
+        logs("CServo_${name}_pidf2", "${pd2.f} - ${pd2.p} - ${pd2.d} - ${pd2.i}")
+        logs("CServo_${name}_der", der)
+        logs("CServo_${name}_Pow", s.power)
+        logs("CServo_${name}_Timer", timer.seconds())
+        log("CServo_${name}_Enc", angNorm(cp))
+        log("CServo_${name}_Tar", angNorm(pt))
+        timer.reset()
     }
 
     var pt: Double = 0.0
 
     fun init() {
-        pidRunning = true
-        pid.start()
-        logs("CServo_${name}_PID_Status", "Init")
+        //pidRunning = true
+        //pid.start()
+        timer.reset()
+        //logs("CServo_${name}_PID_Status", "Init")
     }
 
     fun close() {
+        /*
         pidRunning = false
         pid.join()
-        logs("CServo_${name}_PID_Status", "Close")
+        logs("CServo_${name}_PID_Status", "Close")*/
     }
 }

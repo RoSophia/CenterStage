@@ -53,6 +53,11 @@ public class RobotVars {
     public static double WheelURB = -0.3;
     public static double WheelDRB = -0.1;
 
+    public static double SwerveHeadPidP = 1.0;
+    public static double SwerveHeadPidI = 0.0;
+    public static double SwerveHeadPidD = 0.0;
+    public static double SwerveHeadPidF = 0.0;
+
     public static double GhearaSDESCHIS = 0.75;
     public static double GearaSINCHIS = 0.65;
 
@@ -81,6 +86,7 @@ public class RobotVars {
 
     public static boolean canInvertMotor = true;
     public static boolean MOVE_SWERVE = true;
+    public static boolean _MOVE_SWERVE = true;
     public static double HEADP = 1.0;
 
     public static double SwerveAngP = -1;

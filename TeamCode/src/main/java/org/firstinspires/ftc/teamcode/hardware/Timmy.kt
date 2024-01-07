@@ -9,14 +9,11 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 
 class Timmy(val name: String) {
-    //private val imu: IMU = RobotFuncs.hardwareMap.get(IMU::class.java, name)
     private val imu: BNO055IMU = RobotFuncs.hardwareMap.get(BNO055IMU::class.java, name)
+
     private val t: Thread
     private var trunning: Boolean = false
     private var initialized: Boolean = false
-
-    private val imuPos = arrayListOf(0.0, 0.0, 0.0)
-    private val imuOrientation = arrayListOf(0.0, 0.0, 0.0)
 
     private fun fixAngOrientation(i: Orientation): Orientation {
         return i
@@ -24,47 +21,40 @@ class Timmy(val name: String) {
 
     var yaw: Double = 0.0
     var yawVel: Double = 0.0
-        /*get() {
-            //while (yawm.tryLock()) {  sleep(1)  }
-            //val r = field
-            //yawm.unlock()
-            //return r
-        }*/
 
-    private val yawm = Mutex()
+    val ep = ElapsedTime()
+
+    var lep: Double = 0.0
 
     init {
         val parameters = BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
         initialized = true
-
-        /*
-        imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)))
-        imu.resetYaw()*/
+        ep.reset()
 
         t = Thread {
             val ep = ElapsedTime()
             ep.reset()
             while (trunning && !KILLALL) {
-                //val y = imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
-                //val y = imu.angularOrientation.firstAngle
                 val fixed = fixAngOrientation(imu.angularOrientation)
                 val y = fixed.firstAngle.toDouble()
-                /*
-                while (yawm.tryLock()) {
-                    sleep(1)
-                }*/
                 yaw = y
                 yawVel = imu.angularVelocity.xRotationRate.toDouble()
-                //yawm.unlock()
-                logs("IMU_yaw", y)
-                logs("IMU_CycleTime", ep.seconds())
-                logs("IMU_ango", fixed)
+                lep = ep.seconds()
+                ep.reset()
             }
         }
+    }
 
-        logs("Timmy_${name}_Status", "Init")
+    fun update() {
+        val fixed = fixAngOrientation(imu.angularOrientation)
+        val y = fixed.firstAngle.toDouble()
+        yaw = y
+        yawVel = imu.angularVelocity.xRotationRate.toDouble()
+        logs("IMU_yaw", y)
+        logs("IMU_CycleTime", ep.seconds())
+        logs("IMU_ango", fixed)
     }
 
     fun initThread() {

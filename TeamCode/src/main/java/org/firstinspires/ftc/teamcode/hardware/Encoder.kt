@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.utils.NanoClock
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
 import kotlin.math.roundToInt
 
 class Encoder(val name: String, private val direction: Int) {
@@ -11,6 +13,7 @@ class Encoder(val name: String, private val direction: Int) {
 
     private var lastPosition = 0
     private var m = hardwareMap.get(DcMotorEx::class.java, name)
+
     init {
         clock.reset()
         m.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
@@ -21,19 +24,17 @@ class Encoder(val name: String, private val direction: Int) {
     private val velocityEstimates = arrayListOf(0.0, 0.0, 0.0)
     private var lastUpdateTime = 0.0
 
-    var intPos: Int = 0
-
     val pos: Int
         get() {
             val currentPosition = m.currentPosition
+            val currentTime = clock.seconds()
             if (currentPosition != lastPosition) {
-                val currentTime = clock.seconds()
                 val dt: Double = currentTime - lastUpdateTime
                 velocityEstimates[velocityEstimateIdx] = (currentPosition - lastPosition) / dt
                 velocityEstimateIdx = (velocityEstimateIdx + 1) % 3
                 lastPosition = currentPosition
-                lastUpdateTime = currentTime
             }
+            lastUpdateTime = currentTime
             return currentPosition * direction
         }
 

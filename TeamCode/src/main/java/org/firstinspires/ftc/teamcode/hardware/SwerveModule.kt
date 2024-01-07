@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
-import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
+import org.firstinspires.ftc.teamcode.utils.RobotVars._MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.SERVO_GEAR_RATIO
 import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelPidLBB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelPidLBF
@@ -66,16 +66,22 @@ class SwerveModule(val name: String, eoff: Double) {
     val m = Motor(name + "M", encoder = false, rev = false, overdrive = true)
 
     init {
-        if (MOVE_SWERVE) {
+        if (_MOVE_SWERVE) {
             s.init()
         }
         logs("ServoModule_${name}_Status", "Init")
     }
 
+    fun update() {
+        if (_MOVE_SWERVE) {
+            s.update()
+        }
+    }
+
     var off = 0.0
     var angle: Double = 0.0
         set(v) {
-            if (MOVE_SWERVE) {
+            if (_MOVE_SWERVE) {
                 val vn = angNorm(v)
                 val dif = angDiff(vn, field)
                 if (!epsEq(dif, 0.0)) {
@@ -93,7 +99,7 @@ class SwerveModule(val name: String, eoff: Double) {
 
     var speed: Double = 0.0
         set(v) {
-            if (MOVE_SWERVE) {
+            if (_MOVE_SWERVE) {
                 if (!epsEq(v, field)) {
                     logs("ServoModule_${name}_MSpeed", v)
                     logs("ServoModule_${name}_MRever", m.reverse)
@@ -104,7 +110,7 @@ class SwerveModule(val name: String, eoff: Double) {
         }
 
     fun close() {
-        if (MOVE_SWERVE) {
+        if (_MOVE_SWERVE) {
             s.close()
         }
         logs("ServoModule_${name}_Status", "Close")
