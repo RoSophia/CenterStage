@@ -41,6 +41,7 @@ class Swerve {
     val rf = SwerveModule("RF", OFFRF)
     val rb = SwerveModule("RB", OFFRB)
     val modules = arrayListOf(lf, rf, rb, lb)
+    // LF RF RB LB
     var ws = DoubleArray(4)
     var wa = DoubleArray(4)
     var maxs = 0.0
@@ -135,7 +136,6 @@ class Swerve {
         val y: Double = pose.y
         val head: Double = pose.h
 
-        // LF RF RB LB
         val r = hypot(TRACK_WIDTH, WHEEL_BASE)
         val a: Double = x - head * (WHEEL_BASE / r) * HEADP
         val b: Double = x + head * (WHEEL_BASE / r) * HEADP

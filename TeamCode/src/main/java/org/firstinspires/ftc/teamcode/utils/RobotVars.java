@@ -10,8 +10,9 @@ import java.util.Map;
 public class RobotVars {
     public static boolean USE_TELE = true;
     public static boolean USE_LOCALIZER = true;
-    public static boolean USE_DIFFY = true;
+    public static boolean USE_DIFFY = false;
     public static boolean USE_DIRECTION_PID = true;
+    public static boolean MOVE_SWERVE = true;
 
     public static double pcoef = 1.0; // Power coefficient
 
@@ -45,7 +46,7 @@ public class RobotVars {
     public static PIDFC WheelPidRBB = new PIDFC(0.41, 0.09, 0.0, 0.03);
 
     public static double WheelULF = -0.3;
-    public static double WheelDLF = -0.1;
+    public static double WheelDLF = -0.4;
     public static double WheelULB = -0.3;
     public static double WheelDLB = -0.1;
     public static double WheelURF = -0.3;
@@ -85,7 +86,6 @@ public class RobotVars {
     public static double KMSCONF = 5;
 
     public static boolean canInvertMotor = true;
-    public static boolean MOVE_SWERVE = true;
     public static boolean _MOVE_SWERVE = true;
     public static double HEADP = 1.0;
 
@@ -99,13 +99,13 @@ public class RobotVars {
     public static double WHEEL_BASE = 21.0;
 
     public static String WheelsPerpName = "RBM";
-    public static Pose WheelsPerpPos = new Pose(0.0, 1.5, Math.PI / 2);
-    public static Integer WheelsPerpDir = -1;
+    public static Pose WheelsPerpPos = new Pose(-13, -0.75, Math.PI / 2);
+    public static Integer WheelsPerpDir = 1;
     public static String WheelsParRName = "LBM";
-    public static Pose WheelsParRPos = new Pose(-9.5, -5.0, 0.0);
+    public static Pose WheelsParRPos = new Pose(-8.5, 4.75, 0.0);
     public static Integer WheelsParRDir = -1;
     public static String WheelsParLName = "RidR";
-    public static Pose WheelsParLPos = new Pose(-9.5, 4.5, 0.0);
+    public static Pose WheelsParLPos = new Pose(-8.5, -4.75, 0.0);
     public static Integer WheelsParLDir = 1;
     public static Double WheelsTicksToCm = 1.8 * 2 * Math.PI / 8192.0; // Radius * 2pi / Ticks/Rev
 

@@ -23,7 +23,7 @@ class MServo(name: String, reverse: Boolean, initP: Double?) {
     var position: Double = initP ?: 20.0
         set(v) {
             if (!epsEq(v, field)) {
-                //s.position = v
+                s.position = v
                 field = v
             }
         }

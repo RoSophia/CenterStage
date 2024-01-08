@@ -3,18 +3,13 @@ package org.firstinspires.ftc.teamcode.utils
 import android.graphics.Color
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.outoftheboxrobotics.photoncore.Photon
-import com.outoftheboxrobotics.photoncore.PhotonCore
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Mutex
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.teamcode.IHRP
 import org.firstinspires.ftc.teamcode.hardware.Controller
 import org.firstinspires.ftc.teamcode.hardware.Diffy
 import org.firstinspires.ftc.teamcode.hardware.MServo
@@ -25,6 +20,7 @@ import org.firstinspires.ftc.teamcode.pp.Localizer
 import org.firstinspires.ftc.teamcode.pp.PurePursuit
 import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -63,13 +59,13 @@ object RobotFuncs {
 
     @JvmStatic
     fun send_log() {
-        if (USE_TELE) {
+        //if (USE_TELE) {
             //runBlocking {
                 //logmu.lock()
                 dashboard.sendTelemetryPacket(tp)
                 //logmu.unlock()
             //}
-        }
+        //}
         tp = TelemetryPacket()
     }
 
@@ -141,12 +137,12 @@ object RobotFuncs {
     }
 
     var ale = 0.0
-    var at = ElapsedTime() // RB - RF
+    var at = ElapsedTime()
     var ai = 0.0
     var targetAngle = 0.0
     private fun get_angf(): Double {
         if (USE_DIRECTION_PID) {
-            return lom.gamepad1.right_stick_x.toDouble() * IHRP.KILL
+            return lom.gamepad1.right_stick_x.toDouble()
         } else {
             if (hypot(lom.gamepad1.right_stick_y, lom.gamepad1.right_stick_x) > 0.5) {
                 targetAngle = atan2(lom.gamepad1.right_stick_y, lom.gamepad1.right_stick_x) + Math.PI / 2
@@ -172,7 +168,7 @@ object RobotFuncs {
     @JvmStatic
     fun moveSwerve() {
         val speed = hypot(lom.gamepad1.left_stick_x, lom.gamepad1.left_stick_y).toDouble()
-        val angle = Util.angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2 + IHRP.OFFSET - timmy.yaw)
+        val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2 - timmy.yaw)
         val correctAngForce = get_angf()
         val fcoef = -(1.0 - lom.gamepad1.right_trigger * 0.6) // No clue why this has to be negative
         swerve.move(speed * fcoef, angle, correctAngForce * fcoef)
@@ -201,7 +197,7 @@ object RobotFuncs {
         controlHub.setConstant(Color.rgb(255, 0, 0))
         expansionHub.setConstant(Color.rgb(255, 100, 20))
         telemetry = lom.telemetry
-        //batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
+        batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
         timmy = Timmy("imu")
         controller = Controller()
         localizer = ThreeWheelLocalizer()
@@ -220,39 +216,26 @@ object RobotFuncs {
     }
 
     val ep = ElapsedTime()
-    val timer = ElapsedTime()
     @JvmStatic
     fun update() {
-        log("TIME_log", timer.seconds())
-        timer.reset()
         controller.update()
-        log("TIME_Controller", timer.seconds())
-        timer.reset();
         //timmy.update()
-        log("TIME_Timmy", timer.seconds())
-        timer.reset();
         diffy.update()
-        log("TIME_Diffy", timer.seconds())
-        timer.reset();
         swerve.update()
-        log("TIME_Swerve", timer.seconds())
-        timer.reset();
+        localizer.update()
         controlHub.clearBulkCache()
         expansionHub.clearBulkCache()
-        log("TIME_Refresh", timer.seconds())
-        timer.reset();
-        log("Framerate", 1 / ep.seconds())
-        ep.reset()
         log_state()
-        send_log()
+        tp.put("Framerate", 1 / ep.seconds())
         ep.reset()
+        send_log()
     }
 
     @JvmStatic
     fun startma() { /// Set all values to their starting ones and start the PID threads
         logs("RobotFuncs_Status", "StartStartma")
         canInvertMotor = true
-        //pcoef = 12.0 / batteryVoltageSensor.cachedVoltage
+        pcoef = 12.0 / batteryVoltageSensor.cachedVoltage
         timmy.initThread()
         etime.reset()
         swerve.start()
@@ -267,7 +250,7 @@ object RobotFuncs {
         KILLALL = true
         logs("RobotFuncs_Status", "StartEndma")
         pcoef = 0.0
-        //batteryVoltageSensor.close()
+        batteryVoltageSensor.close()
         swerve.close()
         timmy.closeThread()
         timmy.close()

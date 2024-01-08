@@ -13,14 +13,9 @@ class Diffy(name: String) {
     val RS = CServo(name + "R", DIFROFF, DIFGRAT, false, DiffyPid)
 
     fun update() {
-        val ep = ElapsedTime()
-        ep.reset()
         if (USE_DIFFY) {
-            LS.update()
-            log("DIFYFL", ep.seconds())
-            ep.reset()
             RS.update()
-            log("DIFYFR", ep.seconds())
+            LS.update()
         }
     }
 

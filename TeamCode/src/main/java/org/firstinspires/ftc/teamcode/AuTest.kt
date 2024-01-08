@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.AUTest.AAAAAAAAAAAAAAAAAAA
 import org.firstinspires.ftc.teamcode.AUTest.AINt
+import org.firstinspires.ftc.teamcode.AUTest.AUTO_MOVE
 import org.firstinspires.ftc.teamcode.AUTest.ep
 import org.firstinspires.ftc.teamcode.AUTest.h1
 import org.firstinspires.ftc.teamcode.AUTest.sp
@@ -52,7 +53,7 @@ object AUTest {
     var AINt: Int = 0
 
     @JvmField
-    var AUTO_MOVE: Boolean = false
+    var AUTO_MOVE: Boolean = true
 }
 
 @Photon
@@ -69,18 +70,10 @@ class AuTest : LinearOpMode() {
             controller.update()
             if (AAAAAAAAAAAAAAAAAAA) {
                 log("PPINT", pp.intersects(sp, AINt).toString())
-                val tp = TelemetryPacket()
-                val canv = tp.fieldOverlay()
-                canv.setStrokeWidth(10)
-                canv.setStroke("#4CAF50")
-                canv.strokeCircle(sp.x, sp.y, sp.h)
-
-                FtcDashboard.getInstance().sendTelemetryPacket(tp)
+                pp.startFollowTraj(Trajectory(sp, 0.0, ep, v1, v2, h1))
+                pp.draw(pp.ctraj, Pose(), Pose(100000000000000.0, 0.0, 0.0), 0.0, 0.0, 0.0)
             } else {
                 pp.update()
-                if (MOVE_SWERVE) {
-                    moveSwerve()
-                }
             }
             RobotFuncs.update()
         }

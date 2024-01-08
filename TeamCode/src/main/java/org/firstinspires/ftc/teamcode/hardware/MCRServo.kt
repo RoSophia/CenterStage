@@ -22,7 +22,7 @@ class MCRServo(name: String) {
     var power: Double = 0.0
         set(v) {
             if (v != field) {
-                //s.power = v
+                s.power = v
                 field = v
             }
         }

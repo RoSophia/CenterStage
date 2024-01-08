@@ -16,7 +16,7 @@ class tmp(val time: Double, val pos: Double)
 class AbsEnc(private val name: String, private val off: Double, gearr: Double) {
     constructor(name: String, off: Double) : this(name, off, 1.0)
 
-    private val enc: AnalogInput = RobotFuncs.hardwareMap.get(AnalogInput::class.java, name)
+    val enc: AnalogInput = RobotFuncs.hardwareMap.get(AnalogInput::class.java, name)
 
     private val timer = ElapsedTime()
 
@@ -37,38 +37,38 @@ class AbsEnc(private val name: String, private val off: Double, gearr: Double) {
 
     val angle: Double
         get() {
-        val cv = enc.voltage / maxVoltage
-        de.addLast(tmp(timer.seconds(), cv))
+            val cv = enc.voltage / maxVoltage
+            de.addLast(tmp(timer.seconds(), cv))
 
-        val ts = timer.seconds()
-        var dl: tmp = de.first()
-        while (true) {
-            if (ts - de.first().time > 0.1 && de.size > 1) {
-                dl = de.first()
-                de.removeFirst()
-            } else {
-                break
+            val ts = timer.seconds()
+            var dl: tmp = de.first()
+            while (true) {
+                if (ts - de.first().time > 0.1 && de.size > 1) {
+                    dl = de.first()
+                    de.removeFirst()
+                } else {
+                    break
+                }
             }
+
+            if (cv > 0.8 && dl.pos < 0.2) {
+                while (de.first().pos < 0.2) {
+                    de.removeFirst()
+                }
+                --cnrpos
+                nrRots[name] = cnrpos
+            } else if (cv < 0.2 && dl.pos > 0.8) {
+                while (de.first().pos > 0.8) {
+                    de.removeFirst()
+                }
+                ++cnrpos
+                nrRots[name] = cnrpos
+            }
+
+            logs("AbsEnc_${name}_Volt", cv)
+            logs("AbsEnc_${name}_nrRot", cnrpos)
+            return (cv + cnrpos) * angPer01 + off
         }
-
-        if (cv > 0.8 && dl.pos < 0.2) {
-            while (de.first().pos < 0.2) {
-                de.removeFirst()
-            }
-            --cnrpos
-            nrRots[name] = cnrpos
-        } else if (cv < 0.2 && dl.pos > 0.8) {
-            while (de.first().pos > 0.8) {
-                de.removeFirst()
-            }
-            ++cnrpos
-            nrRots[name] = cnrpos
-        }
-
-        logs("AbsEnc_${name}_Volt", cv)
-        logs("AbsEnc_${name}_nrRot", cnrpos)
-        return (cv + cnrpos) * angPer01 + off
-    }
 
     val pos: Double
         get() {

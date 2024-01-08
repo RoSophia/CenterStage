@@ -7,10 +7,13 @@ import org.apache.commons.math3.linear.LUDecomposition
 import org.apache.commons.math3.linear.MatrixUtils
 import org.firstinspires.ftc.teamcode.hardware.Encoder
 import org.firstinspires.ftc.teamcode.utils.Pose
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.timmy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 class ThreeWheelLocalizer : Localizer {
     private var lwpos = listOf(0.0, 0.0, 0.0)
@@ -106,7 +109,6 @@ class ThreeWheelLocalizer : Localizer {
     }*/
     private var trunning: Boolean = false
 
-    val et = ElapsedTime()
     override fun update() {
         val wheelPositions = listOf(
                 encoders[0].pos * WheelsTicksToCm,
@@ -136,9 +138,15 @@ class ThreeWheelLocalizer : Localizer {
         logs("WheelVelParL", wheelVelocities[1])
         logs("WheelVelPerp", wheelVelocities[2])
 
+        val canvas = RobotFuncs.tp.fieldOverlay()
+        canvas.setStrokeWidth(1)
+        canvas.setStroke("#FF00C3")
+        canvas.strokeCircle(_pose.x * PP.SCALE, _pose.y * PP.SCALE, PP.robotRadius)
+        canvas.setStroke("#00FFC3")
+        canvas.strokeLine(_pose.x * PP.SCALE, _pose.y * PP.SCALE,
+                (_pose.x * PP.SCALE + PP.robotRadius * cos(_pose.h)), (_pose.y * PP.SCALE + PP.robotRadius * sin(_pose.h)))
+
         lwpos = wheelPositions
-        logs("LocalizerRefresh", et.seconds())
-        et.reset()
     }
 
     override fun init(startPos: Pose) {
@@ -148,7 +156,6 @@ class ThreeWheelLocalizer : Localizer {
                     Encoder(WheelsParRName, WheelsParRDir),
                     Encoder(WheelsPerpName, WheelsPerpDir)
             )
-            et.reset()
         }
     }
 

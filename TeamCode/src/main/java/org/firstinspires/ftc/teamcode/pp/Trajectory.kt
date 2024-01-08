@@ -61,9 +61,11 @@ class Trajectory(val start: Pose, val initVel: Double, val end: Pose, val v1e: V
     operator fun get(t: Double) = if (t < 0.0) start else if (t > 1.0) end else Pose(cubX[t], cubY[t], start.h + angDiff(start.h, end.h) * cubH[t])
     fun deriv(t: Double) = Pose(cubX.deriv(t), cubY.deriv(t), cubH.deriv(t))
 
-    fun getSpeed(t: Double): Pose {
+    fun getSpeed(t: Double): Double {
         val cs = min(MAX_VEL, min(initVel + MAX_ACC * t, (1 - t) * MAX_DEC)) * MAX_FRACTION / MAX_VEL
-        val cd = deriv(t)
-        return cd * cs
+        return cs
+        //val cd = deriv(t)
+        //return cd * cs
+
     }
 }

@@ -46,7 +46,7 @@ class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
         set(p) {
             if (p != field) {
                 field = p
-                //m.power = if (reverse) -p else p
+                m.power = if (reverse) -p else p
             }
         }
 }

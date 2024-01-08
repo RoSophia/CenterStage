@@ -7,9 +7,16 @@ import org.firstinspires.ftc.teamcode.AUTest.AUTO_MOVE
 import org.firstinspires.ftc.teamcode.AUTest.sp
 import org.firstinspires.ftc.teamcode.hardware.PIDFC
 import org.firstinspires.ftc.teamcode.hardware.Swerve
+import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_ACC
+import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_DEC
+import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_FRACTION
+import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_VEL
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_DIST
+import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_HEAD
+import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_HEAD_VEL
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_VEL
 import org.firstinspires.ftc.teamcode.pp.PP.HeadingPid
+import org.firstinspires.ftc.teamcode.pp.PP.PERU_COEF
 import org.firstinspires.ftc.teamcode.pp.PP.PositionPid
 import org.firstinspires.ftc.teamcode.pp.PP.SCALE
 import org.firstinspires.ftc.teamcode.pp.PP.SPC
@@ -21,9 +28,16 @@ import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.timmy
+import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
+import org.firstinspires.ftc.teamcode.utils.Util.angNorm
+import kotlin.math.abs
 import kotlin.math.atan
 import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sign
 import kotlin.math.sin
 
@@ -33,10 +47,10 @@ object PP {
     var lookaheadRadius: Double = 10.0
 
     @JvmField
-    var robotRadius: Double = 0.5
+    var robotRadius: Double = 10.0
 
     @JvmField
-    var lkr: Double = 15.0
+    var lkr: Double = 2.0
 
     @JvmField
     var SCALE: Double = 0.2
@@ -54,10 +68,19 @@ object PP {
     var HAPPY_DIST: Double = 1.4
 
     @JvmField
+    var HAPPY_HEAD: Double = 0.08
+
+    @JvmField
+    var HAPPY_HEAD_VEL: Double = 0.02
+
+    @JvmField
+    var PERU_COEF: Double = 1 / 30.0
+
+    @JvmField
     var TSC: Double = 1.0
 
     @JvmField
-    var SPC: Double = 20.0
+    var SPC: Double = 200.0
 }
 
 class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) {
@@ -98,7 +121,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             val ip = intersects(cp, i)
             if (ip != null) {
                 res = ip
-                lastIndex = i - 1
+                lastIndex = i
             } else {
                 break
             }
@@ -111,7 +134,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         return res
     }
 
-    private fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double) {
+    fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double) {
         val canvas = RobotFuncs.tp.fieldOverlay()
         canvas.setStrokeWidth(2)
         canvas.setStroke("#4CAF50")
@@ -119,19 +142,22 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             canvas.strokeLine(t[i * t.checkLen].x * SCALE, t[i * t.checkLen].y * SCALE, t[(i + t.checkpoints / 50) * t.checkLen].x * SCALE, t[(i + t.checkpoints / 50) * t.checkLen].y * SCALE)
         }
 
+        /*
+        canvas.setStrokeWidth(2)
         canvas.setStroke("#FF00C3")
-        canvas.strokeCircle(p.x * SCALE, p.y * SCALE, robotRadius * SCALE)
+        canvas.strokeCircle(p.x * SCALE, p.y * SCALE, robotRadius)
+        */
         canvas.setStrokeWidth(1)
         canvas.setStroke("#FF00C3A0")
         canvas.strokeCircle(p.x * SCALE, p.y * SCALE, lookaheadRadius * SCALE)
-        canvas.setStrokeWidth(2)
-        canvas.setStroke("#FFFF00")
-        canvas.fillCircle(lk.x * SCALE, lk.y * SCALE, lkr * SCALE)
-        canvas.setStroke("#40FF22")
-        canvas.strokeLine(p.x * SCALE, p.y * SCALE, (p.x + speed * cos(angle) * SPC) * SCALE, (p.y + speed * sin(angle) * SPC) * SCALE)
+        canvas.setStroke("#3010FF")
+        canvas.strokeLine(p.x * SCALE, p.y * SCALE,
+                (p.x * SCALE + speed * cos(angle) * SPC), (p.y * SCALE + speed * sin(angle) * SPC))
         canvas.setStrokeWidth(3)
-        canvas.setStroke("#78B00A0")
-        canvas.strokeLine(10.0, 1.0, 10.0 + tspeed * TSC * SCALE, 1.0)
+        canvas.setStroke("#000000")
+        canvas.fillCircle(lk.x * SCALE, lk.y * SCALE, lkr)
+        canvas.setStrokeWidth(1)
+        canvas.strokeLine(10.0, 10.0, 10.0 + tspeed * TSC * SCALE, 10.0)
     }
 
     fun startFollowTraj(t: Trajectory) {
@@ -143,11 +169,16 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         ep.reset()
         lperu = 0.0
         peruI = 0.0
+        runningTime.reset()
     }
 
     fun gangle(o1: Pose, o2: Pose): Double {
         val o12 = o2 - o1
-        return atan(o12.y / o12.x)
+        return if (o12.x >= 0.0) {
+            atan(o12.y / o12.x) - timmy.yaw
+        } else {
+            atan(o12.y / o12.x) + Math.PI - timmy.yaw
+        }
     }
 
     var lperu = 0.0
@@ -155,29 +186,38 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
     var peruI = 0.0
     var angI = 0.0
     var ep = ElapsedTime()
+    var runningTime = ElapsedTime()
     fun update() { /// TODO: Add bump detection
         if (busy) {
             val cp = localizer.pose
             val cv = localizer.poseVel
-            log("S_Cp", cp)
-            log("S_Cv", cv)
 
             val lk = lookahead(cp)
             //val lk = Pose()
             log("S_lk", lk)
+            log("S_Dist", lk - cp)
 
-            val peru = (lk - cp).dist() /// TODO: This code is just shit
+            val peru = (cp - lk).dist() /// TODO: This code is just shit
             val peruD = (peru - lperu) / ep.seconds()
             lperu = peru
             peruI += peru * ep.seconds()
             log("S_d", peru)
-            if ((ctraj.end - cp).dist() < HAPPY_DIST && cv.dist() < HAPPY_VEL) {
+            if (abs(timmy.yawVel) < HAPPY_HEAD_VEL && abs(angDiff(ctraj.end.h, cp.h)) < HAPPY_HEAD && (ctraj.end - cp).dist() < HAPPY_DIST && cv.dist() < HAPPY_VEL) {
+                swerve.move(0.0, swerve.angle, 0.0)
                 done = true
+                return
             }
 
             log("S_ctraje", ctraj.end)
             log("S_spee", ctraj.getSpeed(lastIndex * ctraj.checkLen))
-            var speed = ctraj.getSpeed(lastIndex * ctraj.checkLen).v2d().dist() + (peru * PositionPid.p + peruD * PositionPid.d + peruI * PositionPid.i + sign(peru) * PositionPid.f)
+            //var speed = ctraj.getSpeed(lastIndex * ctraj.checkLen) + (peru * PositionPid.p + peruD * PositionPid.d + peruI * PositionPid.i + sign(peru) * PositionPid.f)
+
+            //val tcoef = min(MAX_VEL, min(ctraj.initVel + MAX_ACC * runningTime.seconds(), (ctraj.end - cp).dist() * PERU_COEF * MAX_DEC)) * MAX_FRACTION / MAX_VEL
+            val tcoef = min(MAX_VEL, ctraj.initVel + MAX_ACC * runningTime.seconds()) * MAX_FRACTION / MAX_VEL
+            val pspeed = min(max(peru * PositionPid.p + peruD * PositionPid.d + peruI * PositionPid.i + sign(peru) * PositionPid.f , -1.0), 1.0)
+            var speed = tcoef * pspeed
+            log("SWERVE_Tcoef", tcoef)
+            log("SWERVE_pspeed", pspeed)
             if (speed.isNaN()) {
                 speed = 0.0
             }
@@ -196,7 +236,10 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             log("SWERVE_MOVE_tspeed", ang)
 
             if (AUTO_MOVE) {
+                log("SWERVE_MOVE", speed)
                 swerve.move(speed, ang, tspeed)
+            } else if (MOVE_SWERVE) {
+                moveSwerve()
             }
             draw(ctraj, cp, lk, speed, ang, ange)
             ep.reset()

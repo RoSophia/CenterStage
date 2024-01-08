@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
+import org.firstinspires.ftc.teamcode.utils.RobotVars.LOG_STATUS
 import org.firstinspires.ftc.teamcode.utils.RobotVars._MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.SERVO_GEAR_RATIO
 import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelPidLBB
@@ -74,6 +75,9 @@ class SwerveModule(val name: String, eoff: Double) {
 
     fun update() {
         if (_MOVE_SWERVE) {
+            if (LOG_STATUS) {
+                logs("SwerveModule_${name}_Current", m.current)
+            }
             s.update()
         }
     }

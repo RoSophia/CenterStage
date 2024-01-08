@@ -50,11 +50,12 @@ class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
     operator fun minus(vec: Vec2d) = Vec2d(x - vec.x, y - vec.y)
 
     operator fun div(vec: Vec2d) = Vec2d(x / vec.x, y / vec.y)
+    operator fun div(s: Double) = Vec2d(x / s, y / s)
 
     operator fun times(vec: Vec2d) = Vec2d(x * vec.x, y * vec.y)
     operator fun times(s: Double) = Vec2d(x * s, y * s)
 
-    fun polar() = Vec2d(x * cos(y), y * sin(y))
+    fun polar() = Vec2d(x * cos(y), x * sin(y))
 
     override fun toString() = String.format("(%.3f, %.3f)", x, y)
 }

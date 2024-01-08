@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode
 
-import com.acmerobotics.dashboard.config.Config
+import kotlinx.coroutines.*
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
@@ -14,11 +16,9 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.funkyL
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.funkyR
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log_state
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.ridIntake
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DIFDOWN
@@ -35,27 +35,6 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePDown
 import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePUp
 import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePower
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
-
-@Config
-object IHRP {
-    @JvmField
-    var AP = 1.0
-
-    @JvmField
-    var AI = 0.0
-
-    @JvmField
-    var AD = 0.0
-
-    @JvmField
-    var AF = 0.0
-
-    @JvmField
-    var KILL = 1.0
-
-    @JvmField
-    var OFFSET = 0.0
-}
 
 @Photon(maximumParallelCommands = 10)
 @TeleOp(name = "我討厭修訂")
@@ -117,4 +96,5 @@ class OpIHATEREV : LinearOpMode() {
 
         endma()
     }
+
 }

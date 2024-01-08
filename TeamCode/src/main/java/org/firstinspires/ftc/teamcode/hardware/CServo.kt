@@ -125,7 +125,6 @@ class CServo(val name: String, eoff: Double, gearr: Double, private val can360: 
             der = 0.0
             int = 0.0
         }
-
         if (err >= 0.0) {
             s.power = sign(err) * pd1.f + err * pd1.p + der * pd1.d + int * pd1.i
         } else {
