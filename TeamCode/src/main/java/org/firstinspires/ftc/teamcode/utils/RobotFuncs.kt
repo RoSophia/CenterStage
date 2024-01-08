@@ -176,7 +176,6 @@ object RobotFuncs {
 
     @JvmStatic
     fun initma(lopm: OpMode) { /// Init all hardware info
-        logs("RobotFuncs_Status", "StartInitma")
         if (nrRots == null) {
             nrRots = HashMap()
         }
@@ -212,7 +211,6 @@ object RobotFuncs {
         clown = MServo("Clown", GhearaSDESCHIS)
         diffy = Diffy("Dif")
         pp = PurePursuit(swerve, localizer)
-        logs("RobotFuncs_Status", "FinishInitma")
     }
 
     val ep = ElapsedTime()
@@ -233,7 +231,6 @@ object RobotFuncs {
 
     @JvmStatic
     fun startma() { /// Set all values to their starting ones and start the PID threads
-        logs("RobotFuncs_Status", "StartStartma")
         canInvertMotor = true
         pcoef = 12.0 / batteryVoltageSensor.cachedVoltage
         timmy.initThread()
@@ -242,13 +239,11 @@ object RobotFuncs {
         //localizer.start()
         diffy.init()
         at.reset()
-        logs("RobotFuncs_Status", "FinishStartma")
     }
 
     @JvmStatic
     fun endma() { /// Shut down the robot
         KILLALL = true
-        logs("RobotFuncs_Status", "StartEndma")
         pcoef = 0.0
         batteryVoltageSensor.close()
         swerve.close()
@@ -257,6 +252,5 @@ object RobotFuncs {
         //localizer.close()
         swerve.stop()
         diffy.close()
-        logs("RobotFuncs_Status", "FinishEndma")
     }
 }

@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.LOG_STATUS
 import org.firstinspires.ftc.teamcode.utils.RobotVars._MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.SERVO_GEAR_RATIO
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelMaxErr
 import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelPidLBB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelPidLBF
 import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelPidLFB
@@ -31,7 +32,18 @@ class SwerveModule(val name: String, eoff: Double) {
                     WheelPidLBF
                 else
                     WheelPidRBF,
+            if (name[name.length - 1] == 'F')
+                if (name[name.length - 2] == 'L')
+                    WheelPidLFF
+                else
+                    WheelPidRFF
+            else
+                if (name[name.length - 2] == 'L')
+                    WheelPidLBF
+                else
+                    WheelPidRBF,
 
+            /*
             if (name[name.length - 1] == 'F')
                 if (name[name.length - 2] == 'L')
                     WheelPidLFB
@@ -41,7 +53,8 @@ class SwerveModule(val name: String, eoff: Double) {
                 if (name[name.length - 2] == 'L')
                     WheelPidLBB
                 else
-                    WheelPidRBB
+                    WheelPidRBB,*/
+            WheelMaxErr
     )
 
     /*
@@ -70,7 +83,6 @@ class SwerveModule(val name: String, eoff: Double) {
         if (_MOVE_SWERVE) {
             s.init()
         }
-        logs("ServoModule_${name}_Status", "Init")
     }
 
     fun update() {
@@ -117,6 +129,5 @@ class SwerveModule(val name: String, eoff: Double) {
         if (_MOVE_SWERVE) {
             s.close()
         }
-        logs("ServoModule_${name}_Status", "Close")
     }
 }

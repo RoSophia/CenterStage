@@ -62,7 +62,6 @@ class Timmy(val name: String) {
             trunning = true
             t.start()
         }
-        logs("Timmy_${name}_Status", "InitT")
     }
 
     fun closeThread() {
@@ -70,7 +69,6 @@ class Timmy(val name: String) {
             trunning = false
             t.join()
         }
-        logs("Timmy_${name}_Status", "CloseT")
     }
 
     fun close() {

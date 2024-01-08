@@ -2,28 +2,10 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.utils.Pose
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
-import org.firstinspires.ftc.teamcode.utils.RobotVars.HEADP
-import org.firstinspires.ftc.teamcode.utils.RobotVars.KMSCONF
-import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLB
-import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLF
-import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRB
-import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRF
-import org.firstinspires.ftc.teamcode.utils.RobotVars.SwerveAngP
-import org.firstinspires.ftc.teamcode.utils.RobotVars.TRACK_WIDTH
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WHEEL_BASE
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelDLB
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelDLF
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelDRB
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelDRF
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelULB
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelULF
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelURB
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelURF
+import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
-import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.firstinspires.ftc.teamcode.utils.Util.clamp
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import kotlin.math.PI
@@ -42,55 +24,15 @@ class Swerve {
     val rb = SwerveModule("RB", OFFRB)
     val modules = arrayListOf(lf, rf, rb, lb)
     // LF RF RB LB
+
     var ws = DoubleArray(4)
     var wa = DoubleArray(4)
     var maxs = 0.0
     var maintainHeading = false
     var locked = false
 
-    //var motorThread: Thread
-    var trunning = false
-    var csp: Double = 0.0
-
     fun getkms(kms: Double): Double {
-        return clamp(1.4 - kms, 0.0, 1.0)
-    }
-
-    val ep = ElapsedTime()
-
-    init {
-        ep.reset()
-        logs("Swerve_Status", "Init");
-        /*
-        trunning = true
-        motorThread = Thread {
-            val ep = ElapsedTime()
-            ep.reset()
-            while (trunning && !KILLALL) {
-                for (i in 0..3) {
-                    modules[i].angle = wa[i]
-                    logs("AngDiff_$i", angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))
-                    //log("PAVER_$i", modules[i].m.current)
-                    modules[i].speed =
-                            if (maxs > 1.0) {
-                                ws[i] / maxs
-                            } else {
-                                ws[i]
-                            }
-
-                    /
-                            if (maxs > 1.0) {
-                                getkms(abs(angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))) * ws[i] / maxs
-                            } else {
-                                getkms(abs(angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))) * ws[i]
-                            }
-                     /
-                    // modules[i].speed = if (abs(angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle)) <= 0.3) { if (maxs > 1.0) { ws[i] / maxs } else { ws[i] } } else { 0.0 }
-                }
-            }
-        }
-
-         */
+        return clamp((kms - WheelAlignStart) * (WheelAlignMax - WheelAlignMin) / (WheelAlignEnd - WheelAlignStart) + WheelAlignMin, WheelAlignMin, WheelAlignMax)
     }
 
     fun update() {
@@ -102,30 +44,14 @@ class Swerve {
                         ws[i] / maxs
                     } else {
                         ws[i]
-                    }
+                    } * getkms(PI / 2 - abs(angDiff(modules[i].angle, modules[i].s.e.pos + modules[i].off)))
             modules[i].update()
         }
     }
 
-    fun start() {
-        /*
-        trunning = true
-        motorThread.start()*/
-    }
+    fun start() {}
 
-    fun stop() {
-        /*
-        trunning = false
-        motorThread.join()*/
-    }
-
-    fun turn(turnPower: Double) {
-        lf.angle = angNorm(PI * 3 / 4)
-        lb.angle = angNorm(PI * 5 / 4)
-        rf.angle = angNorm(PI * 1 / 4)
-        rb.angle = angNorm(PI * 7 / 4)
-        csp = turnPower
-    }
+    fun stop() {}
 
     var speed = 0.0
     var angle = 0.0
@@ -162,7 +88,7 @@ class Swerve {
         if (epsEq(this.speed, speed) && epsEq(this.angle, angle) && epsEq(this.turnPower, turnPower)) {
             return
         }
-        log("Swerve_Movement", "${speed}@${angle} tp: $turnPower")
+        log("Swerve_Movement", String.format("%.3f@%.3f : %.3f", speed, angle, turnPower))
         val actAng = angle + turnPower * SwerveAngP
         if (abs(speed) < 0.1 && abs(turnPower) < 0.1) {
             ws = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
@@ -172,13 +98,10 @@ class Swerve {
     }
 
     fun close() {
-        logs("Swerve_Status", "InitClose");
         lf.close()
         lb.close()
         rf.close()
         rb.close()
-
-        logs("Swerve_Status", "FinishClose");
     }
 
 }

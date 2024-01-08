@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import static java.lang.Math.PI;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.hardware.PIDFC;
@@ -33,26 +35,34 @@ public class RobotVars {
     public static double OFFRF = -0.08555017816129543;
     public static double OFFRB = -0.4809821127735054;
 
-    public static PIDFC WheelPidLFF = new PIDFC(0.31, 0.4, 0.0, 0.015);
+    public static PIDFC WheelPidLFF = new PIDFC(0.4, 0.0, 0.0, 0.03);
     public static PIDFC WheelPidLFB = new PIDFC(0.38, 0.1, 0.0, 0.015);
 
-    public static PIDFC WheelPidLBF = new PIDFC(0.38, 0.1, 0.0, 0.035);
+    public static PIDFC WheelPidLBF = new PIDFC(0.4, 0.0, 0.0, 0.04);
     public static PIDFC WheelPidLBB = new PIDFC(0.38, 0.1, 0.0, 0.03);
 
-    public static PIDFC WheelPidRFF = new PIDFC(0.38, 0.8, 0.0, 0.050);
+    public static PIDFC WheelPidRFF = new PIDFC(0.4, 0.0, 0.0, 0.03);
+    //public static PIDFC WheelPidRFF = new PIDFC(0.38, 0.0, 0.0, 0.050);
     public static PIDFC WheelPidRFB = new PIDFC(0.38, 0.8, 0.0, 0.040);
 
-    public static PIDFC WheelPidRBF = new PIDFC(0.35, 0.07, 0.0, 0.0405);
+    public static PIDFC WheelPidRBF = new PIDFC(0.4, 0.0, 0.0, 0.04);
     public static PIDFC WheelPidRBB = new PIDFC(0.41, 0.09, 0.0, 0.03);
 
-    public static double WheelULF = -0.3;
-    public static double WheelDLF = -0.4;
-    public static double WheelULB = -0.3;
-    public static double WheelDLB = -0.1;
-    public static double WheelURF = -0.3;
-    public static double WheelDRF = -0.1;
-    public static double WheelURB = -0.3;
-    public static double WheelDRB = -0.1;
+    public static double WheelAlignMin = 0.30;
+    public static double WheelAlignMax = 1.00;
+    public static double WheelAlignStart = PI / 2 - PI / 4;
+    public static double WheelAlignEnd = PI / 2 - PI / 8;
+
+    public static double WheelMaxErr = 0.00;
+
+    public static double WheelULF = -0.0;
+    public static double WheelDLF = -0.0;
+    public static double WheelULB = -0.0;
+    public static double WheelDLB = -0.0;
+    public static double WheelURF = -0.0;
+    public static double WheelDRF = -0.0;
+    public static double WheelURB = -0.0;
+    public static double WheelDRB = -0.0;
 
     public static double SwerveHeadPidP = 1.0;
     public static double SwerveHeadPidI = 0.0;
@@ -89,7 +99,7 @@ public class RobotVars {
     public static boolean _MOVE_SWERVE = true;
     public static double HEADP = 1.0;
 
-    public static double SwerveAngP = -1;
+    public static double SwerveAngP = -0.38;
 
     public static boolean LOG_STATUS = false;
 
@@ -99,7 +109,7 @@ public class RobotVars {
     public static double WHEEL_BASE = 21.0;
 
     public static String WheelsPerpName = "RBM";
-    public static Pose WheelsPerpPos = new Pose(-13, -0.75, Math.PI / 2);
+    public static Pose WheelsPerpPos = new Pose(-13, -0.75, PI / 2);
     public static Integer WheelsPerpDir = 1;
     public static String WheelsParRName = "LBM";
     public static Pose WheelsParRPos = new Pose(-8.5, 4.75, 0.0);
@@ -107,7 +117,7 @@ public class RobotVars {
     public static String WheelsParLName = "RidR";
     public static Pose WheelsParLPos = new Pose(-8.5, -4.75, 0.0);
     public static Integer WheelsParLDir = 1;
-    public static Double WheelsTicksToCm = 1.8 * 2 * Math.PI / 8192.0; // Radius * 2pi / Ticks/Rev
+    public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0; // Radius * 2pi / Ticks/Rev
 
     public static Map<String, Integer> nrRots;
 

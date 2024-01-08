@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.timmy
 import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
@@ -56,10 +57,10 @@ object PP {
     var SCALE: Double = 0.2
 
     @JvmField
-    var PositionPid: PIDFC = PIDFC(0.0, 0.0, 0.0, 0.0)
+    var PositionPid: PIDFC = PIDFC(0.3, 0.0, 0.0, 0.0)
 
     @JvmField
-    var HeadingPid: PIDFC = PIDFC(0.0, 0.0, 0.0, 0.0)
+    var HeadingPid: PIDFC = PIDFC(1.7, 0.0, 0.0, 0.0)
 
     @JvmField
     var HAPPY_VEL: Double = 0.3
@@ -87,7 +88,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
     var ctraj = Trajectory()
     var lastIndex = 0
     var haveTraj = false // Only doing this since making ctraj null would be a lot of hassle
-    var done = false
+    var done = true
     var error = false
 
     val busy: Boolean
@@ -116,7 +117,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
     fun lookahead(cp: Pose): Pose { // TODO: Kill youserlf Now!
         var res: Pose? = null
-        log("Lookahead_1", cp)
+        logs("Lookahead_1", cp)
         for (i in lastIndex..ctraj.checkpoints) {
             val ip = intersects(cp, i)
             if (ip != null) {
@@ -126,8 +127,8 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
                 break
             }
         }
-        log("Lookahead_lasti", lastIndex)
-        log("Lookahead_res", res.toString())
+        logs("Lookahead_lasti", lastIndex)
+        logs("Lookahead_res", res.toString())
         if (res == null) {
             return ctraj[lastIndex * ctraj.checkLen]
         }
@@ -142,11 +143,6 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             canvas.strokeLine(t[i * t.checkLen].x * SCALE, t[i * t.checkLen].y * SCALE, t[(i + t.checkpoints / 50) * t.checkLen].x * SCALE, t[(i + t.checkpoints / 50) * t.checkLen].y * SCALE)
         }
 
-        /*
-        canvas.setStrokeWidth(2)
-        canvas.setStroke("#FF00C3")
-        canvas.strokeCircle(p.x * SCALE, p.y * SCALE, robotRadius)
-        */
         canvas.setStrokeWidth(1)
         canvas.setStroke("#FF00C3A0")
         canvas.strokeCircle(p.x * SCALE, p.y * SCALE, lookaheadRadius * SCALE)
@@ -194,27 +190,26 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
             val lk = lookahead(cp)
             //val lk = Pose()
-            log("S_lk", lk)
+            logs("S_lk", lk)
             log("S_Dist", lk - cp)
 
             val peru = (cp - lk).dist() /// TODO: This code is just shit
             val peruD = (peru - lperu) / ep.seconds()
             lperu = peru
             peruI += peru * ep.seconds()
-            log("S_d", peru)
+            logs("S_d", peru)
             if (abs(timmy.yawVel) < HAPPY_HEAD_VEL && abs(angDiff(ctraj.end.h, cp.h)) < HAPPY_HEAD && (ctraj.end - cp).dist() < HAPPY_DIST && cv.dist() < HAPPY_VEL) {
                 swerve.move(0.0, swerve.angle, 0.0)
                 done = true
                 return
             }
 
-            log("S_ctraje", ctraj.end)
-            log("S_spee", ctraj.getSpeed(lastIndex * ctraj.checkLen))
+            logs("S_ctraje", ctraj.end)
             //var speed = ctraj.getSpeed(lastIndex * ctraj.checkLen) + (peru * PositionPid.p + peruD * PositionPid.d + peruI * PositionPid.i + sign(peru) * PositionPid.f)
 
-            //val tcoef = min(MAX_VEL, min(ctraj.initVel + MAX_ACC * runningTime.seconds(), (ctraj.end - cp).dist() * PERU_COEF * MAX_DEC)) * MAX_FRACTION / MAX_VEL
-            val tcoef = min(MAX_VEL, ctraj.initVel + MAX_ACC * runningTime.seconds()) * MAX_FRACTION / MAX_VEL
-            val pspeed = min(max(peru * PositionPid.p + peruD * PositionPid.d + peruI * PositionPid.i + sign(peru) * PositionPid.f , -1.0), 1.0)
+            val tcoef = min(MAX_VEL, min(ctraj.initVel + MAX_ACC * runningTime.seconds(), (ctraj.end - cp).dist() * PERU_COEF * MAX_DEC)) * MAX_FRACTION / MAX_VEL
+            //val tcoef = min(MAX_VEL, ctraj.initVel + MAX_ACC * runningTime.seconds()) * MAX_FRACTION / MAX_VEL
+            val pspeed = min(max(peru * PositionPid.p + peruD * PositionPid.d + peruI * PositionPid.i + sign(peru) * PositionPid.f, -1.0), 1.0)
             var speed = tcoef * pspeed
             log("SWERVE_Tcoef", tcoef)
             log("SWERVE_pspeed", pspeed)
@@ -226,17 +221,13 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             if (ang.isNaN()) {
                 ang = 0.0
             }
-            val ange = angDiff(ctraj[lastIndex * ctraj.checkLen].h, cp.h)
+            val ange = angDiff(cp.h, ctraj[lastIndex * ctraj.checkLen].h)
             val angD = angDiff(ange, lang) / ep.seconds()
             lang = ang
             angI += ange * ep.seconds()
             val tspeed = ange * HeadingPid.p + angD * HeadingPid.d + angI * HeadingPid.i + sign(ange) * HeadingPid.f
-            log("SWERVE_MOVE_S", speed)
-            log("SWERVE_MOVE_A", ang)
-            log("SWERVE_MOVE_tspeed", ang)
 
             if (AUTO_MOVE) {
-                log("SWERVE_MOVE", speed)
                 swerve.move(speed, ang, tspeed)
             } else if (MOVE_SWERVE) {
                 moveSwerve()

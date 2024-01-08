@@ -39,16 +39,22 @@ import org.firstinspires.ftc.teamcode.utils.Vec2d
 object AUTest {
     @JvmField
     var sp: Pose = Pose()
+
     @JvmField
-    var ep: Pose = Pose(10.0, 10.0, 0.0)
+    var ep: Pose = Pose(130.0, 20.0, 0.0)
+
     @JvmField
-    var v1: Vec2d = Vec2d()
+    var v1: Vec2d = Vec2d(130.0, -0.8)
+
     @JvmField
-    var v2: Vec2d = Vec2d()
+    var v2: Vec2d = Vec2d(80.0, 1.3)
+
     @JvmField
     var h1: Vec2d = Vec2d()
+
     @JvmField
     var AAAAAAAAAAAAAAAAAAA: Boolean = false
+
     @JvmField
     var AINt: Int = 0
 
@@ -64,9 +70,23 @@ class AuTest : LinearOpMode() {
         initma(this)
         waitForStart()
         startma()
-        pp.startFollowTraj(Trajectory(sp, 0.0, ep, v1, v2, h1))
+        val t1 = Trajectory(sp, 0.0, ep, v1, v2, h1)
+        val t2 = Trajectory(ep, 0.0, sp, v2, v1, h1)
+        var at = 0
 
-        while (!isStopRequested && !pp.done && !pp.error) {
+        while (!isStopRequested) {
+            log("ppd", pp.done)
+            if (pp.done) {
+                if (at == 0) {
+                    log("st1", "")
+                    at = 1
+                    pp.startFollowTraj(t1)
+                } else {
+                    log("st2", "")
+                    at = 0
+                    pp.startFollowTraj(t2)
+                }
+            }
             controller.update()
             if (AAAAAAAAAAAAAAAAAAA) {
                 log("PPINT", pp.intersects(sp, AINt).toString())
