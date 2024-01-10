@@ -13,6 +13,8 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
     fun dist(): Double = sqrt(dist2())
     fun v2d(): Vec2d = Vec2d(x, y)
 
+    fun copy(): Pose = Pose(x, y, h)
+
     fun vec() = Vec2d(x, y)
     fun headingVec() = Vec2d(cos(h), sin(h))
 

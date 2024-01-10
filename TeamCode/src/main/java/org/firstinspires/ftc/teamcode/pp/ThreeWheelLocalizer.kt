@@ -20,10 +20,10 @@ class ThreeWheelLocalizer : Localizer {
     private var _pose = Pose()
     override var pose: Pose = _pose
         get() = _pose
-        set(value) {
+        set(v) {
             lwpos = listOf(0.0, 0.0, 0.0)
-            lastHeading = 0.0
-            field = value
+            lastHeading = v.h
+            field = v
         }
 
     override var poseVel: Pose = Pose()
@@ -150,6 +150,7 @@ class ThreeWheelLocalizer : Localizer {
     }
 
     override fun init(startPos: Pose) {
+        pose = startPos
         if (USE_LOCALIZER) {
             encoders = listOf(
                     Encoder(WheelsParLName, WheelsParLDir),

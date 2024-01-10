@@ -39,11 +39,24 @@ object DriveConstants {
     var MAX_VEL = 20.0
 
     @JvmField
-    var MAX_FRACTION = 0.7
+    var MAX_FRACTION = 0.9
+
+    @JvmField
+    var PeruStart: Double = 10.0
+
+    @JvmField
+    var PeruEnd: Double = 50.0
+
+    @JvmField
+    var PeruMin: Double = 0.5
+
+    @JvmField
+    var PeruMax: Double = 1.0
 }
 
-class Trajectory(val start: Pose, val initVel: Double, val end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h1: Vec2d, val checkpoints: Int) {
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d) : this(sp, initVel, ep, v1e, v2e, h1, 2000)
+class Trajectory(val start: Pose, val initVel: Double, val end: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d, val maxFraction: Double, val checkpoints: Int) {
+    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d, maxFraction: Double) : this(sp, initVel, ep, v1e, v2e, h1, maxFraction, 2000)
+    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d) : this(sp, initVel, ep, v1e, v2e, h1, MAX_FRACTION)
     constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double, h1x: Double, h1y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(h1x, h1y))
     constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(0.3333, 0.666))
     constructor(sp: Pose, initVel: Double, ep: Pose) : this(sp, initVel, ep, Vec2d(), Vec2d(), Vec2d(0.3333, 0.6666))
@@ -54,18 +67,11 @@ class Trajectory(val start: Pose, val initVel: Double, val end: Pose, val v1e: V
     private val v2 = v2e.polar()
     val checkLen = 1.0 / checkpoints.toDouble()
 
-    private val cubX = CubicBezierCurve(start.x, v1.x, v2.x, end.x)
-    private val cubY = CubicBezierCurve(start.y, v1.y, v2.y, end.y)
+    private val cubX = CubicBezierCurve(start.x, start.x + v1.x, end.x + v2.x, end.x)
+    private val cubY = CubicBezierCurve(start.y, start.y + v1.y, end.y + v2.y, end.y)
     private val cubH = CubicBezierCurve(0.0, h1.x, h1.y, 1.0) // Heading handled in get()
 
     operator fun get(t: Double) = if (t < 0.0) start else if (t > 1.0) end else Pose(cubX[t], cubY[t], start.h + angDiff(start.h, end.h) * cubH[t])
-    fun deriv(t: Double) = Pose(cubX.deriv(t), cubY.deriv(t), cubH.deriv(t))
 
-    fun getSpeed(t: Double): Double {
-        val cs = min(MAX_VEL, min(initVel + MAX_ACC * t, (1 - t) * MAX_DEC)) * MAX_FRACTION / MAX_VEL
-        return cs
-        //val cd = deriv(t)
-        //return cd * cs
-
-    }
+    override fun toString(): String = "$start:$end"
 }

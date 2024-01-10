@@ -132,7 +132,7 @@ object RobotFuncs {
         swerve = Swerve()
         controller = Controller()
         localizer = ThreeWheelLocalizer()
-        localizer.init(Pose())
+        localizer.init(LocalizerInitPos)
         pp = PurePursuit(swerve, localizer)
     }
 
@@ -163,7 +163,6 @@ object RobotFuncs {
             return if (abs(cf) > 0.03) cf + sign(cf) * SwerveHeadPidF else 0.0
         }
     }
-
 
     @JvmStatic
     fun moveSwerve() {
@@ -200,7 +199,7 @@ object RobotFuncs {
         timmy = Timmy("imu")
         controller = Controller()
         localizer = ThreeWheelLocalizer()
-        localizer.init(Pose())
+        localizer.init(LocalizerInitPos)
         _MOVE_SWERVE = MOVE_SWERVE
         swerve = Swerve()
         swerve.move(0.0, 0.0, 0.0)

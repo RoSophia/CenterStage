@@ -11,7 +11,6 @@ interface Localizer {
     var pose: Pose
     var poseVel: Pose
 
-
     fun init(startPos: Pose)
     fun update()
     //fun start()

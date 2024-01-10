@@ -69,12 +69,14 @@ public class RobotVars {
     public static double SwerveHeadPidD = 0.0;
     public static double SwerveHeadPidF = 0.0;
 
+    public static double SwerveMaxAngVel = 2000;
+
     public static double GhearaSDESCHIS = 0.75;
-    public static double GearaSINCHIS = 0.65;
+    public static double GearaSINCHIS = 0.57;
 
-    public static double IntakePower = -0.7;
+    public static double IntakePower = -0.5;
 
-    public static double IntakePDown = 0.44;
+    public static double IntakePDown = 0.43;
     public static double IntakePUp = 0.48;
 
     public static double DIFLOFF = -5.220461982909272;
@@ -107,6 +109,10 @@ public class RobotVars {
 
     public static double TRACK_WIDTH = 21.0;
     public static double WHEEL_BASE = 21.0;
+
+    public static Pose LocalizerInitPos = new Pose(0.0, 0.0, 0.0);
+    public static Pose AutoInitPos = new Pose(0.0, 0.0, 0.0);
+    public static boolean AUTO_MOVE = true;
 
     public static String WheelsPerpName = "RBM";
     public static Pose WheelsPerpPos = new Pose(-13, -0.75, PI / 2);
