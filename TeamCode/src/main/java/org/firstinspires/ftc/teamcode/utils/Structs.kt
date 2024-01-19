@@ -30,12 +30,16 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
     operator fun times(s: Double) = Pose(x * s, y * s, h * s)
 
     override fun toString() = String.format("(%.3f, %.3f, %.3f)", x, y, h)
+
+    companion object {
+        val InfPos: Pose = Pose(10000000000000.0, 1000000000000.0, 0.0)
+    }
 }
 
 class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
     constructor() : this(0.0, 0.0)
 
-    fun dist2(): Double = x * 2 + y * 2
+    fun dist2(): Double = x * x + y * y
     fun dist(): Double = sqrt(dist2())
     fun pose(): Pose = Pose(x, y, 0.0)
 
@@ -44,6 +48,8 @@ class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
         val newY = x * sin(angle) + y * cos(angle)
         return Vec2d(newX, newY)
     }
+
+    fun norm() = this / dist()
 
     operator fun unaryMinus() = Vec2d(-x, -y)
 
@@ -60,4 +66,21 @@ class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
     fun polar() = Vec2d(x * cos(y), x * sin(y))
 
     override fun toString() = String.format("(%.3f, %.3f)", x, y)
+}
+
+class Vec4(@JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Double, @JvmField var d: Double) {
+    operator fun get(i: Int) = when (i) {
+        0 -> {
+            a
+        }
+        1 -> {
+            b
+        }
+        2 -> {
+            c
+        }
+        else -> {
+            d
+        }
+    }
 }

@@ -5,11 +5,9 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.hardware.bosch.BNO055IMU
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.CRServo
-import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.PKW.PAUER
 import org.firstinspires.ftc.teamcode.PKW.PAUER2
 import org.firstinspires.ftc.teamcode.PKW.inv
@@ -21,7 +19,6 @@ import org.firstinspires.ftc.teamcode.hardware.AbsEnc
 import org.firstinspires.ftc.teamcode.hardware.MServo
 import org.firstinspires.ftc.teamcode.hardware.Motor
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 
@@ -88,7 +85,7 @@ class Panzerkampfwagen : OpMode() {
                 crs.power = PAUER
             }
             2 -> {
-                log("pos", abe.pos)
+                log("pos", abe.angn)
             }
             3 -> {
                 mot.power = PAUER

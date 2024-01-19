@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
+import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.firstinspires.ftc.teamcode.utils.Util.clamp
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import kotlin.math.PI
@@ -14,6 +15,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sin
 
 
@@ -31,22 +33,34 @@ class Swerve {
     var maintainHeading = false
     var locked = false
 
-    fun getkms(kms: Double): Double {
-        return clamp((kms - WheelAlignStart) * (WheelAlignMax - WheelAlignMin) / (WheelAlignEnd - WheelAlignStart) + WheelAlignMin, WheelAlignMin, WheelAlignMax)
-    }
+    private fun getkms(kms: Double) = clamp((kms - WheelAlignStart) * (WheelAlignMax - WheelAlignMin) / (WheelAlignEnd - WheelAlignStart) + WheelAlignMin, WheelAlignMin, WheelAlignMax)
+
+    val ep = ElapsedTime()
+    private fun GETKMS(i: Int) = modules[i].latentImpulse * WheelsLBias[i] + modules[i].speed * (if (modules[i].speed >= 0) WheelsFBias[i] else WheelsBBias[i])
 
     fun update() {
         for (i in 0..3) {
+            val cs = if (MOVE_SWERVE_MOTORS) {
+                if (maxs > 1.0) {
+                    ws[i] / maxs
+                } else {
+                    ws[i]
+                } * getkms(PI / 2 - abs(angDiff(modules[i].angle, angNorm(modules[i].s.e.angn + modules[i].off))))
+            } else {
+                0.0
+            }
+            modules[i].tem = WheelsLatentVars[i]
+            modules[i].speed = cs
+            val li = modules[i].updateLatent()
+            log("li_$i", li)
+            modules[i].latentImpulse = cs - li
             modules[i].angle = wa[i]
-            logs("AngDiff_$i", angDiff(modules[i].s.e.pos + modules[i].off, modules[i].angle))
-            modules[i].speed =
-                    if (maxs > 1.0) {
-                        ws[i] / maxs
-                    } else {
-                        ws[i]
-                    } * getkms(PI / 2 - abs(angDiff(modules[i].angle, modules[i].s.e.pos + modules[i].off)))
+            modules[i].forcedForce = GETKMS(i)
+            log("AngDiff_$i", angDiff(modules[i].angle, angNorm(modules[i].s.e.angn + modules[i].off)))
+            log("LatentImpulse_$i", modules[i].latentImpulse)
             modules[i].update()
         }
+        ep.reset()
     }
 
     fun start() {}

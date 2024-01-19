@@ -3,18 +3,10 @@ package org.firstinspires.ftc.teamcode.utils
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.hardware.Encoder
-import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logst
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.shutUp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
 import org.firstinspires.ftc.teamcode.utils.RobotVars.CHANGE_DIFFY_POS
@@ -24,7 +16,6 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFLF
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRB
 import org.firstinspires.ftc.teamcode.utils.RobotVars.OFFRF
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelsPerpName
 import org.firstinspires.ftc.teamcode.utils.RobotVars.nrRots
 
 @Photon
@@ -44,21 +35,21 @@ class SetVars : LinearOpMode() {
             DIFROFF = 0.0
         }
         shutUp(this)
-        OFFLF = -swerve.lf.s.e.pos
-        OFFLB = -swerve.lb.s.e.pos
-        OFFRF = -swerve.rf.s.e.pos
-        OFFRB = -swerve.rb.s.e.pos
+        OFFLF = -swerve.lf.s.e.angn
+        OFFLB = -swerve.lb.s.e.angn
+        OFFRF = -swerve.rf.s.e.angn
+        OFFRB = -swerve.rb.s.e.angn
         if (CHANGE_DIFFY_POS) {
-            DIFLOFF = -diffy.LS.e.pos
-            DIFROFF = -diffy.RS.e.pos
+            DIFLOFF = -diffy.LS.e.angn
+            DIFROFF = -diffy.RS.e.angn
         }
         val tp = TelemetryPacket()
         tp.addLine("public static double OFFLF = $OFFLF;")
         tp.addLine("public static double OFFLB = $OFFLB;")
         tp.addLine("public static double OFFRF = $OFFRF;")
         tp.addLine("public static double OFFRB = $OFFRB;")
-        tp.addLine("public static double DIFLOFF = ${-diffy.LS.e.pos};")
-        tp.addLine("public static double DIFROFF = ${-diffy.RS.e.pos};")
+        tp.addLine("public static double DIFLOFF = ${-diffy.LS.e.angn};")
+        tp.addLine("public static double DIFROFF = ${-diffy.RS.e.angn};")
         dashboard.sendTelemetryPacket(tp)
         telemetry.addLine("Done!!!")
         telemetry.addLine("Done!!!")

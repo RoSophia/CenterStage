@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.pp
 
-import com.acmerobotics.dashboard.config.Config
-import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_ACC
-import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_DEC
-import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_FRACTION
-import org.firstinspires.ftc.teamcode.pp.DriveConstants.MAX_VEL
+import com.sun.tools.javac.comp.Check
+import org.firstinspires.ftc.teamcode.pp.PP.Checkpoints
+import org.firstinspires.ftc.teamcode.pp.PP.MAX_FRACTION
+import org.firstinspires.ftc.teamcode.pp.PP.PeruEnd
+import org.firstinspires.ftc.teamcode.pp.PP.PeruStart
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Vec2d
-import kotlin.math.min
+import java.util.Vector
 
 class CubicBezierCurve(
         private val c0: Double,
@@ -27,35 +27,21 @@ class CubicBezierCurve(
     fun ddderiv(t: Double) = -6 * c0 + 18 * c1 - 18 * c2 + 6 * c3 + 0 * t
 }
 
-@Config
-object DriveConstants {
-    @JvmField
-    var MAX_ACC = 10.0
-
-    @JvmField
-    var MAX_DEC = 10.0
-
-    @JvmField
-    var MAX_VEL = 20.0
-
-    @JvmField
-    var MAX_FRACTION = 0.9
-
-    @JvmField
-    var PeruStart: Double = 10.0
-
-    @JvmField
-    var PeruEnd: Double = 50.0
-
-    @JvmField
-    var PeruMin: Double = 0.5
-
-    @JvmField
-    var PeruMax: Double = 1.0
+class Action(val checkNr: Int, val act: () -> Unit) {
+    override fun toString() = "$checkNr -> $act"
 }
 
-class Trajectory(val start: Pose, val initVel: Double, val end: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d, val maxFraction: Double, val checkpoints: Int) {
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d, maxFraction: Double) : this(sp, initVel, ep, v1e, v2e, h1, maxFraction, 2000)
+class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1: Vec2d, @JvmField var v2: Vec2d, @JvmField var h: Vec2d, @JvmField var mf: Double, @JvmField var peru: Vec2d) {
+    constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d) : this(sp, ep, v1, v2, Vec2d(0.6, 0.95), MAX_FRACTION, Vec2d(PeruStart, PeruEnd))
+    constructor(sp: Pose, ep: Pose) : this(sp, ep, Vec2d(), Vec2d())
+
+    constructor(ep: Pose, v1: Vec2d, v2: Vec2d) : this(Pose(), ep, v1, v2)
+    constructor(ep: Pose) : this(Pose(), ep)
+}
+
+class Trajectory(val start: Pose, val initVel: Double, val end: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double) {
+    constructor(tc: TrajCoef) : this(tc.sp, 0.0, tc.ep, tc.v1, tc.v2, tc.h, tc.mf, tc.peru.x, tc.peru.y)
+    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d, maxFraction: Double) : this(sp, initVel, ep, v1e, v2e, h1, maxFraction, PeruStart, PeruEnd)
     constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d) : this(sp, initVel, ep, v1e, v2e, h1, MAX_FRACTION)
     constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double, h1x: Double, h1y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(h1x, h1y))
     constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(0.3333, 0.666))
@@ -65,13 +51,49 @@ class Trajectory(val start: Pose, val initVel: Double, val end: Pose, v1e: Vec2d
 
     private val v1 = v1e.polar()
     private val v2 = v2e.polar()
-    val checkLen = 1.0 / checkpoints.toDouble()
+    val checkLen = 1.0 / Checkpoints.toDouble()
 
     private val cubX = CubicBezierCurve(start.x, start.x + v1.x, end.x + v2.x, end.x)
     private val cubY = CubicBezierCurve(start.y, start.y + v1.y, end.y + v2.y, end.y)
     private val cubH = CubicBezierCurve(0.0, h1.x, h1.y, 1.0) // Heading handled in get()
 
-    operator fun get(t: Double) = if (t < 0.0) start else if (t > 1.0) end else Pose(cubX[t], cubY[t], start.h + angDiff(start.h, end.h) * cubH[t])
+    var actions: Vector<Action> = Vector()
+    var lastCompletedAction = 0
+
+    fun addActionS(distFromEnd: Double, act: () -> Unit) {
+        for (i in 0..Checkpoints) {
+            if ((start - get(i)).dist() >= distFromEnd) {
+                actions.add(Action(i, act))
+                actions.sortBy { it.checkNr }
+                return
+            }
+        }
+        actions.add(Action(Checkpoints, act))
+        actions.sortBy { it.checkNr }
+    }
+
+    fun addActionE(distFromEnd: Double, act: () -> Unit) {
+        for (i in Checkpoints downTo 0) {
+            if ((end - get(i)).dist() >= distFromEnd) {
+                actions.add(Action(i, act))
+                actions.sortBy { it.checkNr }
+                return
+            }
+        }
+        actions.add(Action(0, act))
+        actions.sortBy { it.checkNr }
+    }
+
+    fun nextAction(): Action =
+            if (lastCompletedAction >= actions.size) {
+                Action(1000000000) {}
+            } else {
+                actions[lastCompletedAction]
+            }
+
+    operator fun get(i: Int) = if (i < 0) start else if (i > Checkpoints) end else Pose(cubX[i * checkLen], cubY[i * checkLen], start.h + angDiff(start.h, end.h) * cubH[i * checkLen])
+    fun deriv(i: Int) = Pose(cubX.deriv(i * checkLen), cubY.deriv(i * checkLen), cubH.deriv(i * checkLen))
+
 
     override fun toString(): String = "$start:$end"
 }

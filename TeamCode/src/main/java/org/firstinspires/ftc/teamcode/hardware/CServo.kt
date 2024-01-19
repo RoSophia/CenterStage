@@ -5,13 +5,16 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
+import org.firstinspires.ftc.teamcode.utils.Util.clamp
 import kotlin.math.abs
 import kotlin.math.sign
 
-class PIDFC(@JvmField var p: Double, @JvmField var i: Double, @JvmField var d: Double, @JvmField var f: Double)
+class PIDFC(@JvmField var p: Double, @JvmField var i: Double, @JvmField var d: Double, @JvmField var f: Double, @JvmField var k: Double) {
+    constructor(p: Double, i: Double, d: Double, f: Double) : this(p, i, d, f, 0.0)
+}
 
-class CServo(val name: String, eoff: Double, gearr: Double, private val can360: Boolean, private val pd1: PIDFC, private val pd2: PIDFC, private val maxErr: Double) {
-    constructor(name: String, eoff: Double, gearr: Double, can360: Boolean, pd1: PIDFC) : this(name, eoff, gearr, can360, pd1, pd1, 0.0)
+class CServo(val name: String, eoff: Double, gearr: Double, private val can360: Boolean, private val pd: PIDFC, val pcoef: Double) {
+    constructor(name: String, eoff: Double, gearr: Double, can360: Boolean, pd1: PIDFC) : this(name, eoff, gearr, can360, pd1, 1.0)
     constructor(name: String, eoff: Double, gearr: Double, can360: Boolean) : this(name, eoff, gearr, can360, PIDFC(0.0, 0.0, 0.0, 0.0))
     constructor(name: String, eoff: Double, gearr: Double) : this(name, eoff, gearr, true)
 
@@ -23,11 +26,15 @@ class CServo(val name: String, eoff: Double, gearr: Double, private val can360: 
     var cp: Double = 0.0
     val timer = ElapsedTime()
 
+    var pt: Double = 0.0
+
     var lastErr = 0.0
     var int = 0.0
-    fun update() {
+    fun updatef(forc: Double) {
         cp = e.angle
         err = if (can360) {
+            pt = angNorm(pt)
+            cp = angNorm(cp)
             angDiff(pt, cp)
         } else {
             pt - cp
@@ -49,27 +56,36 @@ class CServo(val name: String, eoff: Double, gearr: Double, private val can360: 
             der = 0.0
             int = 0.0
         }
-        if (abs(err) > maxErr) {
-            if (err >= 0.0) {
-                s.power = sign(err) * pd1.f + err * pd1.p + der * pd1.d + int * pd1.i
-            } else {
-                s.power = sign(err) * pd2.f + err * pd2.p + der * pd2.d + int * pd2.i
-            }
-        } else {
-            s.power = 0.0
-        }
 
-        logs("CServo_${name}_pidf1", "${pd1.f} - ${pd1.p} - ${pd1.d} - ${pd1.i}")
-        logs("CServo_${name}_pidf2", "${pd2.f} - ${pd2.p} - ${pd2.d} - ${pd2.i}")
-        logs("CServo_${name}_der", der)
-        logs("CServo_${name}_Pow", s.power)
-        logs("CServo_${name}_Timer", timer.seconds())
-        logs("CServo_${name}_Enc", angNorm(cp))
-        logs("CServo_${name}_Tar", angNorm(pt))
+        val f = err * pd.p + int * pd.i + der * pd.d + sign(err) * pd.f
+        val tp = clamp(f, -1.0, 1.0) /// KOky what the zuc
+
+        s.power = (tp + if (abs(err) > 0.02) (pd.k * sign(tp)) else 0.0) + forc
+        //s.power = (tp + if (abs(err) > 0.02) (pd.k * sign(tp)) else 0.0)
+
+        if (name == "LF") {
+            log("CServo_${name}_pd", "${pd.f} - ${pd.p} - ${pd.d} - ${pd.i}")
+            log("CServo_${name}_forc", forc)
+            log("CServo_${name}_err", err)
+            log("CServo_${name}_der", der)
+            log("CServo_${name}_Pow", s.power)
+            log("CServo_${name}_Timer", timer.seconds())
+            log("CServo_${name}_Enc", cp)
+            log("CServo_${name}_Tar", pt)
+        } else {
+            logs("CServo_${name}_pd", "${pd.f} - ${pd.p} - ${pd.d} - ${pd.i}")
+            logs("CServo_${name}_err", err)
+            logs("CServo_${name}_der", der)
+            logs("CServo_${name}_Pow", s.power)
+            logs("CServo_${name}_Timer", timer.seconds())
+            logs("CServo_${name}_Enc", cp)
+            logs("CServo_${name}_Tar", pt)
+        }
         timer.reset()
     }
 
-    var pt: Double = 0.0
+    fun update() = updatef(0.0)
+
 
     fun init() {
         timer.reset()

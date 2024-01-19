@@ -7,7 +7,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 object Util {
-    const val eps = 0.001
+    const val eps = 0.00002
     @JvmStatic
     fun epsEq(o1: Double, o2: Double): Boolean {
         return abs(o1 - o2) < eps

@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode
 
-import kotlinx.coroutines.*
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
@@ -18,22 +20,24 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.ridIntake
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DIFDOWN
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DIFFDOWN
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DIFFUP
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DIFUP
+import org.firstinspires.ftc.teamcode.utils.RobotVars.AvionDeschis
+import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyDown
+import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyfDown
+import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyfUp
+import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyUp
 import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYLD
 import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYLU
 import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYRD
 import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYRU
-import org.firstinspires.ftc.teamcode.utils.RobotVars.GearaSINCHIS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.GhearaSINCHIS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.GhearaSDESCHIS
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePDown
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePUp
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePower
+import org.firstinspires.ftc.teamcode.utils.RobotVars.RBOT_POS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.RMID_POS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.RTOP_POS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.__STATUS
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 
 @Photon(maximumParallelCommands = 10)
@@ -48,27 +52,52 @@ class OpIHATEREV : LinearOpMode() {
         startma()
 
         while (!isStopRequested) {
-            if (controller.C1A == controller.JUST_PRESSED) {
-                swerve.locked = !swerve.locked
+            if (controller.C1A == controller.PRESSED) {
+                swerve.locked = true
                 swerve.move(0.1, 0.0, 0.0)
+            } else {
+                swerve.locked = false
             }
+
             if (controller.C2RB == controller.JUST_PRESSED) {
                 if (epsEq(clown.position, GhearaSDESCHIS)) {
-                    clown.position = GearaSINCHIS
+                    clown.position = GhearaSINCHIS
+                    intake.status = SNothing
                 } else {
                     clown.position = GhearaSDESCHIS
                 }
             }
             if (controller.C2Y == controller.JUST_PRESSED) {
-                if (epsEq(ridIntake.position, IntakePUp)) {
-                    intake.power = IntakePower
-                    ridIntake.position = IntakePDown
+                if (intake.status == SIntake) {
+                    intake.status = SNothing
                 } else {
-                    intake.power = 0.0
-                    ridIntake.position = IntakePUp
+                    intake.status = SIntake
                 }
             }
+            if (controller.C2A == controller.JUST_PRESSED) {
+                diffy.targetPos = DiffyUp
+                diffy.targetDiff = DiffyfUp
+            }
+            if (controller.C2X == controller.JUST_PRESSED) {
+                diffy.targetPos = DiffyUp
+                diffy.targetDiff = DiffyfDown
+            }
+            if (controller.C2B == controller.JUST_PRESSED) {
+                diffy.targetPos = DiffyDown
+                diffy.targetDiff = DiffyfUp
+                slides.setTarget(RBOT_POS)
+            }
+            val g2coef = 1.0 - 0.6 * gamepad2.right_trigger
+            if (!epsEq(gamepad2.right_stick_y.toDouble(), 0.0)) {
+                slides.power = -gamepad2.right_stick_y.toDouble() * g2coef
+            }
             if (controller.C2DU == controller.JUST_PRESSED) {
+                slides.setTarget(RTOP_POS)
+            }
+            if (controller.C2DR == controller.JUST_PRESSED) {
+                slides.setTarget(RMID_POS)
+            }
+            if (controller.C2LT == controller.JUST_PRESSED) {
                 if (epsEq(funkyL.position, FUNKYLD)) {
                     funkyL.position = FUNKYLU
                     funkyR.position = FUNKYRU
@@ -77,24 +106,21 @@ class OpIHATEREV : LinearOpMode() {
                     funkyR.position = FUNKYRD
                 }
             }
-            if (controller.C2A == controller.JUST_PRESSED) {
-                diffy.targetPos = DIFUP
-                diffy.targetDiff = DIFFUP
+            if (controller.C2RT == controller.JUST_PRESSED) {
+                avion.position = AvionDeschis
             }
-            if (controller.C2X == controller.JUST_PRESSED) {
-                diffy.targetPos = DIFUP
-                diffy.targetDiff = DIFFDOWN
-            }
-            if (controller.C2B == controller.JUST_PRESSED) {
-                diffy.targetPos = DIFDOWN
-                diffy.targetDiff = DIFFUP
+            if (controller.C2DL == controller.JUST_PRESSED) {
+                intake.status = SInvert
             }
 
+            if (__STATUS != 20) {
+                intake.status = __STATUS
+                __STATUS = 20
+            }
             moveSwerve()
             RobotFuncs.update()
         }
 
         endma()
     }
-
 }

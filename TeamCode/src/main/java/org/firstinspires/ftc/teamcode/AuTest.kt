@@ -15,8 +15,10 @@ import org.firstinspires.ftc.teamcode.AUTest.v1
 import org.firstinspires.ftc.teamcode.AUTest.v2
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.cam
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initAuto
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.localizer
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
@@ -29,16 +31,16 @@ import org.firstinspires.ftc.teamcode.utils.Vec2d
 @Config
 object AUTest {
     @JvmField
-    var sp: Pose = Pose(0.0, 0.0, 0.0)
+    var sp = Pose(0.0, 0.0, 0.0)
 
     @JvmField
-    var ep: Pose = Pose(-125.0, -22.0, 0.0)
+    var ep = Pose(250.0, 70.0, 0.0)
 
     @JvmField
-    var v1: Vec2d = Vec2d(50.0, 2.0)
+    var v1 = Vec2d(280.0, -0.1)
 
     @JvmField
-    var v2: Vec2d = Vec2d(25.0, 3.0)
+    var v2 = Vec2d(50.0, -1.7)
 
     @JvmField
     var h1: Vec2d = Vec2d()
@@ -50,10 +52,10 @@ object AUTest {
     var AINt: Int = 0
 
     @JvmField
-    var GO_TO_POS: Boolean = true
+    var GO_TO_POS: Boolean = false
 
     @JvmField
-    var LOOP: Boolean = false
+    var LOOP: Boolean = true
 }
 
 @Photon
@@ -62,7 +64,9 @@ class AuTest : LinearOpMode() {
     override fun runOpMode() {
         preinit()
         initma(this)
+        initAuto()
         waitForStart()
+        cam.stop()
         startma()
         val t1 = Trajectory(sp, 0.0, ep, v1, v2, h1)
         val t2 = Trajectory(ep, 0.0, sp, v2, v1, h1)
@@ -84,7 +88,7 @@ class AuTest : LinearOpMode() {
             } else {
                 log("ppd", pp.done)
                 if (LOOP) {
-                    if (pp.done) {
+                    if (!pp.busy) {
                         if (at == 0) {
                             log("st1", "")
                             at = 1
