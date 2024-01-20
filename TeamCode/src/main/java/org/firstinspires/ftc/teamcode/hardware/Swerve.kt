@@ -24,19 +24,18 @@ class Swerve {
     val lb = SwerveModule("LB", OFFLB)
     val rf = SwerveModule("RF", OFFRF)
     val rb = SwerveModule("RB", OFFRB)
-    val modules = arrayListOf(lf, rf, rb, lb)
+    private val modules = arrayListOf(lf, rf, rb, lb)
     // LF RF RB LB
 
-    var ws = DoubleArray(4)
-    var wa = DoubleArray(4)
-    var maxs = 0.0
-    var maintainHeading = false
+    private var ws = DoubleArray(4)
+    private var wa = DoubleArray(4)
+    private var maxs = 0.0
     var locked = false
 
     private fun getkms(kms: Double) = clamp((kms - WheelAlignStart) * (WheelAlignMax - WheelAlignMin) / (WheelAlignEnd - WheelAlignStart) + WheelAlignMin, WheelAlignMin, WheelAlignMax)
 
     val ep = ElapsedTime()
-    private fun GETKMS(i: Int) = modules[i].latentImpulse * WheelsLBias[i] + modules[i].speed * (if (modules[i].speed >= 0) WheelsFBias[i] else WheelsBBias[i])
+    private fun GETKMS(i: Int) = modules[i].latentImpulse * WheelsLBias[i] + abs(modules[i].speed) * (if (modules[i].speed >= 0) WheelsFBias[i] else WheelsBBias[i])
 
     fun update() {
         for (i in 0..3) {
@@ -45,7 +44,7 @@ class Swerve {
                     ws[i] / maxs
                 } else {
                     ws[i]
-                } * getkms(PI / 2 - abs(angDiff(modules[i].angle, angNorm(modules[i].s.e.angn + modules[i].off))))
+                } * getkms(PI / 2 - abs(angDiff(modules[i].angle, angNorm(modules[i].s.e.angle + modules[i].off))))
             } else {
                 0.0
             }
@@ -56,7 +55,7 @@ class Swerve {
             modules[i].latentImpulse = cs - li
             modules[i].angle = wa[i]
             modules[i].forcedForce = GETKMS(i)
-            log("AngDiff_$i", angDiff(modules[i].angle, angNorm(modules[i].s.e.angn + modules[i].off)))
+            log("AngDiff_$i", angDiff(modules[i].angle, angNorm(modules[i].s.e.angle + modules[i].off)))
             log("LatentImpulse_$i", modules[i].latentImpulse)
             modules[i].update()
         }
@@ -88,7 +87,7 @@ class Swerve {
             wa = doubleArrayOf(PI2, 3 * PI2, 5 * PI2, 7 * PI2)
         } else {
             ws = doubleArrayOf(hypot(b, c), hypot(b, d), hypot(a, d), hypot(a, c))
-            if (!maintainHeading) wa = doubleArrayOf(
+            wa = doubleArrayOf(
                     atan2(b, c) + if (head > 0.0) WheelULF else WheelDLF,
                     atan2(b, d) + if (head > 0.0) WheelURF else WheelDRF,
                     atan2(a, d) + if (head > 0.0) WheelURB else WheelDRB,

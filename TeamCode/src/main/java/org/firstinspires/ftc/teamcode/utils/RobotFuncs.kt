@@ -51,7 +51,6 @@ object RobotFuncs {
     lateinit var intake: Intake
     lateinit var funkyL: MServo
     lateinit var funkyR: MServo
-    lateinit var avion: MServo
     lateinit var clown: MServo
     lateinit var controlHub: LynxModule
     lateinit var expansionHub: LynxModule
@@ -88,7 +87,13 @@ object RobotFuncs {
     }
 
     @JvmStatic
+    fun log(s: String, v: Double) = log(s, String.format("%.4f", v))
+    @JvmStatic
     fun log(s: String, v: Any) = log(s, v.toString())
+
+    @JvmStatic
+    fun logs(s: String, v: Double) = if (LOG_STATUS) log(s, String.format("%.4f", v)) else {
+    }
 
     @JvmStatic
     fun logs(s: String, v: Any) = if (LOG_STATUS) log(s, v.toString()) else {
@@ -103,17 +108,6 @@ object RobotFuncs {
                 logmu.unlock()
             }
         }
-    }
-
-    @JvmStatic
-    fun log_state() {
-        logs("Local_Pose", localizer.pose)
-        logs("Local_Vel", localizer.poseVel)
-        logs("Swerve_Speed", swerve.speed)
-        logs("Swerve_Angle", swerve.angle)
-        logs("Swerve_TurnPower", swerve.turnPower)
-        logs("IntakePowerDraw", intake.intake.current)
-        log("ElapsedTime", etime)
     }
 
     @JvmStatic
@@ -177,7 +171,7 @@ object RobotFuncs {
     fun moveSwerve() {
         controller.update()
         val speed = hypot(lom.gamepad1.left_stick_x, lom.gamepad1.left_stick_y).toDouble()
-        val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2 - timmy.yaw)
+        val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2 - if (USE_FIELD_CENTRIC) timmy.yaw else 0.0)
         //val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2)
         val correctAngForce = get_angf()
         val fcoef = -(1.0 - lom.gamepad1.right_trigger * 0.6) // No clue why this has to be negative
@@ -186,9 +180,6 @@ object RobotFuncs {
 
     @JvmStatic
     fun initma(lopm: LinearOpMode) { /// Init all hardware info
-        if (nrRots == null) {
-            nrRots = HashMap()
-        }
         angt.reset()
         canInvertMotor = false
         lom = lopm
@@ -210,6 +201,7 @@ object RobotFuncs {
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
         timmy = Timmy("imu")
         controller = Controller()
+        slides = Slides()
         localizer = ThreeWheelLocalizer()
         localizer.init(LocalizerInitPos)
         _MOVE_SWERVE = MOVE_SWERVE
@@ -218,10 +210,8 @@ object RobotFuncs {
         intake = Intake()
         funkyL = MServo("FunkyL")
         funkyR = MServo("FunkyR")
-        avion = MServo("Pewpew", AvionInchis)
         clown = MServo("Clown", GhearaSDESCHIS)
         diffy = Diffy("Dif")
-        slides = Slides()
         pp = PurePursuit(swerve, localizer)
     }
 
@@ -237,12 +227,12 @@ object RobotFuncs {
     fun update() {
         swerve.update()
         intake.update()
-        //diffy.update()
-        //slides.update()
-        //localizer.update()
+        slides.update()
+        localizer.update()
         controlHub.clearBulkCache()
         //expansionHub.clearBulkCache()
-        //log_state()
+        log("Timmy", timmy.yaw)
+        log("TimmyTime", TIMMYA)
         log("0", 0.0)
         tp.put("Framerate", 1 / ep.seconds())
         ep.reset()
@@ -257,7 +247,6 @@ object RobotFuncs {
         etime.reset()
         swerve.start()
         //localizer.start()
-        diffy.init()
         at.reset()
     }
 
@@ -271,6 +260,5 @@ object RobotFuncs {
         timmy.close()
         //localizer.close()
         swerve.stop()
-        diffy.close()
     }
 }

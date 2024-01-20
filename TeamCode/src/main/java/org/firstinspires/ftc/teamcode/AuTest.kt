@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
+import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_CAMERA
 import org.firstinspires.ftc.teamcode.utils.Vec2d
 
 @Config
@@ -64,9 +65,13 @@ class AuTest : LinearOpMode() {
     override fun runOpMode() {
         preinit()
         initma(this)
-        initAuto()
+        if (USE_CAMERA) {
+            initAuto()
+        }
         waitForStart()
-        cam.stop()
+        if (USE_CAMERA) {
+            cam.stop()
+        }
         startma()
         val t1 = Trajectory(sp, 0.0, ep, v1, v2, h1)
         val t2 = Trajectory(ep, 0.0, sp, v2, v1, h1)

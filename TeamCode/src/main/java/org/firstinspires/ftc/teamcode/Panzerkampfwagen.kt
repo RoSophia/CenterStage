@@ -85,7 +85,7 @@ class Panzerkampfwagen : OpMode() {
                 crs.power = PAUER
             }
             2 -> {
-                log("pos", abe.angn)
+                log("pos", abe.angle)
             }
             3 -> {
                 mot.power = PAUER

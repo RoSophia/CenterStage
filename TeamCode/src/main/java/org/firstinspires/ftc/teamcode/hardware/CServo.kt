@@ -13,13 +13,13 @@ class PIDFC(@JvmField var p: Double, @JvmField var i: Double, @JvmField var d: D
     constructor(p: Double, i: Double, d: Double, f: Double) : this(p, i, d, f, 0.0)
 }
 
-class CServo(val name: String, eoff: Double, gearr: Double, private val can360: Boolean, private val pd: PIDFC, val pcoef: Double) {
-    constructor(name: String, eoff: Double, gearr: Double, can360: Boolean, pd1: PIDFC) : this(name, eoff, gearr, can360, pd1, 1.0)
-    constructor(name: String, eoff: Double, gearr: Double, can360: Boolean) : this(name, eoff, gearr, can360, PIDFC(0.0, 0.0, 0.0, 0.0))
-    constructor(name: String, eoff: Double, gearr: Double) : this(name, eoff, gearr, true)
+class CServo(val name: String, eoff: Double, private val can360: Boolean, private val pd: PIDFC, val pcoef: Double) {
+    constructor(name: String, eoff: Double, can360: Boolean, pd1: PIDFC) : this(name, eoff, can360, pd1, 1.0)
+    constructor(name: String, eoff: Double, can360: Boolean) : this(name, eoff, can360, PIDFC(0.0, 0.0, 0.0, 0.0))
+    constructor(name: String, eoff: Double, ) : this(name, eoff, true)
 
     private val s = MCRServo(name + "S")
-    val e = AbsEnc(name + "E", eoff, gearr)
+    val e = AbsEnc(name + "E", eoff)
 
     var err: Double = 0.0
     var der: Double = 0.0

@@ -4,34 +4,42 @@ import static java.lang.Math.PI;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.hardware.MServo;
 import org.firstinspires.ftc.teamcode.hardware.PIDFC;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Config
 public class RobotVars {
     public static boolean USE_TELE = true;
+    public static boolean USE_CAMERA = false;
     public static boolean USE_LOCALIZER = true;
+    public static boolean USE_FIELD_CENTRIC = true;
     public static boolean USE_DIFFY = true;
+    public static boolean USE_RIDICARE = false;
     public static boolean USE_DIRECTION_PID = false;
     public static boolean MOVE_SWERVE = true;
     public static boolean MOVE_SWERVE_MOTORS = true;
 
+    public static double TIMMYA = 0.5;
     public static PIDFC RidicarePid = new PIDFC(0.0035, 0.0, 0.0, 0.0, 0.2);
     public static double RidicareTime = 0.5;
     public static double RidicareLeeway = 0.5;
     public static double RidicareMaxTime = 0.1;
     public static double RidicarePower = -0.3;
+    public static String RidicareEncoderName = "LFM";
+    public static int RidicareEncoderDir = -1;
 
     public static int RBOT_POS = 1;
     public static int RMID_POS = 5;
-    public static int RTOP_POS = 300;
+    public static int RTOP_POS = 1300;
 
     public static double OFFLF = -2.4828562817478184;
     public static double OFFLB = -2.237612437685438;
     public static double OFFRF = -0.6482802389555943;
-    public static double OFFRB = -2.629242142157146;
+    public static double OFFRB = -3.533453402390716;
 
     public static PIDFC WheelPidF = new PIDFC(0.6, 0.0, 0.008, 0.0, 0.03);
     public static PIDFC WheelPidB = new PIDFC(0.6, 0.0, 0.008, 0.0, 0.03);
@@ -82,18 +90,16 @@ public class RobotVars {
     public static double SwerveHeadPidF = 0.0;
     public static double SwerveMaxPower = 1.0;
 
-    public static double SwerveMaxAngVel = 2000;
-
     public static double GhearaSDESCHIS = 0.6;
     public static double GhearaSINCHIS = 0.47;
 
-    public static double IntakePower = -0.6;
+    public static double IntakePower = -0.7;
 
     public static double IntakePStack1 = 0.51;
     public static double IntakePStack2 = 0.505;
     public static double IntakePStack3 = 0.49;
     public static double IntakePDown = 0.43;
-    public static double IntakePUp = 0.48;
+    public static double IntakePUp = 0.45;
     public static double IntakeMaxCurrent = 4100;
     public static double IntakeMaxCurrentTime = 0.3;
     public static double IntakeWaitTime = 0.1;
@@ -101,25 +107,14 @@ public class RobotVars {
     public static double IntakeWaitFallTime = 0.1;
     public static double SwerveMaxKeepAngTime = 0.1;
 
-    public static double DIFLOFF = -5.302209930930066;
-    public static double DIFROFF = -5.372551188529353;
+    public static double DLOFF = 0;
+    public static double DROFF = 0;
 
-    public static boolean CHANGE_DIFFY_POS = false;
-    public static PIDFC DiffyPid = new PIDFC(-0.2, 0.0, 0.0, -0.025);
+    public static double DiffyUp = 1.05;
+    public static double DiffyDown = 0.6;
+    public static double DiffyfUp = 0.0;
+    public static double DiffyfDown = 0.29;
 
-    public static double DiffyIntakeDownPoint = 0.5;
-    public static double DiffyIntakeDownPoint2 = 1.5;
-    public static double DIFGRAT = 1.0;
-    public static double DiffyUp = 4.8;
-    public static double DiffyDown = -0.1;
-    public static double DiffyfUp = 0.25;
-    public static double DiffyfDown = 3.39;
-    public static double DiffyIntakeUp = 0.8;
-
-    public static double FUNKYLU = 0.01;
-    public static double FUNKYLD = 0.84;
-    public static double FUNKYRU = 0.55;
-    public static double FUNKYRD = 0.0;
     public static double KMSCONF = 5;
 
     public static boolean canInvertMotor = true;
@@ -143,7 +138,6 @@ public class RobotVars {
     public static double AvionInchis = 0.26;
     public static double AvionDeschis = 0.5;
 
-
     public static Pose LocalizerInitPos = new Pose(0.0, 0.0, 0.0);
     public static Pose AutoInitPos = new Pose(0.0, 0.0, 0.0);
     public static boolean AUTO_MOVE = true;
@@ -151,16 +145,16 @@ public class RobotVars {
     public static String WheelsPerpName = "RBM";
     public static Pose WheelsPerpPos = new Pose(-13, -0.75, PI / 2);
     public static Integer WheelsPerpDir = 1;
-    public static String WheelsParRName = "LBM";
+    public static String WheelsParRName = "RFM";
     public static Pose WheelsParRPos = new Pose(-8.5, 4.75, 0.0);
-    public static Integer WheelsParRDir = -1;
-    public static String WheelsParLName = "LFM";
+    public static Integer WheelsParRDir = 1;
+    public static String WheelsParLName = "LBM";
     public static Pose WheelsParLPos = new Pose(-8.5, -4.75, 0.0);
-    public static Integer WheelsParLDir = 1;
+    public static Integer WheelsParLDir = -1;
     public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0; // Radius * 2pi / Ticks/Rev
 
-    public static Vec4 WheelsFBias = new Vec4(0.12, 0.15, 0.12, 0.12);
-    public static Vec4 WheelsBBias = new Vec4(0.12, 0.15, 0.12, 0.12);
+    public static Vec4 WheelsFBias = new Vec4(-0.06, -0.06, -0.06, -0.06);
+    public static Vec4 WheelsBBias = WheelsFBias;
     public static Vec4 WheelsLBias = new Vec4(0.0, 0.0, 0.0, 0.0);
     public static Vec4 WheelsLatentVars = new Vec4(5.0, 5.0, 5.0, 5.0);
 
@@ -169,8 +163,7 @@ public class RobotVars {
     public static int GAIN = 100;
     public static int EXPOSURE = 80;
 
-    public static Map<String, Integer> nrRots;
-
+    public static Pose InfPos = new Pose(10000000000.0, 1000000000000.0, 0.0);
 
     /*
      * Expansion:

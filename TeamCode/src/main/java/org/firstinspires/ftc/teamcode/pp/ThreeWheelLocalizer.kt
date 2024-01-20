@@ -110,43 +110,45 @@ class ThreeWheelLocalizer : Localizer {
     private var trunning: Boolean = false
 
     override fun update() {
-        val wheelPositions = listOf(
-                encoders[0].pos * WheelsTicksToCm,
-                encoders[1].pos * WheelsTicksToCm,
-                encoders[2].pos * WheelsTicksToCm)
-        logs("WheelPosParR", wheelPositions[0])
-        logs("WheelPosParL", wheelPositions[1])
-        logs("WheelPosPerp", wheelPositions[2])
+        if (USE_LOCALIZER) {
+            val wheelPositions = listOf(
+                    encoders[0].pos * WheelsTicksToCm,
+                    encoders[1].pos * WheelsTicksToCm,
+                    encoders[2].pos * WheelsTicksToCm)
+            logs("WheelPosParR", wheelPositions[0])
+            logs("WheelPosParL", wheelPositions[1])
+            logs("WheelPosPerp", wheelPositions[2])
 
-        val wheelDeltas = listOf(
-                wheelPositions[0] - lwpos[0],
-                wheelPositions[1] - lwpos[1],
-                wheelPositions[2] - lwpos[2],
-        )
-        val heading = timmy.yaw
+            val wheelDeltas = listOf(
+                    wheelPositions[0] - lwpos[0],
+                    wheelPositions[1] - lwpos[1],
+                    wheelPositions[2] - lwpos[2],
+            )
+            val heading = timmy.yaw
 
-        val robotPoseDelta = calculatePoseDelta(wheelDeltas)
-        val cpose = relativeOdometryUpdate(_pose, robotPoseDelta)
-        _pose = Pose(cpose.x, cpose.y, heading)
+            val robotPoseDelta = calculatePoseDelta(wheelDeltas)
+            val cpose = relativeOdometryUpdate(_pose, robotPoseDelta)
+            _pose = Pose(cpose.x, cpose.y, heading)
 
-        val wheelVelocities = listOf(
-                encoders[0].vel * WheelsTicksToCm,
-                encoders[1].vel * WheelsTicksToCm,
-                encoders[2].vel * WheelsTicksToCm)
-        poseVel = calculatePoseDelta(wheelVelocities)
-        logs("WheelVelParR", wheelVelocities[0])
-        logs("WheelVelParL", wheelVelocities[1])
-        logs("WheelVelPerp", wheelVelocities[2])
+            val wheelVelocities = listOf(
+                    encoders[0].vel * WheelsTicksToCm,
+                    encoders[1].vel * WheelsTicksToCm,
+                    encoders[2].vel * WheelsTicksToCm)
+            poseVel = calculatePoseDelta(wheelVelocities)
+            logs("WheelVelParR", wheelVelocities[0])
+            logs("WheelVelParL", wheelVelocities[1])
+            logs("WheelVelPerp", wheelVelocities[2])
 
-        val canvas = RobotFuncs.tp.fieldOverlay()
-        canvas.setStrokeWidth(1)
-        canvas.setStroke("#FF00C3")
-        canvas.strokeCircle(_pose.x * PP.SCALE, _pose.y * PP.SCALE, PP.robotRadius)
-        canvas.setStroke("#00FFC3")
-        canvas.strokeLine(_pose.x * PP.SCALE, _pose.y * PP.SCALE,
-                (_pose.x * PP.SCALE + PP.robotRadius * cos(_pose.h)), (_pose.y * PP.SCALE + PP.robotRadius * sin(_pose.h)))
+            val canvas = RobotFuncs.tp.fieldOverlay()
+            canvas.setStrokeWidth(1)
+            canvas.setStroke("#FF00C3")
+            canvas.strokeCircle(_pose.x * PP.SCALE, _pose.y * PP.SCALE, PP.robotRadius)
+            canvas.setStroke("#00FFC3")
+            canvas.strokeLine(_pose.x * PP.SCALE, _pose.y * PP.SCALE,
+                    (_pose.x * PP.SCALE + PP.robotRadius * cos(_pose.h)), (_pose.y * PP.SCALE + PP.robotRadius * sin(_pose.h)))
 
-        lwpos = wheelPositions
+            lwpos = wheelPositions
+        }
     }
 
     override fun init(startPos: Pose) {

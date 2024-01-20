@@ -18,7 +18,7 @@ import kotlin.math.abs
 import kotlin.math.min
 
 class SwerveModule(val name: String, eoff: Double) {
-    val s = CServo(name, eoff, SERVO_GEAR_RATIO, true,
+    val s = CServo(name, eoff, true,
             if (name[name.length - 1] == 'F')
                 WheelPidF
             else
@@ -57,9 +57,11 @@ class SwerveModule(val name: String, eoff: Double) {
     var forcedForce = 0.0
     fun update() {
         if (_MOVE_SWERVE) {
+            /*
             if (LOG_STATUS) {
                 logs("SwerveModule_${name}_Current", m.current)
             }
+            */
             s.updatef(forcedForce)
         }
     }
@@ -71,7 +73,7 @@ class SwerveModule(val name: String, eoff: Double) {
                 val vn = angNorm(v)
                 val dif = angDiff(vn, field)
                 if (!epsEq(dif, 0.0)) {
-                    val actualDif = angDiff(vn + off, s.e.angn)
+                    val actualDif = angDiff(vn + off, s.e.angle)
                     if (canInvertMotor && abs(actualDif) >= (PI / 2)) {
                         m.reverse = !m.reverse
                         off = PI - off

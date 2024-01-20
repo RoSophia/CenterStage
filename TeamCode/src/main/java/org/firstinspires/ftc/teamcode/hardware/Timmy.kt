@@ -7,9 +7,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
+import org.firstinspires.ftc.teamcode.utils.RobotVars.AvionDeschis
+import org.firstinspires.ftc.teamcode.utils.RobotVars.AvionInchis
+import org.firstinspires.ftc.teamcode.utils.RobotVars.TIMMYA
 
 class Timmy(val name: String) {
     private val imu: BNO055IMU = RobotFuncs.hardwareMap.get(BNO055IMU::class.java, name)
+    private val avion: MServo = MServo("Pewpew", AvionInchis)
 
     private val t: Thread
     private var trunning: Boolean = false
@@ -26,10 +30,15 @@ class Timmy(val name: String) {
 
     var lep: Double = 0.0
 
+    fun openAvion() {
+        avion.position = AvionDeschis
+    }
+
     init {
-        val parameters = BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+        val parameters = BNO055IMU.Parameters()
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
+        //parameters.mode = BNO055IMU.SensorMode.COMPASS
+        imu.initialize(parameters)
         initialized = true
         ep.reset()
 
@@ -41,6 +50,7 @@ class Timmy(val name: String) {
                 val y = fixed.firstAngle.toDouble()
                 yaw = y
                 yawVel = imu.angularVelocity.xRotationRate.toDouble()
+                TIMMYA = ep.seconds()
                 lep = ep.seconds()
                 ep.reset()
             }

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode
 
-import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -9,13 +7,10 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.funkyL
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.funkyR
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
@@ -23,21 +18,8 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
-import org.firstinspires.ftc.teamcode.utils.RobotVars.AvionDeschis
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyDown
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyfDown
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyfUp
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyUp
-import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYLD
-import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYLU
-import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYRD
-import org.firstinspires.ftc.teamcode.utils.RobotVars.FUNKYRU
-import org.firstinspires.ftc.teamcode.utils.RobotVars.GhearaSINCHIS
-import org.firstinspires.ftc.teamcode.utils.RobotVars.GhearaSDESCHIS
-import org.firstinspires.ftc.teamcode.utils.RobotVars.RBOT_POS
-import org.firstinspires.ftc.teamcode.utils.RobotVars.RMID_POS
-import org.firstinspires.ftc.teamcode.utils.RobotVars.RTOP_POS
-import org.firstinspires.ftc.teamcode.utils.RobotVars.__STATUS
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.timmy
+import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 
 @Photon(maximumParallelCommands = 10)
@@ -98,16 +80,7 @@ class OpIHATEREV : LinearOpMode() {
                 slides.setTarget(RMID_POS)
             }
             if (controller.C2LT == controller.JUST_PRESSED) {
-                if (epsEq(funkyL.position, FUNKYLD)) {
-                    funkyL.position = FUNKYLU
-                    funkyR.position = FUNKYRU
-                } else {
-                    funkyL.position = FUNKYLD
-                    funkyR.position = FUNKYRD
-                }
-            }
-            if (controller.C2RT == controller.JUST_PRESSED) {
-                avion.position = AvionDeschis
+                timmy.openAvion()
             }
             if (controller.C2DL == controller.JUST_PRESSED) {
                 intake.status = SInvert

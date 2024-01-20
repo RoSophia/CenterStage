@@ -30,10 +30,6 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
     operator fun times(s: Double) = Pose(x * s, y * s, h * s)
 
     override fun toString() = String.format("(%.3f, %.3f, %.3f)", x, y, h)
-
-    companion object {
-        val InfPos: Pose = Pose(10000000000000.0, 1000000000000.0, 0.0)
-    }
 }
 
 class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {

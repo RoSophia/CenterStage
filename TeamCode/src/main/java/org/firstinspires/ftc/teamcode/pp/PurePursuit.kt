@@ -39,6 +39,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.timmy
 import org.firstinspires.ftc.teamcode.utils.RobotVars.AUTO_MOVE
+import org.firstinspires.ftc.teamcode.utils.RobotVars.InfPos
 import org.firstinspires.ftc.teamcode.utils.RobotVars.LOG_STATUS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
@@ -200,7 +201,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         return ctraj[res]
     }
 
-    fun drawTraj(t: Trajectory) = draw(t, localizer.pose, Pose.InfPos, 0.0, 0.0, 0.0)
+    fun drawTraj(t: Trajectory) = draw(t, localizer.pose, InfPos, 0.0, 0.0, 0.0)
 
     fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double) {
         val canvas = RobotFuncs.tp.fieldOverlay()
