@@ -51,12 +51,11 @@ class Swerve {
             modules[i].tem = WheelsLatentVars[i]
             modules[i].speed = cs
             val li = modules[i].updateLatent()
-            log("li_$i", li)
             modules[i].latentImpulse = cs - li
             modules[i].angle = wa[i]
             modules[i].forcedForce = GETKMS(i)
-            log("AngDiff_$i", angDiff(modules[i].angle, angNorm(modules[i].s.e.angle + modules[i].off)))
-            log("LatentImpulse_$i", modules[i].latentImpulse)
+            logs("AngDiff_$i", angDiff(modules[i].angle, angNorm(modules[i].s.e.angle + modules[i].off)))
+            logs("LatentImpulse_$i", modules[i].latentImpulse)
             modules[i].update()
         }
         ep.reset()

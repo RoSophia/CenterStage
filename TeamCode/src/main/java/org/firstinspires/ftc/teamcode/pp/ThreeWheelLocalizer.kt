@@ -129,6 +129,7 @@ class ThreeWheelLocalizer : Localizer {
             val robotPoseDelta = calculatePoseDelta(wheelDeltas)
             val cpose = relativeOdometryUpdate(_pose, robotPoseDelta)
             _pose = Pose(cpose.x, cpose.y, heading)
+            log("CurPos", _pose)
 
             val wheelVelocities = listOf(
                     encoders[0].vel * WheelsTicksToCm,
