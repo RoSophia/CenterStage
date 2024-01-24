@@ -69,8 +69,8 @@ public class RobotVars {
 
     public static double PaiplainMinSat = 50.00;
     public static double PaiplainMinVal = 40.00;
-    public static double PaiplainBloo = 2.09;
-    public static double PaiplainMaxBloo = 1.00;
+    public static double PaiplainBloo = 2.7;
+    public static double PaiplainMaxBloo = 0.2;
 
     // LF RF RB LB
     public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -0.6482802389555943, -3.533453402390716, -2.237612437685438);
@@ -96,6 +96,7 @@ public class RobotVars {
     public static double GhearaSINCHIS = 0.42;
 
     public static double IntakePower = -1.0;
+    public static double IntakeOuttakePower = 0.4;
     public static Vec4 IntakeGet = new Vec4(0.38, 0.11, 0.39, 0.3); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack1 = new Vec4(0.45, 0.24, 0.40, 0.27); // Prep 1 2 Stack 1 2
@@ -112,36 +113,36 @@ public class RobotVars {
 
     public static boolean AutoRed = true;
     public static int AutoMinBlocksRed = 20;
-    public static int AutoMinBlocksBlue = 25;
+    public static int AutoMinBlocksBlue = 45;
     public static int AutoResult = 1;
 
     public static boolean __LOG_STATUS = false;
 
     public static double SERVO_GEAR_RATIO = 1.000;
 
-    public static double AvionInchis = 0.38;
-    public static double AvionDeschis = 0.52;
+    public static double AvionInchis = 0.32;
+    public static double AvionDeschis = 0.48;
 
     public static double WheelsAlignMin = 0.60;
     public static double WheelsAlignMax = 1.00;
     public static double WheelsAlignStart = PI / 2 - PI / 4;
     public static double WheelsAlignEnd = PI / 2 - PI / 8;
 
-    public static String WheelsPerpName = "RBM";
+    public static String WheelsPerpName = "LBM";
     public static Pose WheelsPerpPos = new Pose(-13.5, 1.2, PI / 2);
     public static Integer WheelsPerpDir = 1;
     public static String WheelsParRName = "RFM";
     public static Pose WheelsParRPos = new Pose(-8.15, -4.35, 0.0);
     public static Integer WheelsParRDir = 1;
-    public static String WheelsParLName = "LBM";
+    public static String WheelsParLName = "RBM";
     public static Pose WheelsParLPos = new Pose(-8.15, 5.2, 0.0);
     public static Integer WheelsParLDir = -1;
     public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0; // Radius * 2pi / Ticks/Rev
 
     public static String CameraName = "Anticamera";
     public static OpenCvCameraRotation CameraOrientation = OpenCvCameraRotation.UPSIDE_DOWN;
-    public static int CameraGain = 70;
-    public static int CameraExposure = 80;
+    public static int CameraGain = 60;
+    public static int CameraExposure = 60;
 
     public static double EncoderPowerFuckery = 0.06;
     public static double EncoderFUCKFUCKFUCK = -0.0;

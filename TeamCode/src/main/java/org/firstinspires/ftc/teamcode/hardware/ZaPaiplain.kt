@@ -71,7 +71,7 @@ object CameraControls {
     var LUT: Int = 19
 
     @JvmField
-    var XOFF: Int = 15
+    var XOFF: Int = 0
 
     @JvmField
     var YOFF: Int = 20

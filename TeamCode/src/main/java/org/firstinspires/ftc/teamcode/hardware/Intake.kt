@@ -65,7 +65,7 @@ class Intake {
                 SPStack2 -> sint(IntakeStack2, 0)
                 SStack3 -> sint(IntakeStack3, 1)
                 SPStack3 -> sint(IntakeStack3, 0)
-                SInvert -> sint(IntakeGet, 1, -IntakePower / 2.0)
+                SInvert -> sint(IntakeGet, 1, IntakeOuttakePower)
                 SIdleIntake -> sint(IntakeGetUp, 0)
                 else -> {}
             }

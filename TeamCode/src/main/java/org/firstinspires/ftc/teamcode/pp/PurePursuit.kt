@@ -118,7 +118,7 @@ object PP {
     var PidTrans = PIDFC(0.4, 0.0, 0.0, 0.0) // Trans rights
 
     @JvmField
-    var PidLong = PIDFC(0.2, 0.0, 0.0, 0.0)
+    var PidLong = PIDFC(0.4, 0.0, 0.0, 0.0)
 
     @JvmField
     var PidFinalTrans = PIDFC(0.12, 0.0, 0.0, 0.04)
