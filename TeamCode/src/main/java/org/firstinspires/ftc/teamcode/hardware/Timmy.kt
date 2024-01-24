@@ -1,22 +1,14 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.hardware.bosch.BNO055IMU
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
-import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
-import kotlinx.coroutines.sync.Mutex
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
-import org.firstinspires.ftc.teamcode.utils.RobotVars.AvionDeschis
-import org.firstinspires.ftc.teamcode.utils.RobotVars.AvionInchis
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TIMMYA
+import org.firstinspires.ftc.teamcode.utils.RobotVars.TIMMYOFF
 
 class Timmy(val name: String) {
-    private val imu: IMU = RobotFuncs.hardwareMap.get(IMU::class.java, name)
-    private val avion: MServo = MServo("Pewpew", AvionInchis)
+    private val imu: BNO055IMU = RobotFuncs.hardwareMap.get(BNO055IMU::class.java, name)
 
     private val t: Thread
     private var trunning: Boolean = false
@@ -24,18 +16,17 @@ class Timmy(val name: String) {
 
     var yaw: Double = 0.0
     var yawVel: Double = 0.0
+    var localizerAccessed = false
 
     val ep = ElapsedTime()
 
     var lep: Double = 0.0
 
-    fun openAvion() {
-        avion.position = AvionDeschis
-    }
-
     init {
-        imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)))
-        imu.resetYaw()
+        val parameters = BNO055IMU.Parameters()
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
+        //parameters.mode = BNO055IMU.SensorMode.COMPASS
+        imu.initialize(parameters)
         initialized = true
         ep.reset()
 
@@ -43,9 +34,11 @@ class Timmy(val name: String) {
             val ep = ElapsedTime()
             ep.reset()
             while (trunning && !KILLALL) {
-                val angles = imu.robotYawPitchRollAngles
-                yaw = angles.getYaw(AngleUnit.RADIANS)
-                yawVel = imu.getRobotAngularVelocity(AngleUnit.RADIANS).xRotationRate.toDouble()
+                val fixed = imu.angularOrientation
+                val y = fixed.firstAngle.toDouble() - TIMMYOFF
+                yaw = y
+                localizerAccessed = false
+                yawVel = imu.angularVelocity.xRotationRate.toDouble()
                 TIMMYA = ep.seconds()
                 lep = ep.seconds()
                 ep.reset()
@@ -73,8 +66,5 @@ class Timmy(val name: String) {
             imu.close()
             initialized = false
         }
-        logs("Timmy_${name}_Status", "Close")
     }
-
-
 }

@@ -152,7 +152,7 @@ object Auto10Lini {
 }
 
 @Photon
-@Autonomous(name = "አውራ ጎዳና ከአስር መንገዶች ጋር")
+//@Autonomous(name = "አውራ ጎዳና ከአስር መንገዶች ጋር")
 class AutoStradaCu10Linii : LinearOpMode() {
     private lateinit var peruTraj: Trajectory
     private lateinit var preloadTraj: Trajectory
@@ -280,7 +280,6 @@ class AutoStradaCu10Linii : LinearOpMode() {
 
         while (!isStopRequested) {
             if (justDraw) {
-                controller.update()
                 moveSwerve()
                 log("Cpos", localizer.pose)
                 getTrajectories()

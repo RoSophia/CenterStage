@@ -2,23 +2,24 @@ package org.firstinspires.ftc.teamcode.auto
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.Auto10Lini
+import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.colours
 import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.leftPos
 import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.midPos
 import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.parkPos
 import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.putPos
 import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.rightPos
+import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.stackOffset
 import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.stackPos
+import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.stackPos2
 import org.firstinspires.ftc.teamcode.hardware.Intakes
 import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
-import org.firstinspires.ftc.teamcode.utils.RobotVars
+import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Vec2d
 import java.util.Vector
 
@@ -34,49 +35,71 @@ class TSE(val type: Int, val initActio: () -> Unit, val checkDone: () -> Boolean
 object MKMKMKMKMKMKM {
     @JvmField
     var leftPos = TrajCoef(
-            Pose(-82.0, 6.0, 1.57),
+            Pose(-90.0, 10.0, 1.57),
+            Vec2d(0.0, 0.0),
+            0.7
     )
 
     @JvmField
     var midPos = TrajCoef(
             Pose(-122.0, -11.0, 0.0),
             Vec2d(50.0, 2.0),
-            Vec2d(25.0, 3.0)
+            Vec2d(25.0, 3.0),
+            Vec2d(),
+            0.6
     )
 
     @JvmField
     var rightPos = TrajCoef(
-            Pose(-82.0, -13.0, -1.57)
+            Pose(-90.0, -13.0, -1.57),
+            0.6
     )
 
     @JvmField
     var stackPos = TrajCoef(
-            Pose(-128.0, 55.0, 1.57)
+            Pose(-130.0, 60.0, 1.57),
+            0.8
+    )
+
+    @JvmField
+    var stackPos2 = TrajCoef(
+            Pose(-130.0, 60.0, 1.57),
+            Vec2d(100.0, -3.5),
+            Vec2d(100.0, -1.35),
+            0.8
     )
 
     @JvmField
     var putPos = TrajCoef(
             stackPos.ep,
-            Pose(-54.0, -235.0, 1.57),
-            Vec2d(230.0, 4.6),
-            Vec2d(100.0, 2.34)
+            Pose(-54.0, -220.0, 1.57),
+            Vec2d(200.0, 4.3),
+            Vec2d(80.0, 2.34)
     )
 
     @JvmField
     var parkPos = TrajCoef(
-            Pose(-80.0, -235.0, 1.57)
+            Pose(-90.0, -210.0, 1.57)
     )
+
+    @JvmField
+    var stackOffset = Pose(0.0, 2.0, 0.0)
+
+    @JvmField
+    var NumCycles = 3
+
+    val colours = arrayOf("#254E70", "#37718E", "#8EE3EF", "#AEF3E7", "#F6BD60", "#F7EDE2", "#F5CAC3", "#84A59D", "#F28482", "#19535F", "#0B7A75", "#D7C9AA", "#7B2D26", "#F0F3F5")
 }
 
 class TrajectorySequence {
-    val steps = Vector<TSE>()
-    val stimer = ElapsedTime()
+    private val steps = Vector<TSE>()
+    private val stimer = ElapsedTime()
 
     fun draw() {
-        for (s in steps) {
+        for ((si, s) in steps.withIndex()) {
             if (s.type == 1) {
                 if (s.traj != null) {
-                    pp.drawTraj(s.traj)
+                    pp.drawTraj(s.traj, colours[si % colours.size])
                 }
             }
         }
@@ -106,8 +129,8 @@ class TrajectorySequence {
                 ))
     }
 
-    var ls = 0
-    var e = TSE(10, {}, { true })
+    private var ls = 0
+    private var e = TSE(10, {}, { true })
 
     fun reset() {
         ls = 0
@@ -161,33 +184,42 @@ class Cele10Traiectorii {
 
         ts.addTrajectory(stackTraj)
         ts.addAction { intake.status = Intakes.SStack1 }
-        ts.sleep(0.5)
+        ts.sleep(0.4)
 
         val putTraj = Trajectory(putPos)
-        putTraj.addActionS(0.0) { intake.status = Intakes.SNothing; clown.position = RobotVars.GhearaSINCHIS }
-        putTraj.addActionE(100.0) { diffy.targetPos = RobotVars.DiffyUp }
-
+        putTraj.addActionS(50.0) { intake.status = Intakes.SIntake }
+        putTraj.addActionS(100.0) { intake.status = Intakes.SNothing; clown.position = GhearaSINCHIS }
+        putTraj.addActionE(100.0) { diffy.targetPos = DiffyUp }
         ts.addTrajectory(putTraj)
+        ts.addAction { clown.position = GhearaSDESCHIS }
 
-        val stackTraj2 = Trajectory(stackPos)
-        stackTraj2.addActionS(0.0) { clown.position = RobotVars.GhearaSDESCHIS }
-        stackTraj2.addActionS(80.0) { clown.position = RobotVars.GhearaSINCHIS; diffy.targetPos = RobotVars.DiffyDown }
-        stackTraj2.addActionS(0.0) { intake.status = Intakes.SNothing }
-        stackTraj2.addActionE(30.0) { intake.status = Intakes.SPStack2 }
-        stackTraj2.addActionE(0.0) { intake.status = Intakes.SStack2 }
+        for (i in 0 until ncycle - 1) {
+            stackPos2.sp = putTraj.end
+            var cs = stackPos2.duplicate()
+            cs.sp += stackOffset * i.toDouble()
+            cs.ep += stackOffset * i.toDouble()
+            val stackTraj2 = Trajectory(cs)
+            stackTraj2.addActionS(80.0) { clown.position = GhearaSINCHIS; diffy.targetPos = DiffyDown }
+            stackTraj2.addActionS(0.0) { intake.status = Intakes.SNothing }
+            stackTraj2.addActionE(30.0) { intake.status = Intakes.SPStack2 }
+            stackTraj2.addActionE(0.0) { intake.status = Intakes.SStack2 }
 
-        ts.addTrajectory(stackTraj2)
-        ts.addAction { intake.status = Intakes.SNothing; clown.position = RobotVars.GhearaSINCHIS }
+            ts.addTrajectory(stackTraj2)
+            ts.addAction { intake.status = Intakes.SNothing; clown.position = GhearaSINCHIS }
 
-        val putTraj2 = Trajectory(putPos)
-        putTraj2.addActionE(100.0) { diffy.targetPos = RobotVars.DiffyUp }
-        putTraj2.addActionE(0.0) { clown.position = RobotVars.GhearaSDESCHIS }
+            cs = putPos.duplicate()
+            cs.sp += stackOffset * i.toDouble()
+            cs.ep += stackOffset * i.toDouble()
+            val putTraj2 = Trajectory(cs)
+            putTraj2.addActionE(100.0) { diffy.targetPos = DiffyUp }
+            ts.addTrajectory(putTraj2)
+            ts.addAction { clown.position = GhearaSDESCHIS }
+        }
 
-        ts.addTrajectory(putTraj2)
-
+        parkPos.sp = putPos.ep
         val goPark = Trajectory(parkPos)
-        goPark.addActionS(0.0) { clown.position = RobotVars.GhearaSDESCHIS }
-        goPark.addActionS(70.0) { diffy.targetPos = RobotVars.DiffyDown }
+        goPark.addActionS(0.0) { clown.position = GhearaSDESCHIS }
+        goPark.addActionS(70.0) { diffy.targetPos = DiffyDown }
         ts.addTrajectory(goPark)
 
         return ts

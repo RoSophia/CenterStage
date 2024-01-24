@@ -63,24 +63,14 @@ class CServo(val name: String, eoff: Double, private val can360: Boolean, privat
         s.power = (tp + if (abs(err) > 0.02) (pd.k * sign(tp)) else 0.0) + forc
         //s.power = (tp + if (abs(err) > 0.02) (pd.k * sign(tp)) else 0.0)
 
-        if (name == "LF") {
-            log("CServo_${name}_pd", "${pd.f} - ${pd.p} - ${pd.d} - ${pd.i}")
-            log("CServo_${name}_forc", forc)
-            log("CServo_${name}_err", err)
-            log("CServo_${name}_der", der)
-            log("CServo_${name}_Pow", s.power)
-            log("CServo_${name}_Timer", timer.seconds())
-            log("CServo_${name}_Enc", cp)
-            log("CServo_${name}_Tar", pt)
-        } else {
-            logs("CServo_${name}_pd", "${pd.f} - ${pd.p} - ${pd.d} - ${pd.i}")
-            logs("CServo_${name}_err", err)
-            logs("CServo_${name}_der", der)
-            logs("CServo_${name}_Pow", s.power)
-            logs("CServo_${name}_Timer", timer.seconds())
-            logs("CServo_${name}_Enc", cp)
-            logs("CServo_${name}_Tar", pt)
-        }
+        /*
+        logs("CServo_${name}_pd", "${pd.f} - ${pd.p} - ${pd.d} - ${pd.i}")
+        logs("CServo_${name}_err", err)
+        logs("CServo_${name}_der", der)
+        logs("CServo_${name}_Pow", s.power)
+        logs("CServo_${name}_Timer", timer.seconds())
+        logs("CServo_${name}_Enc", cp)
+        logs("CServo_${name}_Tar", pt)*/
         timer.reset()
     }
 

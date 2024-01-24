@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
@@ -49,6 +50,19 @@ class OpIHATEREV : LinearOpMode() {
                     clown.position = GhearaSDESCHIS
                 }
             }
+            if (controller.C2X == controller.JUST_PRESSED) {
+                intake.status = SNothing
+            }
+            if (controller.C2Y == controller.JUST_PRESSED) {
+                intake.status = SINTNIITNT
+            }
+            if (controller.C2A == controller.JUST_PRESSED) {
+                intake.status = SINTNIITNT2
+            }
+            if (controller.C2B == controller.JUST_PRESSED) {
+                intake.status = SIntake
+            }
+            /*
             if (controller.C2Y == controller.JUST_PRESSED) {
                 if (intake.status == SIntake) {
                     intake.status = SNothing
@@ -68,7 +82,7 @@ class OpIHATEREV : LinearOpMode() {
                 diffy.targetPos = DiffyDown
                 diffy.targetDiff = DiffyfUp
                 slides.setTarget(RBOT_POS)
-            }
+            }*/
             val g2coef = 1.0 - 0.6 * gamepad2.right_trigger
             if (!epsEq(gamepad2.right_stick_y.toDouble(), 0.0)) {
                 slides.power = -gamepad2.right_stick_y.toDouble() * g2coef
@@ -80,7 +94,7 @@ class OpIHATEREV : LinearOpMode() {
                 slides.setTarget(RMID_POS)
             }
             if (controller.C2LT == controller.JUST_PRESSED) {
-                timmy.openAvion()
+                avion.position = AvionDeschis
             }
             if (controller.C2DL == controller.JUST_PRESSED) {
                 intake.status = SInvert

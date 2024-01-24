@@ -15,7 +15,6 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sin
 
 
@@ -32,7 +31,7 @@ class Swerve {
     private var maxs = 0.0
     var locked = false
 
-    private fun getkms(kms: Double) = clamp((kms - WheelAlignStart) * (WheelAlignMax - WheelAlignMin) / (WheelAlignEnd - WheelAlignStart) + WheelAlignMin, WheelAlignMin, WheelAlignMax)
+    private fun getkms(kms: Double) = clamp((kms - WheelsAlignStart) * (WheelsAlignMax - WheelsAlignMin) / (WheelsAlignEnd - WheelsAlignStart) + WheelsAlignMin, WheelsAlignMin, WheelsAlignMax)
 
     val ep = ElapsedTime()
     private fun GETKMS(i: Int) = modules[i].latentImpulse * WheelsLBias[i] + abs(modules[i].speed) * (if (modules[i].speed >= 0) WheelsFBias[i] else WheelsBBias[i])
@@ -49,11 +48,13 @@ class Swerve {
                 0.0
             }
             modules[i].tem = WheelsLatentVars[i]
-            modules[i].speed = cs
             val li = modules[i].updateLatent()
             modules[i].latentImpulse = cs - li
             modules[i].angle = wa[i]
+            modules[i].speed = cs
             modules[i].forcedForce = GETKMS(i)
+            logs("SwerveSpeed_$i", modules[i].speed)
+            logs("SwerveAngle_$i", modules[i].angle)
             logs("AngDiff_$i", angDiff(modules[i].angle, angNorm(modules[i].s.e.angle + modules[i].off)))
             logs("LatentImpulse_$i", modules[i].latentImpulse)
             modules[i].update()
@@ -87,10 +88,10 @@ class Swerve {
         } else {
             ws = doubleArrayOf(hypot(b, c), hypot(b, d), hypot(a, d), hypot(a, c))
             wa = doubleArrayOf(
-                    atan2(b, c) + if (head > 0.0) WheelULF else WheelDLF,
-                    atan2(b, d) + if (head > 0.0) WheelURF else WheelDRF,
-                    atan2(a, d) + if (head > 0.0) WheelURB else WheelDRB,
-                    atan2(a, c) + if (head > 0.0) WheelULB else WheelDLB)
+                    atan2(b, c),
+                    atan2(b, d),
+                    atan2(a, d),
+                    atan2(a, c))
         }
 
         maxs = max(ws[0], max(ws[1], max(ws[2], ws[3])))

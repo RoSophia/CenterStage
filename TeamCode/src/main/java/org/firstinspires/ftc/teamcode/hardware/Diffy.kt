@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_DIFFY
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 
 class Diffy(name: String) {
-    val LS = MServo(name + "LS", true)
-    val RS = MServo(name + "RS", false)
+    val LS = MServo(name + "LS", true, 0.3)
+    val RS = MServo(name + "RS", false, 0.3)
 
     fun updateTarget() {
         if (USE_DIFFY) {

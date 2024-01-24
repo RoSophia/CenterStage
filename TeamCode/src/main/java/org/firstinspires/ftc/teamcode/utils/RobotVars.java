@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import static org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack1;
+import static org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1;
 import static java.lang.Math.PI;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.hardware.MServo;
 import org.firstinspires.ftc.teamcode.hardware.PIDFC;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Config
 public class RobotVars {
@@ -24,6 +22,7 @@ public class RobotVars {
     public static boolean MOVE_SWERVE_MOTORS = true;
 
     public static double TIMMYA = 0.5;
+    public static double TIMMYOFF = 0.0;
     public static PIDFC RidicarePid = new PIDFC(0.0035, 0.0, 0.0, 0.0, 0.2);
     public static double RidicareTime = 0.5;
     public static double RidicareLeeway = 0.5;
@@ -41,8 +40,6 @@ public class RobotVars {
     public static double OFFRF = -0.6482802389555943;
     public static double OFFRB = -3.533453402390716;
 
-    public static PIDFC WheelPidF = new PIDFC(0.6, 0.0, 0.008, 0.0, 0.03);
-    public static PIDFC WheelPidB = new PIDFC(0.6, 0.0, 0.008, 0.0, 0.03);
     /*
     public static PIDFC WheelPidLFF = new PIDFC(0.34, 0.0, 0.004, 0.03);
     public static PIDFC WheelPidLBF = new PIDFC(0.34, 0.0, 0.004, 0.03);
@@ -60,11 +57,6 @@ public class RobotVars {
     public static PIDFC WheelPidRBF = new PIDFC(0.4, 0.0, 0.003, 0.0, 0.02);
     */
 
-    public static double WheelAlignMin = 0.60;
-    public static double WheelAlignMax = 1.00;
-    public static double WheelAlignStart = PI / 2 - PI / 4;
-    public static double WheelAlignEnd = PI / 2 - PI / 8;
-
     public static double PaiplainMinSat = 100.00;
     public static double PaiplainMinVel = 100.00;
     public static double PaiplainRed = 0.00;
@@ -73,16 +65,6 @@ public class RobotVars {
     public static double PaiplainMaxBloo = 1.00;
 
     public static int __STATUS = 20;
-    public static double WheelMaxErr = 0.00;
-
-    public static double WheelULF = -0.0;
-    public static double WheelDLF = -0.0;
-    public static double WheelULB = -0.0;
-    public static double WheelDLB = -0.0;
-    public static double WheelURF = -0.0;
-    public static double WheelDRF = -0.0;
-    public static double WheelURB = -0.0;
-    public static double WheelDRB = -0.0;
 
     public static double SwerveHeadPidP = 1.0;
     public static double SwerveHeadPidI = 0.0;
@@ -94,17 +76,16 @@ public class RobotVars {
     public static double GhearaSINCHIS = 0.47;
 
     public static double IntakePower = -0.7;
-
-    public static double IntakePStack1 = 0.51;
-    public static double IntakePStack2 = 0.505;
-    public static double IntakePStack3 = 0.49;
-    public static double IntakePDown = 0.43;
+    public static double IntakePowerStack = -1.0;
+    public static double IntakePrepDif = 0.2;
+    public static double IntakePStack1 = 0.504;
+    public static double IntakePStack2 = 0.46;
+    public static double IntakePStack3 = 0.418;
+    public static double IntakePDown = 0.42;
     public static double IntakePUp = 0.45;
-    public static double IntakeMaxCurrent = 4100;
-    public static double IntakeMaxCurrentTime = 0.3;
-    public static double IntakeWaitTime = 0.1;
-
+    public static double IntakeWaitTime = 20.1;
     public static double IntakeWaitFallTime = 0.1;
+
     public static double SwerveMaxKeepAngTime = 0.1;
 
     public static double DLOFF = 0;
@@ -126,6 +107,9 @@ public class RobotVars {
     public static int AutoMinBlocksBlue = 20;
     public static int AutoResult = 0;
 
+    public static int SINTNIITNT = SPStack1;
+    public static int SINTNIITNT2 = SStack1;
+
     public static double SwerveAngP = -0.38;
 
     public static boolean LOG_STATUS = false;
@@ -142,18 +126,27 @@ public class RobotVars {
     public static Pose AutoInitPos = new Pose(0.0, 0.0, 0.0);
     public static boolean AUTO_MOVE = true;
 
+    public static double WheelsAlignMin = 0.60;
+    public static double WheelsAlignMax = 1.00;
+    public static double WheelsAlignStart = PI / 2 - PI / 4;
+    public static double WheelsAlignEnd = PI / 2 - PI / 8;
+
+    public static PIDFC WheelsPidF = new PIDFC(0.6, 0.0, 0.008, 0.0, 0.03);
+    public static PIDFC WheelsPidB = new PIDFC(0.6, 0.0, 0.008, 0.0, 0.03);
+    public static double WheelsMaxErr = 0.00;
+
     public static String WheelsPerpName = "RBM";
-    public static Pose WheelsPerpPos = new Pose(-13, -0.75, PI / 2);
+    public static Pose WheelsPerpPos = new Pose(-13, 1.8, PI / 2);
     public static Integer WheelsPerpDir = 1;
     public static String WheelsParRName = "RFM";
-    public static Pose WheelsParRPos = new Pose(-8.5, 4.75, 0.0);
+    public static Pose WheelsParRPos = new Pose(-8, -4.5, 0.0);
     public static Integer WheelsParRDir = 1;
     public static String WheelsParLName = "LBM";
-    public static Pose WheelsParLPos = new Pose(-8.5, -4.75, 0.0);
+    public static Pose WheelsParLPos = new Pose(-8, 5, 0.0);
     public static Integer WheelsParLDir = -1;
     public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0; // Radius * 2pi / Ticks/Rev
 
-    public static Vec4 WheelsFBias = new Vec4(-0.06, -0.06, -0.06, -0.06);
+    public static Vec4 WheelsFBias = new Vec4(-0.02, -0.02, -0.02, -0.02);
     public static Vec4 WheelsBBias = WheelsFBias;
     public static Vec4 WheelsLBias = new Vec4(0.0, 0.0, 0.0, 0.0);
     public static Vec4 WheelsLatentVars = new Vec4(5.0, 5.0, 5.0, 5.0);

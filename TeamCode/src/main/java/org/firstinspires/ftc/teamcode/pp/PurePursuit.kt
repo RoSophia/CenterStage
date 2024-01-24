@@ -1,23 +1,20 @@
 package org.firstinspires.ftc.teamcode.pp
 
-import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.util.ElapsedTime
-import com.sun.tools.javac.comp.Check
 import org.firstinspires.ftc.teamcode.hardware.PIDFC
 import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.pp.PP.AR
-import org.firstinspires.ftc.teamcode.pp.PP.AnglePid
+import org.firstinspires.ftc.teamcode.pp.PP.PidAngle
 import org.firstinspires.ftc.teamcode.pp.PP.CATSAMEARGAINFATACRED
 import org.firstinspires.ftc.teamcode.pp.PP.Checkpoints
-import org.firstinspires.ftc.teamcode.pp.PP.FinalLongPID
-import org.firstinspires.ftc.teamcode.pp.PP.FinalTransPID
+import org.firstinspires.ftc.teamcode.pp.PP.PidFinalLong
+import org.firstinspires.ftc.teamcode.pp.PP.PidFinalTrans
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_DIST
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_HEAD
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_HEAD_VEL
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_VEL
-import org.firstinspires.ftc.teamcode.pp.PP.LongPID
+import org.firstinspires.ftc.teamcode.pp.PP.PidLong
 import org.firstinspires.ftc.teamcode.pp.PP.LookaheadScale
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_ACC
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_TIME
@@ -29,7 +26,7 @@ import org.firstinspires.ftc.teamcode.pp.PP.PeruMax
 import org.firstinspires.ftc.teamcode.pp.PP.SCALE
 import org.firstinspires.ftc.teamcode.pp.PP.SPC
 import org.firstinspires.ftc.teamcode.pp.PP.TSC
-import org.firstinspires.ftc.teamcode.pp.PP.TransPID
+import org.firstinspires.ftc.teamcode.pp.PP.PidTrans
 import org.firstinspires.ftc.teamcode.pp.PP.lkr
 import org.firstinspires.ftc.teamcode.utils.PID
 import org.firstinspires.ftc.teamcode.utils.Pose
@@ -69,17 +66,16 @@ object PP {
     var HAPPY_VEL: Double = 0.3
 
     @JvmField
-    var HAPPY_DIST: Double = 1.4
+    var HAPPY_DIST: Double = 4.0
 
     @JvmField
-    var HAPPY_HEAD: Double = 0.08
+    var HAPPY_HEAD: Double = 0.11
 
     @JvmField
     var HAPPY_HEAD_VEL: Double = 0.02
 
     @JvmField
-    var MAX_TIME: Double = 1.0
-    //var MAX_TIME: Double = 3.0
+    var MAX_TIME: Double = 3.0
 
     @JvmField
     var TSC: Double = 1.0
@@ -100,34 +96,34 @@ object PP {
     var MAX_VEL = 20.0
 
     @JvmField
-    var MAX_FRACTION = 1.0
+    var MAX_FRACTION = 1.4
 
     @JvmField
     var PeruStart: Double = 10.0
 
     @JvmField
-    var PeruEnd: Double = 50.0
+    var PeruEnd: Double = 40.0
 
     @JvmField
-    var PeruMin: Double = 0.6
+    var PeruMin: Double = 0.3
 
     @JvmField
     var PeruMax: Double = 1.0
 
     @JvmField
-    var TransPID = PIDFC(1.0, 0.0, 0.0, 0.2) // Trans rights
+    var PidTrans = PIDFC(2.0, 0.0, 0.0, 0.2) // Trans rights
 
     @JvmField
-    var LongPID = PIDFC(1.0, 0.0, 0.0, 0.2)
+    var PidLong = PIDFC(1.0, 0.0, 0.0, 0.2)
 
     @JvmField
-    var FinalTransPID = PIDFC(1.0, 0.0, 0.0, 0.0)
+    var PidFinalTrans = PIDFC(2.0, 0.0, 0.0, 0.0)
 
     @JvmField
-    var FinalLongPID = PIDFC(1.0, 0.0, 0.0, 0.0)
+    var PidFinalLong = PIDFC(1.0, 0.0, 0.0, 0.0)
 
     @JvmField
-    var AnglePid = PIDFC(1.7, 0.0, 0.0, 0.0)
+    var PidAngle = PIDFC(1.2, 0.0, 0.0, 0.0)
 
     @JvmField
     var Checkpoints: Int = 2000
@@ -139,8 +135,7 @@ object PP {
     var CATSAMEARGAINFATACRED: Double = 0.0
 
     @JvmField
-    var LookaheadScale: Vec2d = Vec2d(60.0, 50.0)
-    //var LookaheadScale: Vec2d = Vec2d(30.0, 20.0)
+    var LookaheadScale: Vec2d = Vec2d(60.0, 30.0)
 }
 
 class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) {
@@ -201,12 +196,14 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         return ctraj[res]
     }
 
-    fun drawTraj(t: Trajectory) = draw(t, localizer.pose, InfPos, 0.0, 0.0, 0.0)
+    fun drawTraj(t: Trajectory, tcol: String) = draw(t, localizer.pose, InfPos, 0.0, 0.0, 0.0, tcol)
+    fun drawTraj(t: Trajectory) = draw(t, localizer.pose, InfPos, 0.0, 0.0, 0.0, "#D7C9AA")
 
-    fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double) {
+    fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double) = draw(t, p, lk, speed, angle, tspeed, "#D7C9AA")
+    fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double, tcol: String) {
         val canvas = RobotFuncs.tp.fieldOverlay()
         canvas.setStrokeWidth(2)
-        canvas.setStroke("#4CAF50")
+        canvas.setStroke(tcol)
         for (i in 0 until Checkpoints step Checkpoints / 50) {
             canvas.strokeLine(t[i].x * SCALE, t[i].y * SCALE, t[(i + Checkpoints / 50)].x * SCALE, t[(i + Checkpoints / 50)].y * SCALE)
         }
@@ -216,19 +213,16 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         for (act in ctraj.actions) {
             canvas.strokeCircle(t[act.checkNr].x * SCALE, t[act.checkNr].y * SCALE, AR)
         }
-        /*
         canvas.setStroke("#FF00C3A0")
-        canvas.strokeCircle(p.x * SCALE, p.y * SCALE, lookaheadRadius * SCALE)*/
-        canvas.setStroke("#FF00C3A0")
-        drawVector(t[lastIndex].vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(t[lastIndex].vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(t[lastIndex].vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(t[lastIndex].vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
 
-        drawVector(t[lastIndex].vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(t[lastIndex].vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(t[lastIndex].vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(t[lastIndex].vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
         canvas.setStroke("#F0B550A0")
         canvas.strokeCircle(ctraj.end.x * SCALE, ctraj.end.y * SCALE, ctraj.peruStart * SCALE)
         canvas.setStroke("#F0B55050")
@@ -280,11 +274,11 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
     private var atLast = false
     private var atLastT = ElapsedTime()
 
-    val angleP = PID(AnglePid)
-    val transP = PID(TransPID)
-    val longP = PID(LongPID)
-    val transFP = PID(FinalTransPID)
-    val longFP = PID(FinalLongPID)
+    val angleP = PID(PidAngle)
+    val transP = PID(PidTrans)
+    val longP = PID(PidLong)
+    val transFP = PID(PidFinalTrans)
+    val longFP = PID(PidFinalLong)
 
     private fun drawVector(pos: Vec2d, v: Vec2d, col: String, sz: Int, sc: Double) {
         val cv = RobotFuncs.tp.fieldOverlay()

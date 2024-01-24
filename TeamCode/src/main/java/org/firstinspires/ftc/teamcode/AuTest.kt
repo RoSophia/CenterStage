@@ -105,7 +105,6 @@ class AuTest : LinearOpMode() {
                         }
                     }
                 }
-                controller.update()
                 if (AAAAAAAAAAAAAAAAAAA) {
                     log("PPINT", pp.intersects(sp, AINt).toString())
                     pp.startFollowTraj(Trajectory(sp, 0.0, ep, v1, v2, h1))

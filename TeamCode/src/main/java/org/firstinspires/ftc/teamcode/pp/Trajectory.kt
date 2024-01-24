@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.pp
 
-import com.sun.tools.javac.comp.Check
 import org.firstinspires.ftc.teamcode.pp.PP.Checkpoints
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_FRACTION
 import org.firstinspires.ftc.teamcode.pp.PP.PeruEnd
@@ -32,11 +31,20 @@ class Action(val checkNr: Int, val act: () -> Unit) {
 }
 
 class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1: Vec2d, @JvmField var v2: Vec2d, @JvmField var h: Vec2d, @JvmField var mf: Double, @JvmField var peru: Vec2d) {
-    constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d) : this(sp, ep, v1, v2, Vec2d(0.6, 0.95), MAX_FRACTION, Vec2d(PeruStart, PeruEnd))
+    constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d, h: Vec2d, mf: Double) : this(sp, ep, v1, v2, h, mf, Vec2d(PeruStart, PeruEnd))
+    constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d, mf: Double) : this(sp, ep, v1, v2, Vec2d(0.6, 0.95), mf)
+    constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d) : this(sp, ep, v1, v2, MAX_FRACTION)
+    constructor(sp: Pose, ep: Pose, mf: Double) : this(sp, ep, Vec2d(), Vec2d(), mf)
     constructor(sp: Pose, ep: Pose) : this(sp, ep, Vec2d(), Vec2d())
 
+    constructor(ep: Pose, v1: Vec2d, v2: Vec2d, h: Vec2d, mf: Double) : this(Pose(), ep, v1, v2, h, mf)
+    constructor(ep: Pose, v1: Vec2d, v2: Vec2d, mf: Double) : this(Pose(), ep, v1, v2, mf)
     constructor(ep: Pose, v1: Vec2d, v2: Vec2d) : this(Pose(), ep, v1, v2)
+    constructor(ep: Pose, h: Vec2d, mf: Double) : this(Pose(), ep, Vec2d(), Vec2d(), h, mf, Vec2d(PeruStart, PeruEnd))
+    constructor(ep: Pose, mf: Double) : this(Pose(), ep, mf)
     constructor(ep: Pose) : this(Pose(), ep)
+
+    fun duplicate(): TrajCoef = TrajCoef(sp, ep, v1, v2, h, mf, peru)
 }
 
 class Trajectory(val start: Pose, val initVel: Double, val end: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double) {
@@ -60,9 +68,9 @@ class Trajectory(val start: Pose, val initVel: Double, val end: Pose, v1e: Vec2d
     var actions: Vector<Action> = Vector()
     var lastCompletedAction = 0
 
-    fun addActionS(distFromEnd: Double, act: () -> Unit) {
+    fun addActionS(distFromStart: Double, act: () -> Unit) {
         for (i in 0..Checkpoints) {
-            if ((start - get(i)).dist() >= distFromEnd) {
+            if ((start - get(i)).dist() >= distFromStart) {
                 actions.add(Action(i, act))
                 actions.sortBy { it.checkNr }
                 return

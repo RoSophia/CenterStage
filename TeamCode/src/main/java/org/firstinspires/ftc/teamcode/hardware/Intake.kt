@@ -15,19 +15,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SWaitFor
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
-import org.firstinspires.ftc.teamcode.utils.RobotVars
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakeMaxCurrent
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakeMaxCurrentTime
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePDown
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePStack1
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePStack2
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePStack3
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePUp
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakePower
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakeWaitFallTime
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakeWaitTime
+import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 
 object Intakes {
@@ -48,52 +36,86 @@ object Intakes {
 }
 
 class Intake {
-    val intake = Motor("Intake", encoder = false, rev = false, overdrive = true)
-    val ridIntake = MServo("RidIntake", IntakePUp)
+    private val intake = Motor("Intake", encoder = false, rev = false, overdrive = true)
+    private val ridIntake = MServo("RidIntake", IntakePUp)
+
+    private var cstack = 0
 
     val running: Boolean
         get() = !epsEq(intake.power, 0.0)
 
-    val sttimer = ElapsedTime()
+    private val sttimer = ElapsedTime()
     var status = 0
         set(v) {
-            if (v == SNothing) {
-                ridIntake.position = IntakePUp
-                intake.power = 0.0
-            }
-            if (v == SDown) {
-                ridIntake.position = IntakePDown
-                intake.power = 0.0
-            }
-            if (v == SIntake) {
-                ridIntake.position = IntakePDown
-                intake.power = IntakePower
-            }
-            if (v == SStack1 || v == SPStack1) {
-                ridIntake.position = IntakePStack1
-            }
-            if (v == SStack2 || v == SPStack2) {
-                ridIntake.position = IntakePStack2
-            }
-            if (v == SStack3 || v == SPStack3) {
-                ridIntake.position = IntakePStack3
-            }
-            if (v == SReset2) {
-                intake.power = 0.0
-                ridIntake.position = IntakePUp
-            }
-            if (v == SInvert) {
-                ridIntake.position = IntakePDown
-                intake.power = -IntakePower
-            }
-            if (v == SGoDownForOuttake) {
-                ridIntake.position = IntakePDown
-                intake.power = 0.0
+            when (v) {
+                SNothing -> {
+                    ridIntake.position = IntakePUp
+                    intake.power = 0.0
+                }
+
+                SDown -> {
+                    ridIntake.position = IntakePDown
+                    intake.power = 0.0
+                }
+
+                SIntake -> {
+                    ridIntake.position = IntakePDown
+                    intake.power = IntakePower
+                }
+
+                SStack1 -> {
+                    ridIntake.position = IntakePStack1
+                    intake.power = IntakePowerStack
+                }
+
+                SPStack1 -> {
+                    ridIntake.position = IntakePStack1
+                    cstack = 1
+                    intake.power = 0.0
+                }
+
+                SStack2 -> {
+                    ridIntake.position = IntakePStack2
+                    intake.power = IntakePowerStack
+                }
+
+                SPStack2 -> {
+                    ridIntake.position = IntakePStack2 + IntakePrepDif
+                    cstack = 2
+                    intake.power = 0.0
+                }
+
+                SStack3 -> {
+                    ridIntake.position = IntakePStack3
+                    intake.power = IntakePower
+                }
+
+                SPStack3 -> {
+                    ridIntake.position = IntakePStack3 + IntakePrepDif
+                    cstack = 3
+                    intake.power = 0.0
+                }
+
+                SReset2 -> {
+                    intake.power = 0.0
+                    ridIntake.position = IntakePUp
+                }
+
+                SInvert -> {
+                    ridIntake.position = IntakePDown
+                    intake.power = -IntakePower
+                }
+
+                SGoDownForOuttake -> {
+                    ridIntake.position = IntakePDown
+                    intake.power = 0.0
+                }
+
+                else -> {}
             }
             field = v
-            if (v == SStack1 || v == SStack2 || v == SStack3) {
-                intake.power = IntakePower
-                field = SWaitFor
+            if (v == SPStack1 || v == SPStack2 || v == SPStack3) {
+                //field = SWaitFor
                 sttimer.reset()
             }
         }
@@ -107,7 +129,7 @@ class Intake {
             }
         } else if (status == SWaitFor) {
             if (sttimer.seconds() > IntakeWaitFallTime) {
-                status = SIntake
+                status = if (cstack == 1) SStack1 else if (cstack == 2) SStack2 else SStack3
             }
         }
     }

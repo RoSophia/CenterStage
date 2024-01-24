@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.timmy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -69,46 +70,8 @@ class ThreeWheelLocalizer : Localizer {
                 rawPoseDelta.getEntry(2, 0))
     }
 
-    /*
-    //private val thread = Thread {
-        val et = ElapsedTime()
-        et.reset()
-        while (trunning) {
-            val wheelPositions = listOf(
-                    encoders[0].pos * WheelsTicksToCm,
-                    encoders[1].pos * WheelsTicksToCm,
-                    encoders[2].pos * WheelsTicksToCm)
-            logs("WheelPosParR", wheelPositions[0])
-            logs("WheelPosParL", wheelPositions[1])
-            logs("WheelPosPerp", wheelPositions[2])
-
-            val wheelDeltas = listOf(
-                    wheelPositions[0] - lwpos[0],
-                    wheelPositions[1] - lwpos[1],
-                    wheelPositions[2] - lwpos[2],
-            )
-            val heading = timmy.yaw
-
-            val robotPoseDelta = calculatePoseDelta(wheelDeltas)
-            val cpose = relativeOdometryUpdate(_pose, robotPoseDelta)
-            _pose = Pose(cpose.x, cpose.y, heading)
-
-            val wheelVelocities = listOf(
-                    encoders[0].vel * WheelsTicksToCm,
-                    encoders[1].vel * WheelsTicksToCm,
-                    encoders[2].vel * WheelsTicksToCm)
-            poseVel = calculatePoseDelta(wheelVelocities)
-            logs("WheelVelParR", wheelVelocities[0])
-            logs("WheelVelParL", wheelVelocities[1])
-            logs("WheelVelPerp", wheelVelocities[2])
-
-            lwpos = wheelPositions
-            logs("LocalizerRefresh", et.seconds())
-            et.reset()
-        }
-    }*/
-    private var trunning: Boolean = false
-
+    var updatedWith = 1
+    var updated = 1
     override fun update() {
         if (USE_LOCALIZER) {
             val wheelPositions = listOf(
@@ -124,21 +87,28 @@ class ThreeWheelLocalizer : Localizer {
                     wheelPositions[1] - lwpos[1],
                     wheelPositions[2] - lwpos[2],
             )
-            val heading = timmy.yaw
 
             val robotPoseDelta = calculatePoseDelta(wheelDeltas)
             val cpose = relativeOdometryUpdate(_pose, robotPoseDelta)
-            _pose = Pose(cpose.x, cpose.y, heading)
+            _pose = Pose(cpose.x, cpose.y, cpose.h)
+            if (!timmy.localizerAccessed) {
+                timmy.localizerAccessed = true
+                ++updatedWith
+                //log("ph2", angNorm(timmy.yaw))
+                _pose.h = angNorm(timmy.yaw)
+            }
+            ++updated
             log("CurPos", _pose)
+            log("ph", _pose.h)
 
             val wheelVelocities = listOf(
                     encoders[0].vel * WheelsTicksToCm,
                     encoders[1].vel * WheelsTicksToCm,
                     encoders[2].vel * WheelsTicksToCm)
             poseVel = calculatePoseDelta(wheelVelocities)
-            logs("WheelVelParR", wheelVelocities[0])
-            logs("WheelVelParL", wheelVelocities[1])
-            logs("WheelVelPerp", wheelVelocities[2])
+            log("WheelVelParR", wheelVelocities[0])
+            log("WheelVelParL", wheelVelocities[1])
+            log("WheelVelPerp", wheelVelocities[2])
 
             val canvas = RobotFuncs.tp.fieldOverlay()
             canvas.setStrokeWidth(1)

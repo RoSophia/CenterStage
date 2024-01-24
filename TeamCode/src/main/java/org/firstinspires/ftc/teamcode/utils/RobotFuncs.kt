@@ -51,6 +51,7 @@ object RobotFuncs {
     lateinit var intake: Intake
     lateinit var funkyL: MServo
     lateinit var funkyR: MServo
+    lateinit var avion: MServo
     lateinit var clown: MServo
     lateinit var controlHub: LynxModule
     lateinit var expansionHub: LynxModule
@@ -92,8 +93,7 @@ object RobotFuncs {
     fun log(s: String, v: Any) = log(s, v.toString())
 
     @JvmStatic
-    fun logs(s: String, v: Double) = if (LOG_STATUS) log(s, String.format("%.4f", v)) else {
-    }
+    fun logs(s: String, v: Double) = if (LOG_STATUS) log(s, String.format("%.4f", v)) else { }
 
     @JvmStatic
     fun logs(s: String, v: Any) = if (LOG_STATUS) log(s, v.toString()) else {
@@ -170,6 +170,10 @@ object RobotFuncs {
     @JvmStatic
     fun moveSwerve() {
         controller.update()
+        if (controller.C1PS == controller.JUST_PRESSED) {
+            TIMMYOFF += timmy.yaw
+            log("ResetHeading", TIMMYOFF)
+        }
         val speed = hypot(lom.gamepad1.left_stick_x, lom.gamepad1.left_stick_y).toDouble()
         val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2 - if (USE_FIELD_CENTRIC) timmy.yaw else 0.0)
         //val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2)
@@ -183,6 +187,7 @@ object RobotFuncs {
         angt.reset()
         canInvertMotor = false
         lom = lopm
+        TIMMYOFF = 0.0
         hardwareMap = lom.hardwareMap
         val lynxModules = hardwareMap.getAll(LynxModule::class.java)
         for (module in lynxModules) {
@@ -210,6 +215,7 @@ object RobotFuncs {
         intake = Intake()
         funkyL = MServo("FunkyL")
         funkyR = MServo("FunkyR")
+        avion = MServo("Pewpew", AvionInchis)
         clown = MServo("Clown", GhearaSDESCHIS)
         diffy = Diffy("Dif")
         pp = PurePursuit(swerve, localizer)
@@ -225,16 +231,27 @@ object RobotFuncs {
 
     @JvmStatic
     fun update() {
+        val cp = ElapsedTime()
+        cp.reset()
         swerve.update()
+        logs("Profiler_Swerve", cp.seconds())
+        cp.reset()
         intake.update()
+        logs("Profiler_Intake", cp.seconds())
+        cp.reset()
         slides.update()
+        logs("Profiler_Slides", cp.seconds())
+        cp.reset()
         localizer.update()
+        logs("Profiler_Localizer", cp.seconds())
+        cp.reset()
         controlHub.clearBulkCache()
         //expansionHub.clearBulkCache()
         log("Timmy", timmy.yaw)
-        log("TimmyTime", TIMMYA)
+        logs("TimmyTime", TIMMYA)
         log("0", 0.0)
         tp.put("Framerate", 1 / ep.seconds())
+        tp.put("Elapsedtime", etime.seconds())
         ep.reset()
         send_log()
     }

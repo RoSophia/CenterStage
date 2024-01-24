@@ -24,10 +24,6 @@ class AbsEnc(private val name: String, private val off: Double) {
             val v = enc.voltage
             maxVoltage = min(max(maxVoltage, v), 3.3)
             val cv = v / maxVoltage
-            logs("AbsEnc_${name}_AcVolt", v)
-            logs("AbsEnc_${name}_MaxVolt", maxVoltage)
-            logs("AbsEnc_${name}_Volt", cv)
-            logs("AbsEnc_${name}_out", angNorm(cv * angPer01 + off))
             return angNorm(cv * angPer01 + off)
         }
 }

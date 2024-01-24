@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
-import org.firstinspires.ftc.teamcode.utils.RobotVars.LOG_STATUS
-import org.firstinspires.ftc.teamcode.utils.RobotVars.SERVO_GEAR_RATIO
 import org.firstinspires.ftc.teamcode.utils.RobotVars.SwerveMaxPower
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelMaxErr
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelPidB
-import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelPidF
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelsMaxErr
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelsPidB
+import org.firstinspires.ftc.teamcode.utils.RobotVars.WheelsPidF
 import org.firstinspires.ftc.teamcode.utils.RobotVars._MOVE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.canInvertMotor
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
@@ -20,10 +17,10 @@ import kotlin.math.min
 class SwerveModule(val name: String, eoff: Double) {
     val s = CServo(name, eoff, true,
             if (name[name.length - 1] == 'F')
-                WheelPidF
+                WheelsPidF
             else
-                WheelPidB,
-            WheelMaxErr
+                WheelsPidB,
+            WheelsMaxErr
     )
 
     /*
@@ -46,7 +43,7 @@ class SwerveModule(val name: String, eoff: Double) {
      */
 
 
-    val m = Motor(name + "M", encoder = false, rev = false, overdrive = true)
+    val m = Motor(name + "M", encoder = false, rev = name == "LF", overdrive = true)
 
     init {
         if (_MOVE_SWERVE) {
@@ -57,11 +54,6 @@ class SwerveModule(val name: String, eoff: Double) {
     var forcedForce = 0.0
     fun update() {
         if (_MOVE_SWERVE) {
-            /*
-            if (LOG_STATUS) {
-                logs("SwerveModule_${name}_Current", m.current)
-            }
-            */
             s.updatef(forcedForce)
         }
     }
@@ -80,7 +72,6 @@ class SwerveModule(val name: String, eoff: Double) {
                     }
                     s.pt = angNorm(vn + off)
                     field = v
-                    logs("ServoModule_${name}_MRever", m.reverse)
                 }
             }
         }
@@ -95,8 +86,6 @@ class SwerveModule(val name: String, eoff: Double) {
         set(v) {
             if (_MOVE_SWERVE) {
                 if (!epsEq(v, field)) {
-                    logs("ServoModule_${name}_MSpeed", v)
-                    logs("ServoModule_${name}_MRever", m.reverse)
                     m.power = v * SwerveMaxPower
                     lspeed = updateLatent()
                     ep.reset()
