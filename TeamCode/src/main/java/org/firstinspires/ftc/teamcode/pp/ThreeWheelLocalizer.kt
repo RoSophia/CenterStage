@@ -94,8 +94,11 @@ class ThreeWheelLocalizer : Localizer {
             if (!timmy.localizerAccessed) {
                 timmy.localizerAccessed = true
                 ++updatedWith
-                //log("ph2", angNorm(timmy.yaw))
-                _pose.h = angNorm(timmy.yaw)
+                if (USE_IMU_LOCALIZER) {
+                    _pose.h = angNorm(timmy.yaw)
+                } else {
+                    log("ph2", angNorm(timmy.yaw))
+                }
             }
             ++updated
             log("CurPos", _pose)
@@ -106,9 +109,9 @@ class ThreeWheelLocalizer : Localizer {
                     encoders[1].vel * WheelsTicksToCm,
                     encoders[2].vel * WheelsTicksToCm)
             poseVel = calculatePoseDelta(wheelVelocities)
-            log("WheelVelParR", wheelVelocities[0])
-            log("WheelVelParL", wheelVelocities[1])
-            log("WheelVelPerp", wheelVelocities[2])
+            logs("WheelVelParR", wheelVelocities[0])
+            logs("WheelVelParL", wheelVelocities[1])
+            logs("WheelVelPerp", wheelVelocities[2])
 
             val canvas = RobotFuncs.tp.fieldOverlay()
             canvas.setStrokeWidth(1)
@@ -132,24 +135,4 @@ class ThreeWheelLocalizer : Localizer {
             )
         }
     }
-
-    /*
-    override fun start() {
-        if (USE_LOCALIZER) {
-            trunning = true
-            thread.start()
-        }
-    }
-
-     */
-
-    /*
-    override fun close() {
-        if (USE_LOCALIZER) {
-            trunning = false
-            thread.join()
-        }
-    }
-
-     */
 }

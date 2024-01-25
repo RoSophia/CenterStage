@@ -69,7 +69,7 @@ class Intake {
                 }
 
                 SPStack1 -> {
-                    ridIntake.position = IntakePStack1
+                    ridIntake.position = IntakePStack1 + IntakePrepDif / 2.0
                     cstack = 1
                     intake.power = 0.0
                 }
@@ -102,8 +102,8 @@ class Intake {
                 }
 
                 SInvert -> {
-                    ridIntake.position = IntakePDown
-                    intake.power = -IntakePower
+                    ridIntake.position = IntakePUp
+                    intake.power = -IntakePower / 2
                 }
 
                 SGoDownForOuttake -> {
@@ -120,8 +120,8 @@ class Intake {
             }
         }
 
-    val intakeTimer = ElapsedTime()
-    var lastStatus = SNothing
+    private val intakeTimer = ElapsedTime()
+    private var lastStatus = SNothing
     fun update() {
         if (status == SReset2) {
             if (intakeTimer.seconds() > IntakeWaitTime) {

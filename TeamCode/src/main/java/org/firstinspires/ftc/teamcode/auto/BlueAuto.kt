@@ -4,13 +4,11 @@ import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.auto.MKMKMKMKMKMKM.NumCycles
-import org.firstinspires.ftc.teamcode.hardware.Intakes
 import org.firstinspires.ftc.teamcode.pp.PP.JustDraw
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.cam
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initAuto
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
@@ -24,10 +22,7 @@ class BlueAuto : LinearOpMode() {
     override fun runOpMode() {
         preinit()
         initma(this)
-        if (USE_CAMERA) {
-            initAuto()
-        }
-        intake.status = Intakes.SDown
+        initAuto()
         while (!isStarted) {
             targetPreload = AutoResult
             telemetry.addData("TargetPreload", targetPreload)
@@ -48,7 +43,9 @@ class BlueAuto : LinearOpMode() {
                 e = ast.getCycleTraj(NumCycles, false, targetPreload)
                 e.draw()
             } else {
-                e.update()
+                if (e.update()) {
+                    requestOpModeStop()
+                }
                 pp.update()
             }
             update()

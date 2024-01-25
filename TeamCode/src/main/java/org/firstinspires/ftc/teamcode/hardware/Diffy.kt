@@ -29,23 +29,9 @@ class Diffy(name: String) {
             }
         }
 
-    var lcp = -100.0
     var targetPos = 0.0
         set(v) {
             if (v != field) {
-                if (slides.pos < 0.5 && targetPos > 0.5) {
-                    clown.position = GhearaSINCHIS
-                }
-                if (slides.pos > 0.5 && targetPos < 0.5 && epsEq(clown.position, GhearaSDESCHIS)) {
-                    lcp = GhearaSDESCHIS
-                    log("DiffyUpClose", slides.pos)
-                    clown.position = GhearaSINCHIS
-                }
-                if (epsEq(lcp, GhearaSDESCHIS) && slides.pos < 0.5) {
-                    clown.position = lcp
-                    log("DiffyDownClose", slides.pos)
-                    lcp = -100.0
-                }
                 field = v
                 updateTarget()
             }

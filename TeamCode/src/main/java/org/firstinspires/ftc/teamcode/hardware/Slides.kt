@@ -14,9 +14,8 @@ class Slides {
     val pos: Int
         get() = enc.pos
 
-    fun setTarget(t: Int) {
-        p.set_target(t, RidicareTime)
-    }
+    fun setTarget(t: Int, time: Double) = p.set_target(t, time)
+    fun setTarget(t: Int) = setTarget(t, RidicareTime)
 
     var power = 0.0
         set(v) {
@@ -34,30 +33,55 @@ class Slides {
         }
 
     private var tryMove = false
+    var RIDICAREEEEEEEEEE = false
+    var richd = false
 
     val ep = ElapsedTime()
 
+    /**
+     * Eu cedez
+     */
+    fun youShouldHangYourselfNOW() {
+        richd = false
+        RIDICAREEEEEEEEEE = true
+    }
+
     fun update() {
         if (USE_RIDICARE) {
-            if (!tryMove) {
-                p.use = true
-                power = p.update()
+            if (RIDICAREEEEEEEEEE) {
+                val ep = enc.pos
+                if (ep < RidicareHaveIHangedMyself) {
+                    l.power = RidicareHANGEDMYSELF
+                    r.power = RidicareHANGEDMYSELF
+                    richd = true
+                } else if (!richd) {
+                    if (ep > RidicareIHaventHangedMyslef) {
+                        l.power = RidicareHANGINGMYSELF
+                        r.power = RidicareHANGINGMYSELF
+                        richd = false
+                    }
+                }
             } else {
-                p.use = false
-                p.update()
-                ep.reset()
+                if (!tryMove) {
+                    p.use = true
+                    power = p.update()
+                } else {
+                    p.use = false
+                    p.update()
+                    ep.reset()
+                }
+                if (ep.seconds() < RidicareMaxTime) {
+                    p.set_target(pos, 0.0)
+                }
+                log("RidicareCurPos", pos)
+                logs("RidicareTryMove", tryMove)
+                logs("RidicareTargetPower", power)
+                if (tryMove) {
+                    r.power = power
+                    l.power = power
+                }
+                tryMove = false
             }
-            if (ep.seconds() < RidicareMaxTime) {
-                p.set_target(pos, 0.0)
-            }
-            logs("RidicareCurPos", pos)
-            logs("SlidesTryMove", tryMove)
-            logs("SlidesTargetPower", power)
-            if (tryMove) {
-                r.power = power
-                l.power = power
-            }
-            tryMove = false
         } else {
             r.power = 0.0
             l.power = 0.0

@@ -66,7 +66,7 @@ object PP {
     var HAPPY_VEL: Double = 0.3
 
     @JvmField
-    var HAPPY_DIST: Double = 4.0
+    var HAPPY_DIST: Double = 3.0
 
     @JvmField
     var HAPPY_HEAD: Double = 0.11
@@ -75,7 +75,7 @@ object PP {
     var HAPPY_HEAD_VEL: Double = 0.02
 
     @JvmField
-    var MAX_TIME: Double = 3.0
+    var MAX_TIME: Double = 2.0
 
     @JvmField
     var TSC: Double = 1.0
@@ -105,7 +105,7 @@ object PP {
     var PeruEnd: Double = 40.0
 
     @JvmField
-    var PeruMin: Double = 0.3
+    var PeruMin: Double = 0.25
 
     @JvmField
     var PeruMax: Double = 1.0
@@ -135,7 +135,7 @@ object PP {
     var CATSAMEARGAINFATACRED: Double = 0.0
 
     @JvmField
-    var LookaheadScale: Vec2d = Vec2d(60.0, 30.0)
+    var LookaheadScale: Vec2d = Vec2d(60.0, 36.0)
 }
 
 class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) {
@@ -320,10 +320,10 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             val peruTP: Double
             val peruLP: Double
             if (lastIndex == Checkpoints) {
-                peruTP = min(abs(transFP.update(peruR.y)), 1.0)
+                peruTP = min(abs(transFP.update(peruR.y)), 2.0)
                 peruLP = min(abs(longFP.update(peru.x)), 1.0)
             } else {
-                peruTP = min(abs(transP.update(peruR.y)), 1.0)
+                peruTP = min(abs(transP.update(peruR.y)), 2.0)
                 peruLP = min(abs(longP.update(peru.x)), 1.0)
             }
             val peruCR = Vec2d(peruR.x * peruLP, peruR.y * peruTP)
@@ -401,6 +401,16 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             log("SWERVE_Tcoef", tcoef)
             log("SWERVE_pspeed", angPower)
             log("SWERVE_perCoef", pcoef)
+        } else {
+            if (AUTO_MOVE) {
+                swerve.move(0.0, swerve.angle, 0.0)
+                swerve.lb.speed = 0.0
+                swerve.rb.speed = 0.0
+                swerve.lf.speed = 0.0
+                swerve.rf.speed = 0.0
+            } else if (MOVE_SWERVE) {
+                moveSwerve()
+            }
         }
     }
 }

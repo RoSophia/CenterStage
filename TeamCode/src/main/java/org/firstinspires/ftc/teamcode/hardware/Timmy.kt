@@ -38,7 +38,7 @@ class Timmy(val name: String) {
                 val y = fixed.firstAngle.toDouble() - TIMMYOFF
                 yaw = y
                 localizerAccessed = false
-                yawVel = imu.angularVelocity.xRotationRate.toDouble()
+                //yawVel = imu.angularVelocity.xRotationRate.toDouble()
                 TIMMYA = ep.seconds()
                 lep = ep.seconds()
                 ep.reset()

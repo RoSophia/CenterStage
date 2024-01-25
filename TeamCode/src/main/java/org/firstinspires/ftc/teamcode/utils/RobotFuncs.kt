@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.hardware.CamGirl
 import org.firstinspires.ftc.teamcode.hardware.Controller
 import org.firstinspires.ftc.teamcode.hardware.Diffy
 import org.firstinspires.ftc.teamcode.hardware.Intake
+import org.firstinspires.ftc.teamcode.hardware.Intakes
 import org.firstinspires.ftc.teamcode.hardware.MServo
 import org.firstinspires.ftc.teamcode.hardware.Slides
 import org.firstinspires.ftc.teamcode.hardware.Swerve
@@ -223,8 +224,13 @@ object RobotFuncs {
 
     @JvmStatic
     fun initAuto() {
-        pipeline = ZaPaiplain(640, 480)
-        cam = CamGirl(CameraName, CameraOrientation, 640, 480, pipeline, streaming = true, waitForOpen = true)
+        if (USE_CAMERA) {
+            pipeline = ZaPaiplain(640, 480)
+            cam = CamGirl(CameraName, CameraOrientation, 640, 480, pipeline, streaming = true, waitForOpen = true)
+        }
+
+        clown.position = GhearaSINCHIS
+        intake.status = Intakes.SDown
     }
 
     val ep = ElapsedTime()

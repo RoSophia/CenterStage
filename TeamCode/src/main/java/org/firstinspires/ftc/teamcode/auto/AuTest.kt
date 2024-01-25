@@ -16,12 +16,10 @@ import org.firstinspires.ftc.teamcode.AUTest.v2
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.cam
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initAuto
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.localizer
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
@@ -35,13 +33,13 @@ object AUTest {
     var sp = Pose(0.0, 0.0, 0.0)
 
     @JvmField
-    var ep = Pose(250.0, 70.0, 0.0)
+    var ep = Pose(200.0, 00.0, 0.0)
 
     @JvmField
-    var v1 = Vec2d(280.0, -0.1)
+    var v1 = Vec2d(000.0, -0.1)
 
     @JvmField
-    var v2 = Vec2d(50.0, -1.7)
+    var v2 = Vec2d(00.0, -1.7)
 
     @JvmField
     var h1: Vec2d = Vec2d()
@@ -75,38 +73,30 @@ class AuTest : LinearOpMode() {
         startma()
         val t1 = Trajectory(sp, 0.0, ep, v1, v2, h1)
         val t2 = Trajectory(ep, 0.0, sp, v2, v1, h1)
-        log("T1", t1)
         var at = 0
 
         var lep = Pose()
 
         while (!isStopRequested) {
             if (GO_TO_POS) {
-                log("GO_TO", pp.ctraj)
-                log("VALS", "$ep  $lep")
                 if (ep.x != lep.x || ep.y != lep.y || lep.h != ep.h) {
-                    log("GOT_DIF", "$ep != $lep")
                     pp.startFollowTraj(Trajectory(localizer.pose, localizer.poseVel.dist(), ep))
                     lep = ep.copy()
                 }
                 pp.update()
             } else {
-                log("ppd", pp.done)
                 if (LOOP) {
                     if (!pp.busy) {
                         if (at == 0) {
-                            log("st1", "")
                             at = 1
                             pp.startFollowTraj(t1)
                         } else {
-                            log("st2", "")
                             at = 0
                             pp.startFollowTraj(t2)
                         }
                     }
                 }
                 if (AAAAAAAAAAAAAAAAAAA) {
-                    log("PPINT", pp.intersects(sp, AINt).toString())
                     pp.startFollowTraj(Trajectory(sp, 0.0, ep, v1, v2, h1))
                     pp.draw(pp.ctraj, Pose(), Pose(100000000000000.0, 0.0, 0.0), 0.0, 0.0, 0.0)
                 } else {

@@ -16,7 +16,8 @@ public class RobotVars {
     public static boolean USE_LOCALIZER = true;
     public static boolean USE_FIELD_CENTRIC = true;
     public static boolean USE_DIFFY = true;
-    public static boolean USE_RIDICARE = false;
+    public static boolean USE_IMU_LOCALIZER = true;
+    public static boolean USE_RIDICARE = true;
     public static boolean USE_DIRECTION_PID = false;
     public static boolean MOVE_SWERVE = true;
     public static boolean MOVE_SWERVE_MOTORS = true;
@@ -27,13 +28,17 @@ public class RobotVars {
     public static double RidicareTime = 0.5;
     public static double RidicareLeeway = 0.5;
     public static double RidicareMaxTime = 0.1;
-    public static double RidicarePower = -0.3;
+    public static double RidicarePower = -0.5;
     public static String RidicareEncoderName = "LFM";
     public static int RidicareEncoderDir = -1;
+    public static int RidicareHaveIHangedMyself = 300;
+    public static int RidicareIHaventHangedMyslef = 400;
+    public static double RidicareHANGEDMYSELF = -0.65;
+    public static double RidicareHANGINGMYSELF = -1.0;
 
     public static int RBOT_POS = 1;
-    public static int RMID_POS = 5;
-    public static int RTOP_POS = 1300;
+    public static int RMID_POS = 200;
+    public static int RTOP_POS = 1400;
 
     public static double OFFLF = -2.4828562817478184;
     public static double OFFLB = -2.237612437685438;
@@ -77,12 +82,12 @@ public class RobotVars {
 
     public static double IntakePower = -0.7;
     public static double IntakePowerStack = -1.0;
-    public static double IntakePrepDif = 0.2;
-    public static double IntakePStack1 = 0.504;
-    public static double IntakePStack2 = 0.46;
-    public static double IntakePStack3 = 0.418;
-    public static double IntakePDown = 0.42;
-    public static double IntakePUp = 0.45;
+    public static double IntakePrepDif = 0.1;
+    public static double IntakePStack1 = 0.481;
+    public static double IntakePStack2 = 0.44;
+    public static double IntakePStack3 = 0.395;
+    public static double IntakePDown = 0.397;
+    public static double IntakePUp = 0.427;
     public static double IntakeWaitTime = 20.1;
     public static double IntakeWaitFallTime = 0.1;
 
@@ -136,13 +141,13 @@ public class RobotVars {
     public static double WheelsMaxErr = 0.00;
 
     public static String WheelsPerpName = "RBM";
-    public static Pose WheelsPerpPos = new Pose(-13, 1.8, PI / 2);
+    public static Pose WheelsPerpPos = new Pose(-13.5, 1, PI / 2);
     public static Integer WheelsPerpDir = 1;
     public static String WheelsParRName = "RFM";
-    public static Pose WheelsParRPos = new Pose(-8, -4.5, 0.0);
+    public static Pose WheelsParRPos = new Pose(-8, -4.3, 0.0);
     public static Integer WheelsParRDir = 1;
     public static String WheelsParLName = "LBM";
-    public static Pose WheelsParLPos = new Pose(-8, 5, 0.0);
+    public static Pose WheelsParLPos = new Pose(-8, 5.2, 0.0);
     public static Integer WheelsParLDir = -1;
     public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0; // Radius * 2pi / Ticks/Rev
 
@@ -163,8 +168,8 @@ public class RobotVars {
      *     Motors:
      *         0: RidL
      *         1: Intake
-     *         2: RidR
-     *         3:
+     *         2:
+     *         3: RidR
      *     Servos:
      *         0: FunkyL
      *         1: DifRS (5 sus in jos)

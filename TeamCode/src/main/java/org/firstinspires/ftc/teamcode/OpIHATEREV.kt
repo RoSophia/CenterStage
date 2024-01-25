@@ -50,7 +50,7 @@ class OpIHATEREV : LinearOpMode() {
                     clown.position = GhearaSDESCHIS
                 }
             }
-            if (controller.C2X == controller.JUST_PRESSED) {
+            /*if (controller.C2X == controller.JUST_PRESSED) {
                 intake.status = SNothing
             }
             if (controller.C2Y == controller.JUST_PRESSED) {
@@ -61,10 +61,16 @@ class OpIHATEREV : LinearOpMode() {
             }
             if (controller.C2B == controller.JUST_PRESSED) {
                 intake.status = SIntake
+            }*/
+            if (controller.C2PS == controller.JUST_PRESSED) {
+                if (!slides.RIDICAREEEEEEEEEE) {
+                    slides.youShouldHangYourselfNOW()
+                } else {
+                    slides.RIDICAREEEEEEEEEE = false
+                }
             }
-            /*
             if (controller.C2Y == controller.JUST_PRESSED) {
-                if (intake.status == SIntake) {
+                if (intake.running) {
                     intake.status = SNothing
                 } else {
                     intake.status = SIntake
@@ -82,7 +88,7 @@ class OpIHATEREV : LinearOpMode() {
                 diffy.targetPos = DiffyDown
                 diffy.targetDiff = DiffyfUp
                 slides.setTarget(RBOT_POS)
-            }*/
+            }
             val g2coef = 1.0 - 0.6 * gamepad2.right_trigger
             if (!epsEq(gamepad2.right_stick_y.toDouble(), 0.0)) {
                 slides.power = -gamepad2.right_stick_y.toDouble() * g2coef
