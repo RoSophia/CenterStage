@@ -15,6 +15,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.max
+import kotlin.math.sign
 import kotlin.math.sin
 
 
@@ -34,7 +35,7 @@ class Swerve {
     private fun getkms(kms: Double) = clamp((kms - WheelsAlignStart) * (WheelsAlignMax - WheelsAlignMin) / (WheelsAlignEnd - WheelsAlignStart) + WheelsAlignMin, WheelsAlignMin, WheelsAlignMax)
 
     val ep = ElapsedTime()
-    private fun GETKMS(i: Int) = modules[i].latentImpulse * WheelsLBias[i] + abs(modules[i].speed) * (if (modules[i].speed >= 0) WheelsFBias[i] else WheelsBBias[i])
+    private fun GETKMS(i: Int) = modules[i].latentImpulse * WheelsLBias[i] + abs(modules[i].speed).coerceAtMost(1.0) * (if (modules[i].speed >= 0) WheelsFBias[i] else WheelsBBias[i])
 
     fun update() {
         for (i in 0..3) {

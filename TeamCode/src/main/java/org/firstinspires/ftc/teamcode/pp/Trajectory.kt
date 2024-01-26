@@ -5,7 +5,10 @@ import org.firstinspires.ftc.teamcode.pp.PP.MAX_FRACTION
 import org.firstinspires.ftc.teamcode.pp.PP.PeruEnd
 import org.firstinspires.ftc.teamcode.pp.PP.PeruStart
 import org.firstinspires.ftc.teamcode.utils.Pose
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
+import org.firstinspires.ftc.teamcode.utils.Util.angNorm
+import org.firstinspires.ftc.teamcode.utils.Util.clamp
 import org.firstinspires.ftc.teamcode.utils.Vec2d
 import java.util.Vector
 
@@ -47,13 +50,14 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
     fun duplicate(): TrajCoef = TrajCoef(sp, ep, v1, v2, h, mf, peru)
 }
 
-class Trajectory(val start: Pose, val initVel: Double, val end: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double) {
+class Trajectory(val start: Pose, val initVel: Double, val end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double) {
+    override fun toString() = "$start - $end ($v1e $v2e $h) - $maxFraction ${Vec2d(peruStart, peruEnd)}"
     constructor(tc: TrajCoef) : this(tc.sp, 0.0, tc.ep, tc.v1, tc.v2, tc.h, tc.mf, tc.peru.x, tc.peru.y)
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d, maxFraction: Double) : this(sp, initVel, ep, v1e, v2e, h1, maxFraction, PeruStart, PeruEnd)
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h1: Vec2d) : this(sp, initVel, ep, v1e, v2e, h1, MAX_FRACTION)
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double, h1x: Double, h1y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(h1x, h1y))
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(0.3333, 0.666))
-    constructor(sp: Pose, initVel: Double, ep: Pose) : this(sp, initVel, ep, Vec2d(), Vec2d(), Vec2d(0.3333, 0.6666))
+    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d, maxFraction: Double) : this(sp, initVel, ep, v1e, v2e, h, maxFraction, PeruStart, PeruEnd)
+    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d) : this(sp, initVel, ep, v1e, v2e, h, MAX_FRACTION)
+    constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double, hx: Double, hy: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(hx, hy))
+    constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(0.0, 1.0))
+    constructor(sp: Pose, initVel: Double, ep: Pose) : this(sp, initVel, ep, Vec2d(), Vec2d(), Vec2d(0.0, 1.0))
     constructor(sp: Pose, ep: Pose) : this(sp, 0.0, ep)
     constructor() : this(Pose(), Pose())
 
@@ -63,7 +67,12 @@ class Trajectory(val start: Pose, val initVel: Double, val end: Pose, v1e: Vec2d
 
     private val cubX = CubicBezierCurve(start.x, start.x + v1.x, end.x + v2.x, end.x)
     private val cubY = CubicBezierCurve(start.y, start.y + v1.y, end.y + v2.y, end.y)
-    private val cubH = CubicBezierCurve(0.0, h1.x, h1.y, 1.0) // Heading handled in get()
+
+    private fun getHeading(v: Double) = clamp((v - h.x) / (h.y - h.x), 0.0, 1.0)
+
+    fun logHeading(v: Double) {
+        log("CurHeading", String.format("%.2f %.2f", getHeading(v), v))
+    }
 
     var actions: Vector<Action> = Vector()
     var lastCompletedAction = 0
@@ -99,9 +108,6 @@ class Trajectory(val start: Pose, val initVel: Double, val end: Pose, v1e: Vec2d
                 actions[lastCompletedAction]
             }
 
-    operator fun get(i: Int) = if (i < 0) start else if (i > Checkpoints) end else Pose(cubX[i * checkLen], cubY[i * checkLen], start.h + angDiff(start.h, end.h) * cubH[i * checkLen])
-    fun deriv(i: Int) = Pose(cubX.deriv(i * checkLen), cubY.deriv(i * checkLen), cubH.deriv(i * checkLen))
-
-
-    override fun toString(): String = "$start:$end"
+    operator fun get(i: Int) = if (i < 0) start else if (i > Checkpoints) end else Pose(cubX[i * checkLen], cubY[i* checkLen], angNorm(start.h + angDiff(start.h, end.h) * getHeading(i.toDouble() * checkLen)))
+    fun deriv(i: Int) = Pose(cubX.deriv(i.toDouble() * checkLen), cubY.deriv(i.toDouble() * checkLen), 0.0)
 }

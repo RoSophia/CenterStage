@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.cam
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initAuto
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
@@ -25,6 +26,7 @@ class BlueAuto : LinearOpMode() {
         initAuto()
         while (!isStarted) {
             targetPreload = AutoResult
+            log("TargetPreload", targetPreload)
             telemetry.addData("TargetPreload", targetPreload)
             telemetry.update()
             sleep(5)

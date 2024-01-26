@@ -37,7 +37,7 @@ public class RobotVars {
     public static double RidicareHANGINGMYSELF = -1.0;
 
     public static int RBOT_POS = 1;
-    public static int RMID_POS = 200;
+    public static int RMID_POS = 230;
     public static int RTOP_POS = 1400;
 
     public static double OFFLF = -2.4828562817478184;
@@ -71,6 +71,7 @@ public class RobotVars {
 
     public static int __STATUS = 20;
 
+    public static double SwerveMinF = 0.15;
     public static double SwerveHeadPidP = 1.0;
     public static double SwerveHeadPidI = 0.0;
     public static double SwerveHeadPidD = 0.0;
@@ -83,7 +84,7 @@ public class RobotVars {
     public static double IntakePower = -0.7;
     public static double IntakePowerStack = -1.0;
     public static double IntakePrepDif = 0.1;
-    public static double IntakePStack1 = 0.481;
+    public static double IntakePStack1 = 0.4825;
     public static double IntakePStack2 = 0.44;
     public static double IntakePStack3 = 0.395;
     public static double IntakePDown = 0.397;
@@ -112,9 +113,6 @@ public class RobotVars {
     public static int AutoMinBlocksBlue = 20;
     public static int AutoResult = 0;
 
-    public static int SINTNIITNT = SPStack1;
-    public static int SINTNIITNT2 = SStack1;
-
     public static double SwerveAngP = -0.38;
 
     public static boolean LOG_STATUS = false;
@@ -124,8 +122,8 @@ public class RobotVars {
     public static double TRACK_WIDTH = 21.0;
     public static double WHEEL_BASE = 21.0;
 
-    public static double AvionInchis = 0.26;
-    public static double AvionDeschis = 0.5;
+    public static double AvionInchis = 0.38;
+    public static double AvionDeschis = 0.52;
 
     public static Pose LocalizerInitPos = new Pose(0.0, 0.0, 0.0);
     public static Pose AutoInitPos = new Pose(0.0, 0.0, 0.0);
