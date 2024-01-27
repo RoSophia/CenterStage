@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.pp.PP.MAX_ACC
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_TIME
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_VEL
 import org.firstinspires.ftc.teamcode.pp.PP.NUSHANG
+import org.firstinspires.ftc.teamcode.pp.PP.PPMaxAngPower
+import org.firstinspires.ftc.teamcode.pp.PP.PPMaxSpeed
 import org.firstinspires.ftc.teamcode.pp.PP.PPPPPPP
 import org.firstinspires.ftc.teamcode.pp.PP.PPStartEnd
 import org.firstinspires.ftc.teamcode.pp.PP.PeruMin
@@ -35,7 +37,6 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.timmy
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.clamp
@@ -51,7 +52,9 @@ import kotlin.math.sqrt
 
 @Config
 object PP {
-    @JvmField var JustDraw = false
+    @JvmField
+    var JustDraw = false
+
     @JvmField
     var robotRadius: Double = 10.0
 
@@ -110,22 +113,28 @@ object PP {
     var PeruMax: Double = 1.0
 
     @JvmField
-    var PidTrans = PIDFC(1.3, 0.0, 0.0, 0.2) // Trans rights
+    var PidTrans = PIDFC(1.0, 0.0, 0.0, 0.2) // Trans rights
 
     @JvmField
-    var PidLong = PIDFC(0.5, 0.0, 0.0, 0.2)
+    var PidLong = PIDFC(1.0, 0.0, 0.0, 0.2)
 
     @JvmField
-    var PidFinalTrans = PIDFC(0.08, 0.5, 0.0, 0.0)
+    var PidFinalTrans = PIDFC(0.20, 2.0, 0.0, 0.0)
 
     @JvmField
-    var PidFinalLong = PIDFC(0.08, 0.5, 0.0, 0.0)
+    var PidFinalLong = PIDFC(0.20, 2.0, 0.0, 0.0)
 
     @JvmField
-    var PidAngle = PIDFC(1.2, 0.0, 0.0, 0.0)
+    var PidAngle = PIDFC(1.3, 0.0, 0.0, 0.0)
 
     @JvmField
     var PPStartEnd: Double = 15.0
+
+    @JvmField
+    var PPMaxAngPower: Double = 0.5
+
+    @JvmField
+    var PPMaxSpeed: Double = 0.5
 
     @JvmField
     var Checkpoints: Int = 2000
@@ -392,19 +401,20 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
                 log("PurePursuitError", "NaN angle")
                 angle = 0.0
             }
-            var angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), 1.0), -1.0)
+            var angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), PPMaxAngPower), -PPMaxAngPower)
             if (angPower.isNaN()) {
                 log("PurePursuitError", "NaN anglePower")
                 angPower = 0.0
             }
 
             if (AUTO_MOVE) {
-                swerve.move(SwerveMinF + speed, angle, angPower)
+                swerve.move(max(min(SwerveMinF + speed, PPMaxSpeed), 0.0), angle, angPower)
             } else if (MOVE_SWERVE) {
                 moveSwerve()
             }
             draw(ctraj, cp, lk, speed, angle, angPower)
             ep.reset()
+            log("ctraj", ctraj)
             logs("S_lk", lk)
             log("S_Dist", lk - cp)
             log("S_Pos", cp)

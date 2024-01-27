@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.timmy
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 
@@ -114,6 +113,7 @@ class OpIHATEREV : LinearOpMode() {
             RobotFuncs.update()
         }
 
+        CLOSE_IMU = true
         endma()
     }
 }

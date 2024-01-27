@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.openftc.easyopencv.OpenCvPipeline
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -42,7 +43,6 @@ object RobotFuncs {
     lateinit var hardwareMap: HardwareMap
     lateinit var lom: LinearOpMode
     lateinit var telemetry: Telemetry
-    lateinit var timmy: Timmy
     lateinit var localizer: Localizer
     lateinit var swerve: Swerve
     lateinit var controller: Controller
@@ -90,11 +90,13 @@ object RobotFuncs {
 
     @JvmStatic
     fun log(s: String, v: Double) = log(s, String.format("%.4f", v))
+
     @JvmStatic
     fun log(s: String, v: Any) = log(s, v.toString())
 
     @JvmStatic
-    fun logs(s: String, v: Double) = if (LOG_STATUS) log(s, String.format("%.4f", v)) else { }
+    fun logs(s: String, v: Double) = if (LOG_STATUS) log(s, String.format("%.4f", v)) else {
+    }
 
     @JvmStatic
     fun logs(s: String, v: Any) = if (LOG_STATUS) log(s, v.toString()) else {
@@ -185,10 +187,13 @@ object RobotFuncs {
 
     @JvmStatic
     fun initma(lopm: LinearOpMode) { /// Init all hardware info
+        if (TOADKILL) {
+            TIMMYOFF += PI
+            TOADKILL = false
+        }
         angt.reset()
         canInvertMotor = false
         lom = lopm
-        TIMMYOFF = 0.0
         hardwareMap = lom.hardwareMap
         val lynxModules = hardwareMap.getAll(LynxModule::class.java)
         for (module in lynxModules) {
@@ -205,7 +210,24 @@ object RobotFuncs {
         expansionHub.setConstant(Color.rgb(255, 100, 20))
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
-        timmy = Timmy("imu")
+        if (CLOSE_IMU) {
+            try {
+                timmy.close()
+            } catch (e: Exception) {
+                log("Timmy wasn't closed", "Idiot")
+            }
+            timmy = Timmy("imu")
+            CLOSE_IMU = false
+        } else {
+            try {
+                if (!timmy.trunning) {
+                    timmy.initThread()
+                }
+            } catch (e: Exception) {
+                log("Timmy wasn't Opened", "Idiot")
+                timmy = Timmy("imu")
+            }
+        }
         controller = Controller()
         slides = Slides()
         localizer = ThreeWheelLocalizer()
@@ -254,6 +276,7 @@ object RobotFuncs {
         controlHub.clearBulkCache()
         //expansionHub.clearBulkCache()
         log("Timmy", timmy.yaw)
+        logs("TimmyOF", TIMMYOFF)
         logs("TimmyTime", TIMMYA)
         log("0", 0.0)
         tp.put("Framerate", 1 / ep.seconds())
@@ -279,8 +302,11 @@ object RobotFuncs {
         //pcoef = 0.0
         batteryVoltageSensor.close()
         swerve.close()
-        timmy.closeThread()
-        timmy.close()
+        if (CLOSE_IMU) {
+            timmy.closeThread()
+            timmy.close()
+            CLOSE_IMU = false
+        }
         //localizer.close()
         swerve.stop()
     }

@@ -5,19 +5,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.auto.AutoFuncs.automa
 import org.firstinspires.ftc.teamcode.auto.AutoFuncs.totBordu
-import org.firstinspires.ftc.teamcode.auto.AutoFuncs.updateAuto
 import org.firstinspires.ftc.teamcode.auto.AutoVars.NumCycles
 import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoResult
 
-@Photon
 @Autonomous
-class BlueAuto : LinearOpMode() {
+@Photon
+class RedAuto: LinearOpMode() {
     override fun runOpMode() {
-        totBordu(this, false)
-        var e = Cele10Traiectorii.getCycleTrajLongBlue(NumCycles, AutoResult)
+        totBordu(this, true)
+        var e = Cele10Traiectorii.getCycleTrajLongRed(NumCycles, AutoResult)
 
         while (!isStopRequested) {
-            val ce = updateAuto(e, NumCycles)
+            val ce = AutoFuncs.updateAuto(e, NumCycles)
             if (ce != null) {
                 e = ce
             }

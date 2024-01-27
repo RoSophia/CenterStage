@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.hardware.CameraControls.RC
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.TB
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.TR
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
@@ -22,7 +23,6 @@ import org.opencv.core.Mat
 import org.opencv.core.Point
 import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
-import org.opencv.imgproc.Imgproc.COLOR_BGR2HSV
 import org.opencv.imgproc.Imgproc.COLOR_RGB2HSV
 import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.PI
@@ -68,10 +68,10 @@ object CameraControls {
     var LUP: Int = 9
 
     @JvmField
-    var LUT: Int = 18
+    var LUT: Int = 19
 
     @JvmField
-    var XOFF: Int = 0
+    var XOFF: Int = 15
 
     @JvmField
     var YOFF: Int = 20
@@ -83,10 +83,10 @@ object CameraControls {
     var ALPHA: Double = 200.0
 
     @JvmField
-    var TB: Double = 75.0
+    var TB: Double = 70.0
 
     @JvmField
-    var TR: Double = 25.0
+    var TR: Double = 30.0
 
     @JvmField
     var COL_INDEX: Int = 1
@@ -95,7 +95,7 @@ object CameraControls {
     var BC: Double = 1.0
 
     @JvmField
-    var DRAW_BOXES: Boolean = false
+    var DRAW_BOXES: Boolean = true
 
     @JvmField
     var DRAW_MEDIAN: Boolean = true
@@ -124,9 +124,6 @@ class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
     var xoff: Double = 0.0
 
     var results: Array<Box2d> = arrayOf(Box2d())
-    init {
-
-    }
 
     private fun mklocations(up: Int, left: Int, width: Int, xoff: Int, yoff: Int, h: Int, w: Int): Array<Box2d> {
         val len: Int = (up * 2 - 1) * (left * 2 - 1)
@@ -166,20 +163,11 @@ class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
     }
 
     private fun isRed(col: DoubleArray): Boolean {
-        val h = (col[0] / 255.0) * PI * 2
-        val s = col[1]
-        val v = col[2]
-
-        return abs(angDiff(h, PaiplainRed)) < PaiplainMaxRed && s > PaiplainMinSat && v > PaiplainMinVel
-
-
-
         val b = col[0]
         val g = col[1]
         val r = col[2]
         val rcoef = (-(r / 255) + 1.5) * RC
         val bg = b - g
-
         if (abs(r - g) * rcoef < TR) {
             if (bg > TB) {
                 return true
@@ -193,7 +181,7 @@ class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
         val s = col[1]
         val v = col[2]
 
-        return abs(angDiff(h, PaiplainBloo)) < PaiplainMaxBloo && s > PaiplainMinSat && v > PaiplainMinVel
+        return abs(angDiff(h, PaiplainBloo)) < PaiplainMaxBloo && s > PaiplainMinSat && v > PaiplainMinVal
 
         val b = col[2]
         val g = col[1]
@@ -222,7 +210,9 @@ class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
         if (DO_I_EVEN_PROCESS_FRAME) {
             val frame = Mat()
             input.copyTo(frame)
-            Imgproc.cvtColor(frame, frame, COLOR_BGR2HSV)
+            if (!AutoRed) {
+                Imgproc.cvtColor(frame, frame, COLOR_RGB2HSV)
+            }
 
             val ff = Mat()
             if (DRAW_BOXES || DRAW_MEDIAN) {
@@ -260,6 +250,8 @@ class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
                     }
                 }
             }
+            lom.telemetry.addData("MidBoxes", midBlocks)
+            lom.telemetry.addData("RightBoxes", rightBlocks)
             log("MidBoxes", midBlocks)
             log("RightBoxes", rightBlocks)
             send_log()
@@ -267,9 +259,9 @@ class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
                 if (midBlocks > AutoMinBlocksRed) {
                     1
                 } else if (rightBlocks > AutoMinBlocksRed) {
-                    2
-                } else {
                     0
+                } else {
+                    2
                 }
             } else {
                 if (midBlocks > AutoMinBlocksBlue) {
@@ -280,6 +272,8 @@ class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
                     0
                 }
             }
+            lom.telemetry.addData("GOT RESULT", AutoResult)
+            lom.telemetry.update()
 
             val w = frame.width()
             val h = frame.height()

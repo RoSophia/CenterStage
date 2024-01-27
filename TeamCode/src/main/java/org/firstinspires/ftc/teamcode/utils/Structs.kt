@@ -13,7 +13,7 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
     fun dist(): Double = sqrt(dist2())
     fun v2d(): Vec2d = Vec2d(x, y)
 
-    fun copy(): Pose = Pose(x, y, h)
+    fun duplicate(): Pose = Pose(x, y, h)
 
     fun vec() = Vec2d(x, y)
     fun headingVec() = Vec2d(cos(h), sin(h))
@@ -46,6 +46,8 @@ class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
     }
 
     fun norm() = this / dist()
+
+    fun duplicate() = Vec2d(x, y)
 
     operator fun unaryMinus() = Vec2d(-x, -y)
 

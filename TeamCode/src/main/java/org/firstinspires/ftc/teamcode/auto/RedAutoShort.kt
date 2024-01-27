@@ -11,10 +11,10 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoResult
 
 @Photon
 @Autonomous
-class BlueAuto : LinearOpMode() {
+class RedAutoShort : LinearOpMode() {
     override fun runOpMode() {
-        totBordu(this, false)
-        var e = Cele10Traiectorii.getCycleTrajLongBlue(NumCycles, AutoResult)
+        totBordu(this, true)
+        var e = Cele10Traiectorii.getCycleTrajShortBlue(NumCycles, AutoResult)
 
         while (!isStopRequested) {
             val ce = updateAuto(e, NumCycles)

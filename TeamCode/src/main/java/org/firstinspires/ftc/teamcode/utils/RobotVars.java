@@ -1,18 +1,17 @@
 package org.firstinspires.ftc.teamcode.utils;
 
-import static org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack1;
-import static org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1;
 import static java.lang.Math.PI;
 
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.hardware.PIDFC;
+import org.firstinspires.ftc.teamcode.hardware.Timmy;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Config
 public class RobotVars {
     public static boolean USE_TELE = true;
-    public static boolean USE_CAMERA = false;
+    public static boolean USE_CAMERA = true;
     public static boolean USE_LOCALIZER = true;
     public static boolean USE_FIELD_CENTRIC = true;
     public static boolean USE_DIFFY = true;
@@ -21,6 +20,11 @@ public class RobotVars {
     public static boolean USE_DIRECTION_PID = false;
     public static boolean MOVE_SWERVE = true;
     public static boolean MOVE_SWERVE_MOTORS = true;
+
+    public static Timmy timmy;
+    public static boolean TOADKILL = false;
+
+    public static boolean CLOSE_IMU = true;
 
     public static double TIMMYA = 0.5;
     public static double TIMMYOFF = 0.0;
@@ -37,7 +41,7 @@ public class RobotVars {
     public static double RidicareHANGINGMYSELF = -1.0;
 
     public static int RBOT_POS = 1;
-    public static int RMID_POS = 230;
+    public static int RMID_POS = 1;
     public static int RTOP_POS = 1400;
 
     public static double OFFLF = -2.4828562817478184;
@@ -62,16 +66,14 @@ public class RobotVars {
     public static PIDFC WheelPidRBF = new PIDFC(0.4, 0.0, 0.003, 0.0, 0.02);
     */
 
-    public static double PaiplainMinSat = 100.00;
-    public static double PaiplainMinVel = 100.00;
-    public static double PaiplainRed = 0.00;
+    public static double PaiplainMinSat = 50.00;
+    public static double PaiplainMinVal = 40.00;
     public static double PaiplainBloo = 2.09;
-    public static double PaiplainMaxRed = 1.00;
     public static double PaiplainMaxBloo = 1.00;
 
     public static int __STATUS = 20;
 
-    public static double SwerveMinF = 0.15;
+    public static double SwerveMinF = 0.19;
     public static double SwerveHeadPidP = 1.0;
     public static double SwerveHeadPidI = 0.0;
     public static double SwerveHeadPidD = 0.0;
@@ -109,9 +111,9 @@ public class RobotVars {
     public static double HEADP = 1.0;
 
     public static boolean AutoRed = true;
-    public static int AutoMinBlocksRed = 10;
-    public static int AutoMinBlocksBlue = 20;
-    public static int AutoResult = 0;
+    public static int AutoMinBlocksRed = 20;
+    public static int AutoMinBlocksBlue = 25;
+    public static int AutoResult = 1;
 
     public static double SwerveAngP = -0.38;
 
@@ -156,7 +158,7 @@ public class RobotVars {
 
     public static String CameraName = "Anticamera";
     public static OpenCvCameraRotation CameraOrientation = OpenCvCameraRotation.UPSIDE_DOWN;
-    public static int GAIN = 100;
+    public static int GAIN = 70;
     public static int EXPOSURE = 80;
 
     public static Pose InfPos = new Pose(10000000000.0, 1000000000000.0, 0.0);

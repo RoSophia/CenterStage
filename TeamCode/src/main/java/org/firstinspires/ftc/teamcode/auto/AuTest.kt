@@ -5,7 +5,6 @@ import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.AUTest.AAAAAAAAAAAAAAAAAAA
-import org.firstinspires.ftc.teamcode.AUTest.AINt
 import org.firstinspires.ftc.teamcode.AUTest.GO_TO_POS
 import org.firstinspires.ftc.teamcode.AUTest.LOOP
 import org.firstinspires.ftc.teamcode.AUTest.ep
@@ -81,7 +80,7 @@ class AuTest : LinearOpMode() {
             if (GO_TO_POS) {
                 if (ep.x != lep.x || ep.y != lep.y || lep.h != ep.h) {
                     pp.startFollowTraj(Trajectory(localizer.pose, localizer.poseVel.dist(), ep))
-                    lep = ep.copy()
+                    lep = ep.duplicate()
                 }
                 pp.update()
             } else {
