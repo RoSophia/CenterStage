@@ -277,7 +277,6 @@ object Cele10Traiectorii {
         ts.addAction { intake.status = Intakes.SInvert }
         ts.sleep(WaitIntake)
         ts.addAction { intake.status = Intakes.SNothing }
-        ts.sleep(SLEEPY_TIME)
 
         val stackPos: TrajCoef = when (randomCase) {
             2 -> rPos2Stack
@@ -286,6 +285,7 @@ object Cele10Traiectorii {
         }
         stackPos.sp = preloadPos.ep
         ts.addTrajectory(Trajectory(stackPos))
+        ts.sleep(SLEEPY_TIME)
 
         val cp = rPutPos
         cp.sp = stackPos.ep

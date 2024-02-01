@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.utils
 
 import android.graphics.Color
-import android.transition.Slide
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
@@ -30,10 +29,8 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
-import kotlin.math.sign
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -50,8 +47,6 @@ object RobotFuncs {
     lateinit var diffy: Diffy
     lateinit var slides: Slides
     lateinit var intake: Intake
-    lateinit var funkyL: MServo
-    lateinit var funkyR: MServo
     lateinit var avion: MServo
     lateinit var clown: MServo
     lateinit var controlHub: LynxModule
@@ -95,11 +90,11 @@ object RobotFuncs {
     fun log(s: String, v: Any) = log(s, v.toString())
 
     @JvmStatic
-    fun logs(s: String, v: Double) = if (LOG_STATUS) log(s, String.format("%.4f", v)) else {
+    fun logs(s: String, v: Double) = if (__LOG_STATUS) log(s, String.format("%.4f", v)) else {
     }
 
     @JvmStatic
-    fun logs(s: String, v: Any) = if (LOG_STATUS) log(s, v.toString()) else {
+    fun logs(s: String, v: Any) = if (__LOG_STATUS) log(s, v.toString()) else {
     }
 
     @JvmStatic
@@ -122,8 +117,8 @@ object RobotFuncs {
     @JvmStatic
     fun shutUp(lopm: LinearOpMode) {
         preinit()
-        _MOVE_SWERVE = false
-        canInvertMotor = false
+        __SwerveMove = false
+        SwerveCanInvertMotor = false
         lom = lopm
         hardwareMap = lom.hardwareMap
         telemetry = lom.telemetry
@@ -133,7 +128,7 @@ object RobotFuncs {
         swerve = Swerve()
         controller = Controller()
         localizer = ThreeWheelLocalizer()
-        localizer.init(LocalizerInitPos)
+        localizer.init(Pose())
         pp = PurePursuit(swerve, localizer)
     }
 
@@ -142,40 +137,14 @@ object RobotFuncs {
     var ai = 0.0
     var targetAngle = 0.0
     var angt = ElapsedTime()
-    private fun get_angf(): Double {
-        if (USE_DIRECTION_PID) {
-            if (abs(lom.gamepad1.right_stick_x.toDouble()) > 0.02) {
-                angt.reset()
-                return lom.gamepad1.right_stick_x.toDouble()
-            } else {
-                if (angt.seconds() < SwerveMaxKeepAngTime) {
-                    targetAngle = timmy.yaw
-                    ai = 0.0
-                }
-                var ae = Util.angDiff(targetAngle, timmy.yaw)
-                ae = if (abs(ae) < 0.03) 0.0 else ae
-                val ad = (ae - ale) / at.seconds()
-                ai += ae * at.seconds()
-                at.reset()
-                val cf = SwerveHeadPidP * ae + SwerveHeadPidD * ad + SwerveHeadPidI * ai
-                log("Target", targetAngle)
-                log("TTimmy", timmy.yaw)
-                log("TError", ae)
-                log("TDeri", ad)
-                log("TFors", if (abs(cf) > 0.03) cf + sign(cf) * SwerveHeadPidF else 0.0)
-                return if (abs(cf) > 0.03) cf + sign(cf) * SwerveHeadPidF else 0.0
-            }
-        } else {
-            return lom.gamepad1.right_stick_x.toDouble()
-        }
-    }
+    private fun get_angf() = lom.gamepad1.right_stick_x.toDouble()
 
     @JvmStatic
     fun moveSwerve() {
         controller.update()
         if (controller.C1PS == controller.JUST_PRESSED) {
-            TIMMYOFF += timmy.yaw
-            log("ResetHeading", TIMMYOFF)
+            TimmyCurOff += timmy.yaw
+            log("ResetHeading", TimmyCurOff)
         }
         val speed = hypot(lom.gamepad1.left_stick_x, lom.gamepad1.left_stick_y).toDouble()
         val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2 - if (USE_FIELD_CENTRIC) timmy.yaw else 0.0)
@@ -187,12 +156,12 @@ object RobotFuncs {
 
     @JvmStatic
     fun initma(lopm: LinearOpMode) { /// Init all hardware info
-        if (TOADKILL) {
-            TIMMYOFF += PI
-            TOADKILL = false
+        if (TimmyAddKILLLLLLLL) {
+            TimmyCurOff += PI
+            TimmyAddKILLLLLLLL = false
         }
         angt.reset()
-        canInvertMotor = false
+        SwerveCanInvertMotor = false
         lom = lopm
         hardwareMap = lom.hardwareMap
         val lynxModules = hardwareMap.getAll(LynxModule::class.java)
@@ -210,14 +179,14 @@ object RobotFuncs {
         expansionHub.setConstant(Color.rgb(255, 100, 20))
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
-        if (CLOSE_IMU) {
+        if (TimmyToClose) {
             try {
                 timmy.close()
             } catch (e: Exception) {
                 log("Timmy wasn't closed", "Idiot")
             }
             timmy = Timmy("imu")
-            CLOSE_IMU = false
+            TimmyToClose = false
         } else {
             try {
                 if (!timmy.trunning) {
@@ -231,13 +200,11 @@ object RobotFuncs {
         controller = Controller()
         slides = Slides()
         localizer = ThreeWheelLocalizer()
-        localizer.init(LocalizerInitPos)
-        _MOVE_SWERVE = MOVE_SWERVE
+        localizer.init(Pose())
+        __SwerveMove = USE_SWERVE
         swerve = Swerve()
         swerve.move(0.0, 0.0, 0.0)
         intake = Intake()
-        funkyL = MServo("FunkyL")
-        funkyR = MServo("FunkyR")
         avion = MServo("Pewpew", AvionInchis)
         clown = MServo("Clown", GhearaSDESCHIS)
         diffy = Diffy("Dif")
@@ -262,22 +229,23 @@ object RobotFuncs {
         val cp = ElapsedTime()
         cp.reset()
         swerve.update()
-        logs("Profiler_Swerve", cp.seconds())
+        //logs("Profiler_Swerve", cp.seconds())
         cp.reset()
         intake.update()
-        logs("Profiler_Intake", cp.seconds())
+        //logs("Profiler_Intake", cp.seconds())
         cp.reset()
         slides.update()
-        logs("Profiler_Slides", cp.seconds())
+        //logs("Profiler_Slides", cp.seconds())
         cp.reset()
         localizer.update()
-        logs("Profiler_Localizer", cp.seconds())
+        //logs("Profiler_Localizer", cp.seconds())
         cp.reset()
         controlHub.clearBulkCache()
         //expansionHub.clearBulkCache()
+        /*
         log("Timmy", timmy.yaw)
-        logs("TimmyOF", TIMMYOFF)
-        logs("TimmyTime", TIMMYA)
+        logs("TimmyOF", TimmyCurOff)
+        logs("TimmyTime", TimmyLoopTime)*/
         log("0", 0.0)
         tp.put("Framerate", 1 / ep.seconds())
         tp.put("Elapsedtime", etime.seconds())
@@ -286,28 +254,21 @@ object RobotFuncs {
     }
 
     @JvmStatic
-    fun startma() { /// Set all values to their starting ones and start the PID threads
-        canInvertMotor = true
-        //pcoef = 13.0 / batteryVoltageSensor.cachedVoltage
+    fun startma() {
+        SwerveCanInvertMotor = true
         timmy.initThread()
         etime.reset()
-        swerve.start()
-        //localizer.start()
         at.reset()
     }
 
     @JvmStatic
     fun endma() { /// Shut down the robot
         KILLALL = true
-        //pcoef = 0.0
         batteryVoltageSensor.close()
-        swerve.close()
-        if (CLOSE_IMU) {
+        if (TimmyToClose) {
             timmy.closeThread()
             timmy.close()
-            CLOSE_IMU = false
+            TimmyToClose = false
         }
-        //localizer.close()
-        swerve.stop()
     }
 }

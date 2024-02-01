@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.AnalogInput
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
+import org.firstinspires.ftc.teamcode.utils.RobotVars.EncoderPowerFuckery
+import org.firstinspires.ftc.teamcode.utils.RobotVars.___CURRENT_SCHWERVE_SWPEED
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import kotlin.math.PI
 import kotlin.math.max
@@ -21,7 +24,7 @@ class AbsEnc(private val name: String, private val off: Double) {
 
     val angle: Double
         get() {
-            val v = enc.voltage
+            val v = enc.voltage + ___CURRENT_SCHWERVE_SWPEED * EncoderPowerFuckery
             maxVoltage = min(max(maxVoltage, v), 3.3)
             val cv = v / maxVoltage
             return angNorm(cv * angPer01 + off)

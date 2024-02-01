@@ -24,7 +24,7 @@ class Slides {
                 0.0
             } else if (pos > RTOP_POS + RidicareLeeway && v > 0.0) {
                 logs("RidicareStoppingPower", "UP:$v")
-                RidicarePid.k
+                RidicarePid.f
             } else {
                 logs("RidicareStoppingPower", "None")
                 v
@@ -73,9 +73,9 @@ class Slides {
                 if (ep.seconds() < RidicareMaxTime) {
                     p.set_target(pos, 0.0)
                 }
-                log("RidicareCurPos", pos)
+                /*log("RidicareCurPos", pos)
                 logs("RidicareTryMove", tryMove)
-                logs("RidicareTargetPower", power)
+                logs("RidicareTargetPower", power)*/
                 if (tryMove) {
                     r.power = power
                     l.power = power

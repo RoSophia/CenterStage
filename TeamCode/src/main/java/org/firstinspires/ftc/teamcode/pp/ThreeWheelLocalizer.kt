@@ -77,9 +77,10 @@ class ThreeWheelLocalizer : Localizer {
                     encoders[0].pos * WheelsTicksToCm,
                     encoders[1].pos * WheelsTicksToCm,
                     encoders[2].pos * WheelsTicksToCm)
+            /*
             logs("WheelPosParR", wheelPositions[0])
             logs("WheelPosParL", wheelPositions[1])
-            logs("WheelPosPerp", wheelPositions[2])
+            logs("WheelPosPerp", wheelPositions[2])*/
 
             val wheelDeltas = listOf(
                     wheelPositions[0] - lwpos[0],
@@ -97,20 +98,21 @@ class ThreeWheelLocalizer : Localizer {
                     _pose.h = angNorm(timmy.yaw)
                 } else {
                     log("ph2", angNorm(timmy.yaw))
+                    log("ph", angNorm(_pose.h))
                 }
             }
             ++updated
             log("CurPos", _pose)
-            log("ph", _pose.h)
 
             val wheelVelocities = listOf(
                     encoders[0].vel * WheelsTicksToCm,
                     encoders[1].vel * WheelsTicksToCm,
                     encoders[2].vel * WheelsTicksToCm)
             poseVel = calculatePoseDelta(wheelVelocities)
-            logs("WheelVelParR", wheelVelocities[0])
-            logs("WheelVelParL", wheelVelocities[1])
-            logs("WheelVelPerp", wheelVelocities[2])
+            /*
+                logs("WheelVelParR", wheelVelocities[0])
+                logs("WheelVelParL", wheelVelocities[1])
+                logs("WheelVelPerp", wheelVelocities[2])*/
 
             val canvas = RobotFuncs.tp.fieldOverlay()
             canvas.setStrokeWidth(1)

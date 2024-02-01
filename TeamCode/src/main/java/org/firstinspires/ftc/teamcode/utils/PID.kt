@@ -28,10 +28,6 @@ class PID(val coef: PIDFC) {
         vi += err * ep.seconds()
         ep.reset()
         lp = err
-        return if (coef.k > 0.00001) {
-            err * coef.p + d * coef.d + vi * coef.i * li + coef.k
-        } else {
-            err * coef.p + d * coef.d + vi * coef.i * li + sign(err) * coef.f
-        }
+        return err * coef.p + d * coef.d + vi * coef.i * li + sign(err) * coef.f
     }
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.utils
 
+import org.firstinspires.ftc.teamcode.hardware.PIDFC
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -67,18 +68,45 @@ class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
 }
 
 class Vec4(@JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Double, @JvmField var d: Double) {
+    var x: Double = a
+        get() = a
+        set(v) { a = v; field = v }
+    var y: Double = b
+        get() = b
+        set(v) { b = v; field = v }
+    var z: Double = c
+        get() = c
+        set(v) { c = v; field = v }
+    var w: Double = d
+        get() = d
+        set(v) { d = v; field = v }
+
     operator fun get(i: Int) = when (i) {
-        0 -> {
-            a
-        }
-        1 -> {
-            b
-        }
-        2 -> {
-            c
-        }
-        else -> {
-            d
-        }
+        0 -> a
+        1 -> b
+        2 -> c
+        else -> d
+    }
+}
+
+class Vec4P(@JvmField var a: PIDFC, @JvmField var b: PIDFC, @JvmField var c: PIDFC, @JvmField var d: PIDFC) {
+    var x: PIDFC = a
+        get() = a
+        set(v) { a = v; field = v }
+    var y: PIDFC = b
+        get() = b
+        set(v) { b = v; field = v }
+    var z: PIDFC = c
+        get() = c
+        set(v) { c = v; field = v }
+    var w: PIDFC = d
+        get() = d
+        set(v) { d = v; field = v }
+
+    operator fun get(i: Int) = when (i) {
+        0 -> a
+        1 -> b
+        2 -> c
+        else -> d
     }
 }

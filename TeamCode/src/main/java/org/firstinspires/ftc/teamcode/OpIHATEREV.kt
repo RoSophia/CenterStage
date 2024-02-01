@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
@@ -101,19 +102,23 @@ class OpIHATEREV : LinearOpMode() {
             if (controller.C2LT == controller.JUST_PRESSED) {
                 avion.position = AvionDeschis
             }
+            if (controller.C2DD == controller.JUST_PRESSED) {
+                avion.position = AvionInchis
+            }
             if (controller.C2DL == controller.JUST_PRESSED) {
                 intake.status = SInvert
             }
 
-            if (__STATUS != 20) {
-                intake.status = __STATUS
-                __STATUS = 20
+            if (__IntakeSetStatus != 20) {
+                intake.status = __IntakeSetStatus
+                __IntakeSetStatus = 20
             }
+
             moveSwerve()
             RobotFuncs.update()
         }
 
-        CLOSE_IMU = true
+        TimmyToClose = true
         endma()
     }
 }

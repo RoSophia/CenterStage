@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 
 class Motor(name: String, encoder: Boolean, rev: Boolean, overdrive: Boolean) {
-    private val m: PhotonDcMotor = RobotFuncs.hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
+    val m: PhotonDcMotor = RobotFuncs.hardwareMap.get(DcMotorEx::class.java, name) as PhotonDcMotor
 
     var reverse: Boolean = rev
         set(v) {

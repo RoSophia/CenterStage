@@ -369,7 +369,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 \ \ ___) |
  \_\____/
              */
-            if (LOG_STATUS) {
+            if (__LOG_STATUS) {
                 log("TrajAngle", trajAngle)
                 drawVector(ctraj[lastIndex].vec(), Vec2d(1.0, 0.0).rotated(trajAngle))
                 drawVector(ctraj[lastIndex].vec(), Vec2d(0.0, 1.0).rotated(trajAngle))
@@ -392,24 +392,23 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
             val tcoef = min(MAX_VEL, ctraj.initVel + MAX_ACC * runningTime.seconds()) * ctraj.maxFraction / MAX_VEL
             var speed = tcoef * peruP * pcoef
+            var angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), PPMaxAngPower), -PPMaxAngPower)
             if (speed.isNaN()) {
                 log("PurePursuitError", "NaN speed")
                 speed = 0.0
             }
-            //var angle = gangle((cp - lk).vec()) - timmy.yaw
             if (angle.isNaN()) {
                 log("PurePursuitError", "NaN angle")
                 angle = 0.0
             }
-            var angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), PPMaxAngPower), -PPMaxAngPower)
             if (angPower.isNaN()) {
                 log("PurePursuitError", "NaN anglePower")
                 angPower = 0.0
             }
 
-            if (AUTO_MOVE) {
-                swerve.move(max(min(SwerveMinF + speed, PPMaxSpeed), 0.0), angle, angPower)
-            } else if (MOVE_SWERVE) {
+            if (USE_AUTO_MOVE) {
+                swerve.move(max(min(speed, PPMaxSpeed), 0.0), angle, angPower)
+            } else if (USE_SWERVE) {
                 moveSwerve()
             }
             draw(ctraj, cp, lk, speed, angle, angPower)
@@ -424,13 +423,13 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             log("SWERVE_pspeed", angPower)
             log("SWERVE_perCoef", pcoef)
         } else {
-            if (AUTO_MOVE) {
+            if (USE_AUTO_MOVE) {
                 swerve.move(0.0, swerve.angle, 0.0)
                 swerve.lb.speed = 0.0
                 swerve.rb.speed = 0.0
                 swerve.lf.speed = 0.0
                 swerve.rf.speed = 0.0
-            } else if (MOVE_SWERVE) {
+            } else if (USE_SWERVE) {
                 moveSwerve()
             }
         }

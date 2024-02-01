@@ -14,11 +14,10 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
 import org.firstinspires.ftc.teamcode.utils.RobotVars
-import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoInitPos
 import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoRed
-import org.firstinspires.ftc.teamcode.utils.RobotVars.CLOSE_IMU
-import org.firstinspires.ftc.teamcode.utils.RobotVars.TIMMYOFF
-import org.firstinspires.ftc.teamcode.utils.RobotVars.TOADKILL
+import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyToClose
+import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyCurOff
+import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyAddKILLLLLLLL
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_CAMERA
 import java.lang.Thread.sleep
 
@@ -40,7 +39,7 @@ object AutoFuncs {
 
     @JvmStatic
     fun totBordu(lom: LinearOpMode, isRed: Boolean): Int {
-        CLOSE_IMU = true
+        TimmyToClose = true
         AutoRed = isRed
         preinit()
         initma(lom)
@@ -51,15 +50,14 @@ object AutoFuncs {
             cam.stop()
         }
         startma()
-        TIMMYOFF = 0.0
-        localizer.pose = AutoInitPos
-        TOADKILL = true
+        TimmyCurOff = 0.0
+        TimmyAddKILLLLLLLL = true
         return i
     }
 
     @JvmStatic
     fun automa() {
-        CLOSE_IMU = false
+        TimmyToClose = false
         endma()
     }
 

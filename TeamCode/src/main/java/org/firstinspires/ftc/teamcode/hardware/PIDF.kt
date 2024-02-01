@@ -89,8 +89,9 @@ class PIDF(private val motA: Motor, private val motB: Motor, private val enc: En
             if (cp < 5 && ctarg == RBOT_POS) {
                 outp = 0.0
             }
+            /*
             logs("RidicareTarPos", ctarg)
-            logs("RidicareOutp", outp)
+            logs("RidicareOutp", outp)*/
             return outp
         } else {
             motAP.reset()

@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack1
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack3
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SReset
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SReset2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
@@ -37,7 +36,8 @@ object Intakes {
 
 class Intake {
     private val intake = Motor("Intake", encoder = false, rev = false, overdrive = true)
-    private val ridIntake = MServo("RidIntake", IntakePUp)
+    private val ridIntake1 = MServo("RidIntake", IntakeP1Up)
+    private val ridIntake2 = MServo("SoftStage2VericuRupeAderenta", IntakeP2Up)
 
     private var cstack = 0
 
@@ -49,65 +49,69 @@ class Intake {
         set(v) {
             when (v) {
                 SNothing -> {
-                    ridIntake.position = IntakePUp
+                    ridIntake1.position = IntakeP1Up
+                    ridIntake2.position = IntakeP2Up
                     intake.power = 0.0
                 }
 
                 SDown -> {
-                    ridIntake.position = IntakePDown
+                    ridIntake1.position = IntakeP1Down
+                    ridIntake2.position = IntakeP2Down
                     intake.power = 0.0
                 }
 
                 SIntake -> {
-                    ridIntake.position = IntakePDown
+                    ridIntake1.position = IntakeP1Down
+                    ridIntake2.position = IntakeP2Down
                     intake.power = IntakePower
                 }
 
                 SStack1 -> {
-                    ridIntake.position = IntakePStack1
+                    ridIntake1.position = IntakeP1Stack1
                     intake.power = IntakePowerStack
                 }
 
                 SPStack1 -> {
-                    ridIntake.position = IntakePStack1 + IntakePrepDif / 2.0
+                    ridIntake1.position = IntakeP1Stack1 + IntakePrepDif / 2.0
                     cstack = 1
                     intake.power = 0.0
                 }
 
                 SStack2 -> {
-                    ridIntake.position = IntakePStack2
+                    ridIntake1.position = IntakeP1Stack2
                     intake.power = IntakePowerStack
                 }
 
                 SPStack2 -> {
-                    ridIntake.position = IntakePStack2 + IntakePrepDif
+                    ridIntake1.position = IntakeP1Stack2 + IntakePrepDif
                     cstack = 2
                     intake.power = 0.0
                 }
 
                 SStack3 -> {
-                    ridIntake.position = IntakePStack3
+                    ridIntake1.position = IntakeP1Stack3
                     intake.power = IntakePower
                 }
 
                 SPStack3 -> {
-                    ridIntake.position = IntakePStack3 + IntakePrepDif
+                    ridIntake1.position = IntakeP1Stack3 + IntakePrepDif
                     cstack = 3
                     intake.power = 0.0
                 }
 
                 SReset2 -> {
+                    ridIntake1.position = IntakeP1Up
                     intake.power = 0.0
-                    ridIntake.position = IntakePUp
                 }
 
                 SInvert -> {
-                    ridIntake.position = IntakePUp
-                    intake.power = -IntakePower / 2
+                    ridIntake1.position = IntakeP1Up
+                    ridIntake2.position = IntakeP2Up
+                    intake.power = -IntakePower
                 }
 
                 SGoDownForOuttake -> {
-                    ridIntake.position = IntakePDown
+                    ridIntake1.position = IntakeP1Down
                     intake.power = 0.0
                 }
 
@@ -115,7 +119,6 @@ class Intake {
             }
             field = v
             if (v == SPStack1 || v == SPStack2 || v == SPStack3) {
-                //field = SWaitFor
                 sttimer.reset()
             }
         }

@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logst
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
-import org.firstinspires.ftc.teamcode.utils.RobotVars.EXPOSURE
-import org.firstinspires.ftc.teamcode.utils.RobotVars.GAIN
+import org.firstinspires.ftc.teamcode.utils.RobotVars.CameraExposure
+import org.firstinspires.ftc.teamcode.utils.RobotVars.CameraGain
 import org.openftc.easyopencv.*
 import java.lang.Thread.sleep
 import java.util.concurrent.TimeUnit
@@ -42,7 +39,7 @@ class CamGirl(
             pipeline: OpenCvPipeline,
             streaming: Boolean,
             waitForOpen: Boolean,
-    ) : this(name, orientation, resX, resY, pipeline, streaming, waitForOpen, GAIN, EXPOSURE)
+    ) : this(name, orientation, resX, resY, pipeline, streaming, waitForOpen, CameraGain, CameraExposure)
 
     var camera: OpenCvWebcam
     var ecode: Int = 0
