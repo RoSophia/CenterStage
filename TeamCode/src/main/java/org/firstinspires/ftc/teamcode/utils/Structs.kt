@@ -19,6 +19,12 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
     fun vec() = Vec2d(x, y)
     fun headingVec() = Vec2d(cos(h), sin(h))
 
+    operator fun get(id: Int) = when (id) {
+        0 -> x
+        1 -> y
+        else -> h
+    }
+
     operator fun unaryMinus() = Pose(-x, -y, -h)
 
     operator fun plus(pose: Pose) = Pose(x + pose.x, y + pose.y, h + pose.h)

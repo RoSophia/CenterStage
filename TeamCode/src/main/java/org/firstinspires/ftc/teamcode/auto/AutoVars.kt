@@ -10,41 +10,41 @@ import org.firstinspires.ftc.teamcode.utils.Vec2d
 object BlueLongP {
     @JvmField
     var bPos2 = TrajCoef(
-            Pose(-92.0, 18.0, 0.5),
-            0.45
+            Pose(-92.0, 24.0, 0.5),
+            0.4
     )
 
     @JvmField
     var bPos1 = TrajCoef(
             Pose(-120.0, -0.0, 0.0),
             Vec2d(0.0, 2.0), Vec2d(0.0, 3.0),
-            0.1
+            0.4
     )
 
     @JvmField
     var bPos0 = TrajCoef(
-            Pose(-77.0, -25.0, -1.57),
+            Pose(-85.0, -20.0, -1.57),
             Vec2d(80.0, 1.8), Vec2d(40.0, 1.4),
-            0.5
+            0.4
     )
 
     @JvmField
     var bPos2Stack = TrajCoef(
-            Pose(-129.0, 51.2, 1.57),
+            Pose(-125.0, 10.2, 1.57),
             Vec2d(60.0, 4.4), Vec2d(0.0, 4.0),
             0.5
     )
 
     @JvmField
     var bPos1Stack = TrajCoef(
-            Pose(-125.0, 51.0, 1.57),
+            Pose(-125.0, 10.0, 1.57),
             Vec2d(30.0, 3.1), Vec2d(20.0, 4.0),
             0.4
     )
 
     @JvmField
     var bPos0Stack = TrajCoef(
-            Pose(-120.0, 51.2, 1.57),
+            Pose(-125.0, 10.0, 1.57),
             Vec2d(60.0, 1.7), Vec2d(0.0, 0.0),
             Vec2d(0.2, 0.7),
             0.5
@@ -52,13 +52,16 @@ object BlueLongP {
 
     @JvmField
     var bPutPos = TrajCoef(
-            Pose(), Pose(-65.0, -240.0, 1.57),
-            Vec2d(200.0, 4.5), Vec2d(80.0, 1.9),
-            Vec2d(0.0, 1.0), MAX_FRACTION, Vec2d(40.0, 80.0)
+            Pose(), Pose(-65.0, -245.0, 1.57),
+            Vec2d(200.0, 4.65), Vec2d(80.0, 1.9),
+            Vec2d(0.0, 1.0), 0.5, Vec2d(40.0, 80.0)
     )
 
     @JvmField
-    var bOffsets = Pose(1.0, 0.0, 2.5)
+    var bPutPosCase = Pose(-25.0, -50.0, -70.0)
+
+    @JvmField
+    var bOffsets = Pose(0.0, 0.0, 0.0)
 
     @JvmField
     var bStackOffset = Pose(0.0, -0.0, 0.0)
@@ -139,73 +142,74 @@ object BlueShortP {
 object RedLongP {
     @JvmField
     var rPos2 = TrajCoef(
-            Pose(-92.0, -35.0, 0.0),
-            0.45
+            Pose(-92.0, 24.0, 0.5),
+            0.4
     )
 
     @JvmField
     var rPos1 = TrajCoef(
-            Pose(-112.0, -16.0, 0.0),
-            Vec2d(40.0, -2.0), Vec2d(15.0, -3.0),
+            Pose(-120.0, -0.0, 0.0),
+            Vec2d(0.0, 2.0), Vec2d(0.0, 3.0),
             0.4
     )
 
     @JvmField
     var rPos0 = TrajCoef(
-            Pose(-77.0, 20.0, 1.57),
-            Vec2d(50.0, -2.0), Vec2d(30.0, -1.6),
-            0.5
+            Pose(-85.0, -20.0, -1.57),
+            Vec2d(80.0, 1.8), Vec2d(40.0, 1.4),
+            0.4
     )
 
     @JvmField
     var rPos2Stack = TrajCoef(
-            Pose(-129.0, -42.0, -1.57),
-            Vec2d(80.0, 3.14), Vec2d(20.0, 3.14),
+            Pose(-125.0, 10.2, 1.57),
+            Vec2d(60.0, 4.4), Vec2d(0.0, 4.0),
             0.5
     )
 
     @JvmField
     var rPos1Stack = TrajCoef(
-            Pose(-129.0, 40.0, 1.57),
-            Vec2d(30.0, 3.1), Vec2d(40.0, 4.0),
-            0.5
+            Pose(-125.0, 10.0, 1.57),
+            Vec2d(30.0, 3.1), Vec2d(20.0, 4.0),
+            0.4
     )
 
     @JvmField
     var rPos0Stack = TrajCoef(
-            Pose(-130.0, -10.0, 1.57),
-            Vec2d(70.0, -1.7), Vec2d(0.0, 0.0),
+            Pose(-125.0, 10.0, 1.57),
+            Vec2d(60.0, 1.7), Vec2d(0.0, 0.0),
             Vec2d(0.2, 0.7),
             0.5
     )
 
     @JvmField
     var rPutPos = TrajCoef(
-            Pose(), Pose(-65.0, 227.5, -1.57),
-            Vec2d(100.0, 1.9), Vec2d(80.0, -2.0),
-            Vec2d(0.0, 0.3), MAX_FRACTION, Vec2d(80.0, 140.0)
+            Pose(), Pose(-65.0, -245.0, 1.57),
+            Vec2d(200.0, 4.65), Vec2d(80.0, 1.9),
+            Vec2d(0.0, 1.0), 0.5, Vec2d(40.0, 80.0)
     )
 
     @JvmField
-    var rOffsets = Pose(3.0, 0.0, -3.0)
+    var rOffsets = Pose(1.0, 0.0, 2.5)
 
     @JvmField
-    var rPutPosCase = Pose(-75.0, -92.0, -120.0)
-
-    @JvmField
-    var rstackOffset = Pose(3.0, -4.0, 0.0)
+    var rStackOffset = Pose(0.0, -0.0, 0.0)
 
     @JvmField
     var rStackPos2 = TrajCoef(
-            Pose(), Pose(-130.0, 69.0, 1.57),
+            rPutPos.ep,
+            Pose(-130.0, 58.0, 1.57),
             Vec2d(100.0, -3.5), Vec2d(100.0, -1.35),
             Vec2d(), MAX_FRACTION, Vec2d(60.0, 100.0)
     )
 
     @JvmField
-    var rParkPos = TrajCoef(
-            Pose(-150.0, 220.0, -1.57),
-            Vec2d(30.0, -1.7), Vec2d(30.0, -1.7)
+    var rPutPosCase = Pose(-25.0, -50.0, -70.0)
+
+    @JvmField
+    var rparkPos = TrajCoef(
+            Pose(-105.0, -237.0, 1.57),
+            Vec2d(30.0, 1.7), Vec2d(30.0, 1.7)
     )
 }
 
@@ -286,9 +290,6 @@ object AutoVars {
 
     @JvmField
     var SLEEPY_TIME = 4.0
-
-    @JvmField
-    var putPosCase = Pose(-25.0, -43.0, -50.0)
 
     @JvmField
     var sputPosCase = Pose(-27.0, -56.0, -70.0)
