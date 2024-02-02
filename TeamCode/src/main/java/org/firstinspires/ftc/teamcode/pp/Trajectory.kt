@@ -35,7 +35,7 @@ class Action(val checkNr: Int, val act: () -> Unit) {
 
 class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1: Vec2d, @JvmField var v2: Vec2d, @JvmField var h: Vec2d, @JvmField var mf: Double, @JvmField var peru: Vec2d) {
     constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d, h: Vec2d, mf: Double) : this(sp, ep, v1, v2, h, mf, Vec2d(PeruStart, PeruEnd))
-    constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d, mf: Double) : this(sp, ep, v1, v2, Vec2d(0.6, 0.95), mf)
+    constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d, mf: Double) : this(sp, ep, v1, v2, Vec2d(0.0, 1.0), mf)
     constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d) : this(sp, ep, v1, v2, MAX_FRACTION)
     constructor(sp: Pose, ep: Pose, mf: Double) : this(sp, ep, Vec2d(), Vec2d(), mf)
     constructor(sp: Pose, ep: Pose) : this(sp, ep, Vec2d(), Vec2d())
@@ -47,7 +47,7 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
     constructor(ep: Pose, mf: Double) : this(Pose(), ep, mf)
     constructor(ep: Pose) : this(Pose(), ep)
 
-    fun duplicate(): TrajCoef = TrajCoef(sp, ep, v1, v2, h, mf, peru)
+    fun duplicate() = TrajCoef(sp.duplicate(), ep.duplicate(), v1.duplicate(), v2.duplicate(), h.duplicate(), mf, peru.duplicate())
 }
 
 class Trajectory(val start: Pose, val initVel: Double, val end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double) {

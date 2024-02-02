@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.openftc.easyopencv.OpenCvPipeline
+import java.util.Vector
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -160,6 +161,11 @@ object RobotFuncs {
             TimmyCurOff += PI
             TimmyAddKILLLLLLLL = false
         }
+        ___C = Vector()
+        ___C.add(0.0)
+        ___C.add(0.0)
+        ___C.add(0.0)
+        ___C.add(0.0)
         angt.reset()
         SwerveCanInvertMotor = false
         lom = lopm
@@ -226,27 +232,20 @@ object RobotFuncs {
 
     @JvmStatic
     fun update() {
-        val cp = ElapsedTime()
-        cp.reset()
         swerve.update()
-        //logs("Profiler_Swerve", cp.seconds())
-        cp.reset()
-        intake.update()
-        //logs("Profiler_Intake", cp.seconds())
-        cp.reset()
         slides.update()
-        //logs("Profiler_Slides", cp.seconds())
-        cp.reset()
         localizer.update()
-        //logs("Profiler_Localizer", cp.seconds())
-        cp.reset()
         controlHub.clearBulkCache()
-        //expansionHub.clearBulkCache()
         /*
         log("Timmy", timmy.yaw)
         logs("TimmyOF", TimmyCurOff)
         logs("TimmyTime", TimmyLoopTime)*/
+
         log("0", 0.0)
+        log("KILLLLLLLLLLL", (___C[0] +
+                ___C[1] +
+                ___C[2] +
+                ___C[3]))
         tp.put("Framerate", 1 / ep.seconds())
         tp.put("Elapsedtime", etime.seconds())
         ep.reset()

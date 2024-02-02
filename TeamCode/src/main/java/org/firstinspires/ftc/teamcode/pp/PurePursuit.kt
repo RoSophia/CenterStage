@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pp
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.util.ElapsedTime
+import com.sun.tools.javac.comp.Check
 import org.firstinspires.ftc.teamcode.hardware.PIDFC
 import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.pp.PP.AR
@@ -24,6 +25,7 @@ import org.firstinspires.ftc.teamcode.pp.PP.PPMaxAngPower
 import org.firstinspires.ftc.teamcode.pp.PP.PPMaxSpeed
 import org.firstinspires.ftc.teamcode.pp.PP.PPPPPPP
 import org.firstinspires.ftc.teamcode.pp.PP.PPStartEnd
+import org.firstinspires.ftc.teamcode.pp.PP.PPStaticSpeed
 import org.firstinspires.ftc.teamcode.pp.PP.PeruMin
 import org.firstinspires.ftc.teamcode.pp.PP.PeruMax
 import org.firstinspires.ftc.teamcode.pp.PP.SCALE
@@ -68,10 +70,10 @@ object PP {
     var HAPPY_VEL: Double = 0.3
 
     @JvmField
-    var HAPPY_DIST: Double = 3.0
+    var HAPPY_DIST: Double = 6.0
 
     @JvmField
-    var HAPPY_HEAD: Double = 0.09
+    var HAPPY_HEAD: Double = 0.22
 
     @JvmField
     var HAPPY_HEAD_VEL: Double = 0.02
@@ -98,7 +100,7 @@ object PP {
     var MAX_VEL = 20.0
 
     @JvmField
-    var MAX_FRACTION = 0.8
+    var MAX_FRACTION = 1.0
 
     @JvmField
     var PeruStart: Double = 10.0
@@ -107,25 +109,25 @@ object PP {
     var PeruEnd: Double = 40.0
 
     @JvmField
-    var PeruMin: Double = 0.80
+    var PeruMin: Double = 0.40
 
     @JvmField
     var PeruMax: Double = 1.0
 
     @JvmField
-    var PidTrans = PIDFC(1.0, 0.0, 0.0, 0.2) // Trans rights
+    var PidTrans = PIDFC(0.4, 0.0, 0.0, 0.0) // Trans rights
 
     @JvmField
-    var PidLong = PIDFC(1.0, 0.0, 0.0, 0.2)
+    var PidLong = PIDFC(0.2, 0.0, 0.0, 0.0)
 
     @JvmField
-    var PidFinalTrans = PIDFC(0.20, 2.0, 0.0, 0.0)
+    var PidFinalTrans = PIDFC(0.12, 0.0, 0.0, 0.04)
 
     @JvmField
-    var PidFinalLong = PIDFC(0.20, 2.0, 0.0, 0.0)
+    var PidFinalLong = PIDFC(0.12, 0.0, 0.0, 0.04)
 
     @JvmField
-    var PidAngle = PIDFC(1.3, 0.0, 0.0, 0.0)
+    var PidAngle = PIDFC(1.3, 0.0, 0.0, 0.00)
 
     @JvmField
     var PPStartEnd: Double = 15.0
@@ -134,7 +136,10 @@ object PP {
     var PPMaxAngPower: Double = 0.5
 
     @JvmField
-    var PPMaxSpeed: Double = 0.5
+    var PPMaxSpeed: Double = 0.8
+
+    @JvmField
+    var PPStaticSpeed: Double = 0.09
 
     @JvmField
     var Checkpoints: Int = 2000
@@ -262,6 +267,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         canvas.strokeLine(10.0, 10.0, 10.0 + tspeed * TSC * SCALE, 10.0)
     }
 
+    var atLastt = false
     fun startFollowTraj(t: Trajectory) {
         ctraj = t
         ctraj.lastCompletedAction = 0
@@ -270,6 +276,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         error = false
         haveTraj = true
         atLast = false
+        atLastt = false
         atLastT.reset()
         ep.reset()
         runningTime.reset()
@@ -316,6 +323,12 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             cp = localizer.pose
             val lk = lookahead(cp)
 
+            if (lastIndex == Checkpoints && atLastt) {
+                atLastt = true
+                transFP.reset()
+                longFP.reset()
+            }
+
             if (!atLast) {
                 if ((ctraj.end - cp).dist() < PPStartEnd) {
                     atLast = true
@@ -341,21 +354,22 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             val peruTP: Double
             val peruLP: Double
             if (lastIndex == Checkpoints) {
-                peruTP = min(abs(transFP.update(peruR.y)), 2.0)
-                peruLP = min(abs(longFP.update(peru.x)), 1.0)
+                peruTP = abs(transFP.update(peruR.y))
+                peruLP = abs(longFP.update(peru.x))
             } else {
-                peruTP = min(abs(transP.update(peruR.y)), 2.0)
-                peruLP = min(abs(longP.update(peru.x)), 1.0)
+                peruTP = abs(transP.update(peruR.y))
+                peruLP = abs(longP.update(peru.x))
             }
             val peruCR = Vec2d(peruR.x * peruLP, peruR.y * peruTP)
 
-            val speedV = Vec2d(CATSAMEARGAINFATACRED * pcoef * pcoef, 0.0).rotated(trajAngle * NUSHANG)
-            log("SpeedV", speedV)
-            drawVector(cp.vec(), speedV)
-
-            val peruC = peruCR.rotated(trajAngle) + speedV
+            val peruC = peruCR.rotated(trajAngle)
             var angle = gangle(peruC) - timmy.yaw
-            val peruP = (Vec2d(peruTP, peruLP) + speedV).dist() / sqrt(2.0)
+            var peruV = Vec2d(peruTP, peruLP)
+            val peruVd = peruV.dist()
+            if (peruVd > 1.0) {
+                peruV /= peruVd
+            }
+            val peruP = peruV.dist()
             /*
  __  __       _   _
 |  \/  | __ _| |_| |__
@@ -393,6 +407,8 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             val tcoef = min(MAX_VEL, ctraj.initVel + MAX_ACC * runningTime.seconds()) * ctraj.maxFraction / MAX_VEL
             var speed = tcoef * peruP * pcoef
             var angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), PPMaxAngPower), -PPMaxAngPower)
+            log("ANGP", angDiff(cp.h, lk.h))
+            log("ANGPOW", angPower)
             if (speed.isNaN()) {
                 log("PurePursuitError", "NaN speed")
                 speed = 0.0
@@ -407,7 +423,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             }
 
             if (USE_AUTO_MOVE) {
-                swerve.move(max(min(speed, PPMaxSpeed), 0.0), angle, angPower)
+                swerve.move(clamp(speed + PPStaticSpeed, 0.0, PPMaxSpeed), angle, clamp(angPower, -1.0, 1.0))
             } else if (USE_SWERVE) {
                 moveSwerve()
             }

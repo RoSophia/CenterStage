@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
 import org.firstinspires.ftc.teamcode.utils.RobotVars.SwerveWheelOffsets
 
 @Photon
-@TeleOp(name = "設置變量")
+//@TeleOp(name = "設置變量")
 class SetVars : LinearOpMode() {
     override fun runOpMode() {
         SwerveWheelOffsets.x = 0.0

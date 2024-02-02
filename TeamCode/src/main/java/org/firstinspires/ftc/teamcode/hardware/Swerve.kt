@@ -46,10 +46,7 @@ class Swerve {
                 0.0
             }
             modules[i].angle = wa[i]
-            modules[i].speed = cs + SwerveStaticRotation[i]
-            if (AutoRed) {
-                logs("AngDiff_$i", angDiff(modules[i].angle, angNorm(modules[i].s.e.angle + modules[i].off)))
-            }
+            modules[i].speed = cs + if (cs > 0.001) SwerveStaticRotation[i] else 0.0
             modules[i].update()
         }
         ep.reset()
@@ -94,7 +91,7 @@ class Swerve {
         }
         log("Swerve_Movement", String.format("%.3f@%.3f : %.3f", speed, angle, turnPower))
         val actAng = angle + turnPower * SwerveAngP
-        if (abs(speed) < 0.002 && abs(turnPower) < 0.002) {
+        if (abs(speed) < 0.0002 && abs(turnPower) < 0.0002) {
             ws = if (AntiRetardationTimer.seconds() < SwerveAntiRetardationTime || AntiRetardationFrames < 2) {
                 doubleArrayOf(SwerveAntiRetardationForce, SwerveAntiRetardationForce, SwerveAntiRetardationForce, SwerveAntiRetardationForce)
             } else {

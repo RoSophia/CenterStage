@@ -57,82 +57,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.RBOT_POS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.RMID_POS
 import java.util.Vector
 
-/// 1 = Trajectory
-/// 2 = Function
-// 10 = None
-class TSE(val type: Int, val initActio: () -> Unit, val checkDone: () -> Boolean, val traj: Trajectory?) {
-    constructor(type: Int, initActio: () -> Unit, checkDone: () -> Boolean) : this(type, initActio, checkDone, null) // Trajectory Sequence Element
-}
-
-class TrajectorySequence {
-    private val steps = Vector<TSE>()
-    private val stimer = ElapsedTime()
-
-    fun draw() {
-        for ((si, s) in steps.withIndex()) {
-            if (s.type == 1) {
-                if (s.traj != null) {
-                    pp.drawTraj(s.traj, colours[si % colours.size])
-                }
-            }
-        }
-    }
-
-    fun addTrajectory(t: Trajectory) {
-        steps.add(
-                TSE(1,
-                        { pp.startFollowTraj(t) },
-                        { !pp.busy },
-                        t
-                ))
-    }
-
-    fun addAction(a: () -> Unit) {
-        steps.add(
-                TSE(2, a)
-                { true }
-        )
-    }
-
-    fun sleep(s: Double) {
-        steps.add(
-                TSE(2, { stimer.reset() })
-                { stimer.seconds() > s }
-        )
-    }
-
-    private var ls = 0
-    private var e = TSE(10, {}, { true })
-
-    fun reset() {
-        ls = 0
-        e = TSE(10, {}, { true })
-    }
-
-    fun update(): Boolean {
-        if (ls < steps.size) {
-            if (e.type == 10) {
-                ls = 0
-                e = steps[0]
-                e.initActio()
-            }
-            while (e.checkDone()) {
-                ++ls
-                if (ls < steps.size) {
-                    e = steps[ls]
-                    e.initActio()
-                } else {
-                    return true
-                }
-            }
-        } else {
-            return true
-        }
-        return false
-    }
-}
-
-object Cele10Traiectorii {
+object Cele10Traiectorii2 {
     @JvmStatic
     fun getCycleTrajLongBlue(ncycle: Int, randomCase: Int): TrajectorySequence {
         val ts = TrajectorySequence()
@@ -155,7 +80,11 @@ object Cele10Traiectorii {
         }
         stackPos.sp = preloadPos.ep
         val stackTraj = Trajectory(stackPos)
+        stackTraj.addActionE(0.0) { intake.status = Intakes.SPStack1 }
         ts.addTrajectory(stackTraj)
+        ts.sleep(0.1)
+        ts.addAction { intake.status = Intakes.SStack1 }
+        ts.sleep(WaitStack)
 
         val cp = bPutPos.duplicate()
         cp.sp = stackPos.ep
@@ -174,11 +103,12 @@ object Cele10Traiectorii {
         putTraj.addActionE(190.0) { clown.position = GhearaSINCHIS; intake.status = Intakes.SIdleIntake }
         putTraj.addActionE(160.0) { clown.position = GhearaSDESCHIS }
         putTraj.addActionE(120.0) { clown.position = GhearaSINCHIS; intake.status = Intakes.SIdleIntake }
+        //putTraj.addActionE(100.0) { slides.setTarget(RMID_POS / 2, 0.0) }
         putTraj.addActionE(100.0) { intake.status = Intakes.SNothing; diffy.targetPos = DiffyUp; diffy.targetDiff = DiffyfDown }
         ts.addTrajectory(putTraj)
-        ts.sleep(0.2)
+        ts.sleep(1.0)
         ts.addAction { clown.position = GhearaSDESCHIS }
-        ts.sleep(0.2)
+        ts.sleep(1.0)
 
         for (i in 0 until ncycle - 1) {
             bStackPos2.sp = putTraj.end

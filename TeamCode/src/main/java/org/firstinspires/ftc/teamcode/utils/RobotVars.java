@@ -8,10 +8,12 @@ import org.firstinspires.ftc.teamcode.hardware.PIDFC;
 import org.firstinspires.ftc.teamcode.hardware.Timmy;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.Vector;
+
 @Config
 public class RobotVars {
     public static boolean USE_TELE = true;
-    public static boolean USE_CAMERA = true;
+    public static boolean USE_CAMERA = false;
     public static boolean USE_LOCALIZER = true;
     public static boolean USE_FIELD_CENTRIC = true;
     public static boolean USE_DIFFY = true;
@@ -73,10 +75,10 @@ public class RobotVars {
     // LF RF RB LB
     public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -0.6482802389555943, -3.533453402390716, -2.237612437685438);
     public static Vec4P SwervePids = new Vec4P(
-            new PIDFC(0.55, 0.0, 0.0, 0.01),
-            new PIDFC(0.55, 0.0, 0.0, 0.01),
-            new PIDFC(0.55, 0.0, 0.0, 0.01),
-            new PIDFC(0.55, 0.0, 0.0, 0.01)
+            new PIDFC(0.55, 0.0, 0.0, 0.03),
+            new PIDFC(0.6, 0.0, 0.0, 0.03),
+            new PIDFC(0.7, 0.0, 0.0015, 0.03),
+            new PIDFC(0.55, 0.0, 0.0, 0.00)
     );
     public static Vec4 SwerveStaticRotation = new Vec4(0.08, 0.08, 0.08, 0.08);
     public static double SwerveAngP = -0.38;
@@ -91,20 +93,14 @@ public class RobotVars {
     public static double SwerveAntiRetardationTime = 0.15;
 
     public static double GhearaSDESCHIS = 0.6;
-    public static double GhearaSINCHIS = 0.47;
+    public static double GhearaSINCHIS = 0.42;
 
-    public static double IntakePower = -0.8;
-    public static double IntakePowerStack = -1.0;
-    public static double IntakePrepDif = 0.1;
-    public static double IntakeP1Stack1 = 0.4825;
-    public static double IntakeP1Stack2 = 0.44;
-    public static double IntakeP1Stack3 = 0.395;
-    public static double IntakeP1Down = 0.397;
-    public static double IntakeP1Up = 0.427;
-    public static double IntakeP2Down = 0.13;
-    public static double IntakeP2Up = 0.3;
-    public static double IntakeWaitTime = 20.1;
-    public static double IntakeWaitFallTime = 0.1;
+    public static double IntakePower = -1.0;
+    public static Vec4 IntakeGet = new Vec4(0.38, 0.11, 0.39, 0.3); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.45, 0.45); // Get 1 2 Up 1 2
+    public static Vec4 IntakeStack1 = new Vec4(0.45, 0.24, 0.40, 0.27); // Prep 1 2 Stack 1 2
+    public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.38, 0.23); // Prep 1 2 Stack 1 2
+    public static Vec4 IntakeStack3 = new Vec4(0.45, 0.235, 0.40, 0.27); // Prep 1 2 Stack 1 2
     public static int __IntakeSetStatus = 20;
 
     public static double DiffyUp = 1.05;
@@ -132,7 +128,7 @@ public class RobotVars {
     public static double WheelsAlignEnd = PI / 2 - PI / 8;
 
     public static String WheelsPerpName = "RBM";
-    public static Pose WheelsPerpPos = new Pose(-13.5, 1.2, (PI / 2) + 0.036);
+    public static Pose WheelsPerpPos = new Pose(-13.5, 1.2, PI / 2);
     public static Integer WheelsPerpDir = 1;
     public static String WheelsParRName = "RFM";
     public static Pose WheelsParRPos = new Pose(-8.15, -4.35, 0.0);
@@ -148,7 +144,10 @@ public class RobotVars {
     public static int CameraExposure = 80;
 
     public static double EncoderPowerFuckery = 0.06;
+    public static double EncoderFUCKFUCKFUCK = -0.0;
     public static double ___CURRENT_SCHWERVE_SWPEED = 0.0;
+    public static Vector<Double> ___C = new Vector<>(4);
+    public static int ___DELETE_THIS = 0;
 
     public static Pose InfPos = new Pose(10000000000.0, 1000000000000.0, 0.0);
 

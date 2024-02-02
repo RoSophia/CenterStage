@@ -62,13 +62,7 @@ class AuTest : LinearOpMode() {
     override fun runOpMode() {
         preinit()
         initma(this)
-        if (USE_CAMERA) {
-            initAuto()
-        }
         waitForStart()
-        if (USE_CAMERA) {
-            cam.stop()
-        }
         startma()
         val t1 = Trajectory(sp, 0.0, ep, v1, v2, h1)
         val t2 = Trajectory(ep, 0.0, sp, v2, v1, h1)

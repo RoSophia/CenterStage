@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.utils.NanoClock
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
+import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoRed
 import kotlin.math.roundToInt
 
 class Encoder(val name: String, private val direction: Int) {
@@ -40,6 +42,7 @@ class Encoder(val name: String, private val direction: Int) {
 
     val vel: Double
         get() {
+            logs("KIl", pos)
             val median: Double = if (velocityEstimates[0] > velocityEstimates[1])
                 velocityEstimates[1].coerceAtLeast(velocityEstimates[0].coerceAtMost(velocityEstimates[2]))
             else {

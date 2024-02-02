@@ -14,7 +14,7 @@ import kotlin.math.abs
 import kotlin.math.min
 
 class SwerveModule(val name: String, id: Int) {
-    val s = CServo(name, SwerveWheelOffsets[id], SwervePids[id])
+    val s = CServo(name, SwerveWheelOffsets[id], SwervePids[id], id)
 
     /*
        /__\

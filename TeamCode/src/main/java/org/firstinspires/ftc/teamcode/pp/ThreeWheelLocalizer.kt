@@ -109,10 +109,9 @@ class ThreeWheelLocalizer : Localizer {
                     encoders[1].vel * WheelsTicksToCm,
                     encoders[2].vel * WheelsTicksToCm)
             poseVel = calculatePoseDelta(wheelVelocities)
-            /*
-                logs("WheelVelParR", wheelVelocities[0])
-                logs("WheelVelParL", wheelVelocities[1])
-                logs("WheelVelPerp", wheelVelocities[2])*/
+            logs("WheelVelParR", wheelVelocities[0])
+            logs("WheelVelParL", wheelVelocities[1])
+            logs("WheelVelPerp", wheelVelocities[2])
 
             val canvas = RobotFuncs.tp.fieldOverlay()
             canvas.setStrokeWidth(1)
