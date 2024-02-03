@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto
-
+/*
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.auto.AutoVars.SLEEPY_TIME
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitIntake
@@ -249,3 +249,4 @@ object Cele10Traiectorii2 {
         return ts
     }
 }
+*/

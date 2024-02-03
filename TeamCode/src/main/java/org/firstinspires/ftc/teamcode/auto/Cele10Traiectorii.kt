@@ -190,6 +190,7 @@ object Cele10Traiectorii {
             1 -> rPos1Stack
             else -> rPos0Stack
         }
+        /*
         stackPos.sp = preloadPos.ep
         val stackTraj = Trajectory(stackPos)
         ts.addTrajectory(stackTraj)
@@ -210,7 +211,7 @@ object Cele10Traiectorii {
         goPark.addActionS(0.0) { clown.position = GhearaSDESCHIS }
         goPark.addActionS(70.0) { clown.position = GhearaSINCHIS; diffy.targetPos = DiffyDown; diffy.targetDiff = DiffyfUp }
         ts.addTrajectory(goPark)
-
+        */
         return ts
     }
 

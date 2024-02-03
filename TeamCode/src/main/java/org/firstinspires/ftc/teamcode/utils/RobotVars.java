@@ -13,7 +13,7 @@ import java.util.Vector;
 @Config
 public class RobotVars {
     public static boolean USE_TELE = true;
-    public static boolean USE_CAMERA = false;
+    public static boolean USE_CAMERA = true;
     public static boolean USE_LOCALIZER = true;
     public static boolean USE_FIELD_CENTRIC = true;
     public static boolean USE_DIFFY = true;
@@ -97,7 +97,7 @@ public class RobotVars {
 
     public static double IntakePower = -1.0;
     public static Vec4 IntakeGet = new Vec4(0.38, 0.11, 0.39, 0.3); // Get 1 2 Up 1 2
-    public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.45, 0.45); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack1 = new Vec4(0.45, 0.24, 0.40, 0.27); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.38, 0.23); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack3 = new Vec4(0.45, 0.235, 0.40, 0.27); // Prep 1 2 Stack 1 2

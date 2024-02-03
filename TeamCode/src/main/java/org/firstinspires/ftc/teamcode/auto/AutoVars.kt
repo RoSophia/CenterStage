@@ -10,20 +10,20 @@ import org.firstinspires.ftc.teamcode.utils.Vec2d
 object BlueLongP {
     @JvmField
     var bPos2 = TrajCoef(
-            Pose(-92.0, 24.0, 0.5),
+            Pose(-94.0, 10.0, 0.5),
             0.4
     )
 
     @JvmField
     var bPos1 = TrajCoef(
-            Pose(-120.0, -0.0, 0.0),
+            Pose(-111.0, -23.0, 0.0),
             Vec2d(0.0, 2.0), Vec2d(0.0, 3.0),
             0.4
     )
 
     @JvmField
     var bPos0 = TrajCoef(
-            Pose(-85.0, -20.0, -1.57),
+            Pose(-85.0, -25.0, -1.57),
             Vec2d(80.0, 1.8), Vec2d(40.0, 1.4),
             0.4
     )
