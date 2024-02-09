@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.qualcomm.robotcore.hardware.AnalogInput
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
-import org.firstinspires.ftc.teamcode.utils.RobotVars.EncoderFUCKFUCKFUCK
+import org.firstinspires.ftc.teamcode.utils.RobotVars.EncoderAccelFuckery
 import org.firstinspires.ftc.teamcode.utils.RobotVars.EncoderPowerFuckery
-import org.firstinspires.ftc.teamcode.utils.RobotVars.___C
+import org.firstinspires.ftc.teamcode.utils.RobotVars.___CURRENT_SCHWERVE_ACCEL
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___CURRENT_SCHWERVE_SWPEED
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import kotlin.math.PI
@@ -26,12 +26,8 @@ class AbsEnc(private val name: String, private val off: Double) {
     val angle: Double
         get() {
             val ccv = enc.voltage
-            logs("${name}_ccv", ccv)
-            val KILLLLLLLL = (___C[0] +
-                    ___C[1] +
-                    ___C[2] +
-                    ___C[3])
-            val v = ccv + ___CURRENT_SCHWERVE_SWPEED * EncoderPowerFuckery + KILLLLLLLL * EncoderFUCKFUCKFUCK
+            val v = ccv + ___CURRENT_SCHWERVE_SWPEED * EncoderPowerFuckery + ___CURRENT_SCHWERVE_ACCEL * EncoderAccelFuckery
+            logs("${name}_cv", v)
 
             maxVoltage = min(max(maxVoltage, v), 3.3)
             val cv = v / maxVoltage

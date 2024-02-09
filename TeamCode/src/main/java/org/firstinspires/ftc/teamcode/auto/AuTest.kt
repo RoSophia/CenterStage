@@ -1,29 +1,24 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.auto
 
 import com.acmerobotics.dashboard.config.Config
 import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.teamcode.AUTest.AAAAAAAAAAAAAAAAAAA
-import org.firstinspires.ftc.teamcode.AUTest.GO_TO_POS
-import org.firstinspires.ftc.teamcode.AUTest.LOOP
-import org.firstinspires.ftc.teamcode.AUTest.ep
-import org.firstinspires.ftc.teamcode.AUTest.h1
-import org.firstinspires.ftc.teamcode.AUTest.sp
-import org.firstinspires.ftc.teamcode.AUTest.v1
-import org.firstinspires.ftc.teamcode.AUTest.v2
+import org.firstinspires.ftc.teamcode.auto.AUTest.SLEPY
+import org.firstinspires.ftc.teamcode.auto.AUTest.ep
+import org.firstinspires.ftc.teamcode.auto.AUTest.h1
+import org.firstinspires.ftc.teamcode.auto.AUTest.sp
+import org.firstinspires.ftc.teamcode.auto.AUTest.v1
+import org.firstinspires.ftc.teamcode.auto.AUTest.v2
+import org.firstinspires.ftc.teamcode.auto.AutoFuncs.totBordu
+import org.firstinspires.ftc.teamcode.auto.AutoFuncs.updateAutoCustom
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.cam
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initAuto
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.localizer
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
-import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_CAMERA
 import org.firstinspires.ftc.teamcode.utils.Vec2d
 
 @Config
@@ -44,59 +39,28 @@ object AUTest {
     var h1: Vec2d = Vec2d()
 
     @JvmField
-    var AAAAAAAAAAAAAAAAAAA: Boolean = false
-
-    @JvmField
-    var AINt: Int = 0
-
-    @JvmField
-    var GO_TO_POS: Boolean = false
-
-    @JvmField
-    var LOOP: Boolean = true
+    var SLEPY = 0.5
 }
 
 @Photon
 @Autonomous(name = "我愛修訂")
 class AuTest : LinearOpMode() {
     override fun runOpMode() {
-        preinit()
-        initma(this)
-        waitForStart()
-        startma()
-        val t1 = Trajectory(sp, 0.0, ep, v1, v2, h1)
-        val t2 = Trajectory(ep, 0.0, sp, v2, v1, h1)
-        var at = 0
+        totBordu(this, false)
 
-        var lep = Pose()
+        val updateTraj = {
+            val cc = TrajectorySequence()
+            cc.addTrajectory(Trajectory(sp, 0.0, ep, v1, v2, h1))
+            cc.sleep(SLEPY)
+            cc.addTrajectory(Trajectory(ep, 0.0, sp, v2, v1, h1))
+            cc.sleep(SLEPY)
+            cc
+        }
+        var ce = updateTraj()
 
         while (!isStopRequested) {
-            if (GO_TO_POS) {
-                if (ep.x != lep.x || ep.y != lep.y || lep.h != ep.h) {
-                    pp.startFollowTraj(Trajectory(localizer.pose, localizer.poseVel.dist(), ep))
-                    lep = ep.duplicate()
-                }
-                pp.update()
-            } else {
-                if (LOOP) {
-                    if (!pp.busy) {
-                        if (at == 0) {
-                            at = 1
-                            pp.startFollowTraj(t1)
-                        } else {
-                            at = 0
-                            pp.startFollowTraj(t2)
-                        }
-                    }
-                }
-                if (AAAAAAAAAAAAAAAAAAA) {
-                    pp.startFollowTraj(Trajectory(sp, 0.0, ep, v1, v2, h1))
-                    pp.draw(pp.ctraj, Pose(), Pose(100000000000000.0, 0.0, 0.0), 0.0, 0.0, 0.0)
-                } else {
-                    pp.update()
-                }
-            }
-            update()
+            val cce = updateAutoCustom(ce, updateTraj)
+            if (cce != null) { ce = cce }
         }
 
         endma()

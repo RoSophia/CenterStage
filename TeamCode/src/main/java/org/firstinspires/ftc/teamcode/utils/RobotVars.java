@@ -77,14 +77,14 @@ public class RobotVars {
     public static Vec4P SwervePids = new Vec4P(
             new PIDFC(0.55, 0.0, 0.0, 0.03),
             new PIDFC(0.6, 0.0, 0.0, 0.03),
-            new PIDFC(0.7, 0.0, 0.0015, 0.03),
-            new PIDFC(0.55, 0.0, 0.0, 0.00)
+            new PIDFC(0.65, 0.0, 0.0015, 0.015),
+            new PIDFC(0.45, 0.0, 0.0, 0.00)
     );
     public static Vec4 SwerveStaticRotation = new Vec4(0.08, 0.08, 0.08, 0.08);
     public static double SwerveAngP = -0.38;
     public static double SwerveHeadP = 1.0;
     public static double SwerveMaxPower = 1.0;
-    public static double SwerveKmsConf = 5;
+    public static double SwerveKmsConf = 3;
     public static boolean SwerveCanInvertMotor = true;
     public static double SwerveTrackWidth = 21.0;
     public static double SwerveWheelBase = 21.0;
@@ -97,7 +97,7 @@ public class RobotVars {
 
     public static double IntakePower = -1.0;
     public static double IntakeOuttakePower = 0.4;
-    public static Vec4 IntakeGet = new Vec4(0.38, 0.11, 0.39, 0.3); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGet = new Vec4(0.38, 0.155, 0.4, 0.28); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack1 = new Vec4(0.45, 0.24, 0.40, 0.27); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.38, 0.23); // Prep 1 2 Stack 1 2
@@ -132,12 +132,12 @@ public class RobotVars {
     public static Pose WheelsPerpPos = new Pose(-13.5, 1.2, PI / 2);
     public static Integer WheelsPerpDir = 1;
     public static String WheelsParRName = "RFM";
-    public static Pose WheelsParRPos = new Pose(-8.15, -4.35, 0.0);
+    public static Pose WheelsParRPos = new Pose(-8.15, -4.35, 0.034);
     public static Integer WheelsParRDir = 1;
     public static String WheelsParLName = "RBM";
     public static Pose WheelsParLPos = new Pose(-8.15, 5.2, 0.0);
     public static Integer WheelsParLDir = -1;
-    public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0; // Radius * 2pi / Ticks/Rev
+    public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0 / 1.02; // Radius * 2pi / Ticks/Rev / DracuStie
 
     public static String CameraName = "Anticamera";
     public static OpenCvCameraRotation CameraOrientation = OpenCvCameraRotation.UPSIDE_DOWN;
@@ -145,10 +145,9 @@ public class RobotVars {
     public static int CameraExposure = 60;
 
     public static double EncoderPowerFuckery = 0.06;
-    public static double EncoderFUCKFUCKFUCK = -0.0;
+    public static double EncoderAccelFuckery = 0.00;
     public static double ___CURRENT_SCHWERVE_SWPEED = 0.0;
-    public static Vector<Double> ___C = new Vector<>(4);
-    public static int ___DELETE_THIS = 0;
+    public static double ___CURRENT_SCHWERVE_ACCEL = 0.0;
 
     public static Pose InfPos = new Pose(10000000000.0, 1000000000000.0, 0.0);
 

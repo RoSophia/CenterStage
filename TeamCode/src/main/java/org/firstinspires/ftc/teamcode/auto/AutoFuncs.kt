@@ -62,6 +62,23 @@ object AutoFuncs {
     }
 
     @JvmStatic
+    fun updateAutoCustom(e: TrajectorySequence, func: ()->TrajectorySequence): TrajectorySequence? {
+        if (JustDraw) {
+            val ce = func()
+            ce.draw()
+            update()
+            return ce
+        } else {
+            if (e.update()) {
+                return func()
+            }
+            pp.update()
+        }
+        update()
+        return null
+    }
+
+    @JvmStatic
     fun updateAuto(e: TrajectorySequence, numCycles: Int): TrajectorySequence? {
         if (JustDraw) {
             val ce = Cele10Traiectorii.getCycleTrajLongBlue(numCycles, targetPreload)

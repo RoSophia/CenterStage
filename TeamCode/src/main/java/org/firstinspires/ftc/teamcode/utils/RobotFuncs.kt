@@ -161,11 +161,6 @@ object RobotFuncs {
             TimmyCurOff += PI
             TimmyAddKILLLLLLLL = false
         }
-        ___C = Vector()
-        ___C.add(0.0)
-        ___C.add(0.0)
-        ___C.add(0.0)
-        ___C.add(0.0)
         angt.reset()
         SwerveCanInvertMotor = false
         lom = lopm
@@ -185,11 +180,12 @@ object RobotFuncs {
         expansionHub.setConstant(Color.rgb(255, 100, 20))
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
+        log("__InitVoltage", batteryVoltageSensor.voltage)
         if (TimmyToClose) {
             try {
                 timmy.close()
             } catch (e: Exception) {
-                log("Timmy wasn't closed", "Idiot")
+                //log("Timmy wasn't closed", "Idiot")
             }
             timmy = Timmy("imu")
             TimmyToClose = false
@@ -242,10 +238,6 @@ object RobotFuncs {
         logs("TimmyTime", TimmyLoopTime)*/
 
         log("0", 0.0)
-        log("KILLLLLLLLLLL", (___C[0] +
-                ___C[1] +
-                ___C[2] +
-                ___C[3]))
         tp.put("Framerate", 1 / ep.seconds())
         tp.put("Elapsedtime", etime.seconds())
         ep.reset()

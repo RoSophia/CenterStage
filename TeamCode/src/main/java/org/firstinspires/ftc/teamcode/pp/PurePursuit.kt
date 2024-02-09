@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.hardware.PIDFC
 import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.pp.PP.AR
 import org.firstinspires.ftc.teamcode.pp.PP.PidAngle
-import org.firstinspires.ftc.teamcode.pp.PP.CATSAMEARGAINFATACRED
 import org.firstinspires.ftc.teamcode.pp.PP.Checkpoints
 import org.firstinspires.ftc.teamcode.pp.PP.PidFinalLong
 import org.firstinspires.ftc.teamcode.pp.PP.PidFinalTrans
@@ -36,6 +35,7 @@ import org.firstinspires.ftc.teamcode.pp.PP.lkr
 import org.firstinspires.ftc.teamcode.utils.PID
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.ep
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
@@ -70,10 +70,10 @@ object PP {
     var HAPPY_VEL: Double = 0.3
 
     @JvmField
-    var HAPPY_DIST: Double = 6.0
+    var HAPPY_DIST: Double = 3.0
 
     @JvmField
-    var HAPPY_HEAD: Double = 0.22
+    var HAPPY_HEAD: Double = 0.12
 
     @JvmField
     var HAPPY_HEAD_VEL: Double = 0.02
@@ -118,7 +118,7 @@ object PP {
     var PidTrans = PIDFC(0.4, 0.0, 0.0, 0.0) // Trans rights
 
     @JvmField
-    var PidLong = PIDFC(0.4, 0.0, 0.0, 0.0)
+    var PidLong = PIDFC(0.4, 0.0, 0.0, 0.6)
 
     @JvmField
     var PidFinalTrans = PIDFC(0.12, 0.0, 0.0, 0.04)
@@ -127,7 +127,7 @@ object PP {
     var PidFinalLong = PIDFC(0.12, 0.0, 0.0, 0.04)
 
     @JvmField
-    var PidAngle = PIDFC(1.3, 0.0, 0.0, 0.00)
+    var PidAngle = PIDFC(0.4, 0.0, 0.0, 0.00)
 
     @JvmField
     var PPStartEnd: Double = 15.0
@@ -146,9 +146,6 @@ object PP {
 
     @JvmField
     var NUSHANG: Double = 1.0
-
-    @JvmField
-    var CATSAMEARGAINFATACRED: Double = 0.0
 
     @JvmField
     var LookaheadScale: Vec2d = Vec2d(50.0, 30.0)
@@ -275,6 +272,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         done = false
         error = false
         haveTraj = true
+        haveResetF = false
         atLast = false
         atLastt = false
         atLastT.reset()
@@ -283,6 +281,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         longP.reset()
         transP.reset()
         angleP.reset()
+        log("ctraj", ctraj)
     }
 
     private fun gangle(o12: Vec2d): Double {
@@ -301,6 +300,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
     private var runningTime = ElapsedTime()
     private var atLast = false
     private var atLastT = ElapsedTime()
+    private var haveResetF = false
 
     private val angleP = PID(PidAngle)
     private val transP = PID(PidTrans)
@@ -354,11 +354,15 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             val peruTP: Double
             val peruLP: Double
             if (lastIndex == Checkpoints) {
-                peruTP = abs(transFP.update(peruR.y))
-                peruLP = abs(longFP.update(peru.x))
+                if (haveResetF) {
+                    transFP.reset()
+                    longFP.reset()
+                }
+                peruTP = abs(transFP.update(peruR.y)).coerceAtMost(2.0)
+                peruLP = abs(longFP.update(peru.x)).coerceAtMost(2.0)
             } else {
-                peruTP = abs(transP.update(peruR.y))
-                peruLP = abs(longP.update(peru.x))
+                peruTP = abs(transP.update(peruR.y)).coerceAtMost(2.0)
+                peruLP = abs(longP.update(peru.x)).coerceAtMost(2.0)
             }
             val peruCR = Vec2d(peruR.x * peruLP, peruR.y * peruTP)
 
@@ -405,7 +409,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             }
 
             val tcoef = min(MAX_VEL, ctraj.initVel + MAX_ACC * runningTime.seconds()) * ctraj.maxFraction / MAX_VEL
-            var speed = tcoef * peruP * pcoef
+            var speed = clamp(tcoef * peruP * pcoef + PPStaticSpeed, 0.0, PPMaxSpeed)
             var angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), PPMaxAngPower), -PPMaxAngPower)
             log("ANGP", angDiff(cp.h, lk.h))
             log("ANGPOW", angPower)
@@ -423,23 +427,24 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             }
 
             if (USE_AUTO_MOVE) {
-                swerve.move(clamp(speed + PPStaticSpeed, 0.0, PPMaxSpeed), angle, clamp(angPower, -1.0, 1.0))
+                swerve.move(speed, angle, angPower)
             } else if (USE_SWERVE) {
                 moveSwerve()
             }
             draw(ctraj, cp, lk, speed, angle, angPower)
             ep.reset()
-            log("ctraj", ctraj)
             logs("S_lk", lk)
-            log("S_Dist", lk - cp)
+            logs("S_Dist", lk - cp)
             log("S_Pos", cp)
+            log("S_FinalDist", ctraj.end - cp)
             logs("S_ctraje", ctraj.end)
-            log("lastIndex", lastIndex)
-            log("SWERVE_Tcoef", tcoef)
-            log("SWERVE_pspeed", angPower)
-            log("SWERVE_perCoef", pcoef)
+            logs("lastIndex", lastIndex)
+            logs("SWERVE_Tcoef", tcoef)
+            logs("SWERVE_pspeed", angPower)
+            logs("SWERVE_perCoef", pcoef)
         } else {
             if (USE_AUTO_MOVE) {
+                log("MOVEING ZIRO", RobotFuncs.ep.seconds())
                 swerve.move(0.0, swerve.angle, 0.0)
                 swerve.lb.speed = 0.0
                 swerve.rb.speed = 0.0

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.utils.Pose
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
@@ -83,11 +84,13 @@ class Swerve {
         maxs = max(ws[0], max(ws[1], max(ws[2], ws[3])))
     }
 
-    val AntiRetardationTimer = ElapsedTime()
-    var AntiRetardationFrames = 0
+    private val AntiRetardationTimer = ElapsedTime()
+    private var AntiRetardationFrames = 0
+    private var accelTimer = ElapsedTime()
     fun move(speed: Double, angle: Double, turnPower: Double) {
         if (epsEq(this.speed, speed) && epsEq(this.angle, angle) && epsEq(this.turnPower, turnPower)) {
-            return
+            log("KILIKIL", String.format("%.5f - %.5f : %.5f", speed, angle, turnPower))
+            //return
         }
         log("Swerve_Movement", String.format("%.3f@%.3f : %.3f", speed, angle, turnPower))
         val actAng = angle + turnPower * SwerveAngP
@@ -103,11 +106,14 @@ class Swerve {
             AntiRetardationFrames = 0
             kmskms(Pose(sin(actAng) * speed, cos(actAng) * speed, turnPower * PI / SwerveKmsConf))
         }
-        ___CURRENT_SCHWERVE_SWPEED = (
-                clamp(abs(ws[0]), 0.0, 1.0) +
-                        clamp(abs(ws[1]), 0.0, 1.0) +
-                        clamp(abs(ws[2]), 0.0, 1.0) +
-                        clamp(abs(ws[3]), 0.0, 1.0)) / 4
-        log("CURRENT_", ___CURRENT_SCHWERVE_SWPEED)
+
+        val css = (clamp(abs(ws[0]), 0.0, 1.0) +
+                   clamp(abs(ws[1]), 0.0, 1.0) +
+                   clamp(abs(ws[2]), 0.0, 1.0) +
+                   clamp(abs(ws[3]), 0.0, 1.0)) / 4
+        ___CURRENT_SCHWERVE_ACCEL = abs(___CURRENT_SCHWERVE_SWPEED - css) / accelTimer.seconds()
+        accelTimer.reset()
+        ___CURRENT_SCHWERVE_SWPEED = css
+
     }
 }

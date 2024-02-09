@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import org.firstinspires.ftc.teamcode.utils.PID
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
-import org.firstinspires.ftc.teamcode.utils.RobotVars.___C
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
-import kotlin.math.abs
 
 class PIDFC(@JvmField var p: Double, @JvmField var i: Double, @JvmField var d: Double, @JvmField var f: Double) {
     override fun toString() = "($p $i $d $f)"
@@ -27,7 +25,6 @@ class CServo(val name: String, eoff: Double, private val pd: PIDFC, val id: Int)
         logs("${name}_PID", pd)
         logs("${name}_Pwr", pwr)
 
-        ___C[id] = abs(pwr)
         s.power = pwr
     }
 }

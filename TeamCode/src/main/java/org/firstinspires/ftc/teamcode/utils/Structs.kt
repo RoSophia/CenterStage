@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.utils
 
+import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.PIDFC
+import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -35,6 +37,7 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
 
     operator fun times(pose: Pose) = Pose(x * pose.x, y * pose.y, h * pose.h)
     operator fun times(s: Double) = Pose(x * s, y * s, h * s)
+    operator fun times(s: Int) = times(s.toDouble())
 
     override fun toString() = String.format("(%.3f, %.3f, %.3f)", x, y, h)
 }
@@ -73,6 +76,26 @@ class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
     override fun toString() = String.format("(%.3f, %.3f)", x, y)
 }
 
+class Vec3(@JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Double) {
+    var x: Double = a
+        get() = a
+        set(v) { a = v; field = v }
+    var y: Double = b
+        get() = b
+        set(v) { b = v; field = v }
+    var z: Double = c
+        get() = c
+        set(v) { c = v; field = v }
+
+    operator fun get(i: Int) = when (i) {
+        0 -> a
+        1 -> b
+        else -> c
+    }
+
+    fun duplicate() = Vec3(a, b, c)
+}
+
 class Vec4(@JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Double, @JvmField var d: Double) {
     var x: Double = a
         get() = a
@@ -93,6 +116,28 @@ class Vec4(@JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Do
         2 -> c
         else -> d
     }
+
+    fun duplicate() = Vec4(a, b, c, d)
+}
+
+class Vec3T(@JvmField var a: TrajCoef, @JvmField var b: TrajCoef, @JvmField var c: TrajCoef) {
+    var x: TrajCoef = a
+        get() = a
+        set(v) { a = v; field = v }
+    var y: TrajCoef = b
+        get() = b
+        set(v) { b = v; field = v }
+    var z: TrajCoef = c
+        get() = c
+        set(v) { c = v; field = v }
+
+    operator fun get(i: Int) = when (i) {
+        0 -> a
+        1 -> b
+        else -> c
+    }
+
+    fun duplicate() = Vec3T(a.duplicate(), b.duplicate(), c.duplicate())
 }
 
 class Vec4P(@JvmField var a: PIDFC, @JvmField var b: PIDFC, @JvmField var c: PIDFC, @JvmField var d: PIDFC) {
