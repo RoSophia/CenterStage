@@ -13,13 +13,14 @@ import java.util.Vector;
 @Config
 public class RobotVars {
     public static boolean USE_TELE = true;
-    public static boolean USE_CAMERA = true;
+    public static boolean USE_CAMERA = false;
     public static boolean USE_LOCALIZER = true;
     public static boolean USE_FIELD_CENTRIC = true;
     public static boolean USE_DIFFY = true;
     public static boolean USE_IMU_LOCALIZER = true;
     public static boolean USE_RIDICARE = true;
     public static boolean USE_SWERVE = true;
+    public static boolean USE_INTAKE = true;
     public static boolean USE_SWERVE_MOTORS = true;
     public static boolean USE_AUTO_MOVE = true;
 
@@ -85,6 +86,7 @@ public class RobotVars {
     public static double SwerveHeadP = 1.0;
     public static double SwerveMaxPower = 1.0;
     public static double SwerveKmsConf = 3;
+    public static double SwerveManualTurnPower = 0.8;
     public static boolean SwerveCanInvertMotor = true;
     public static double SwerveTrackWidth = 21.0;
     public static double SwerveWheelBase = 21.0;

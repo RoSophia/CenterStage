@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
 import org.firstinspires.ftc.teamcode.utils.RobotVars
 import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoRed
+import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoResult
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyToClose
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyCurOff
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyAddKILLLLLLLL
@@ -29,7 +30,7 @@ object AutoFuncs {
     private fun checkCamera(): Int {
         if (USE_CAMERA) {
             while (!lom.isStarted) {
-                targetPreload = RobotVars.AutoResult
+                targetPreload = AutoResult
                 RobotFuncs.log("TargetPreload", targetPreload)
                 sleep(5)
             }
@@ -81,7 +82,7 @@ object AutoFuncs {
     @JvmStatic
     fun updateAuto(e: TrajectorySequence, numCycles: Int): TrajectorySequence? {
         if (JustDraw) {
-            val ce = Cele10Traiectorii.getCycleTrajLongBlue(numCycles, targetPreload)
+            val ce = Cele10Traiectorii.getCycleTrajLongBlue(numCycles, AutoResult)
             ce.draw()
             update()
             return ce

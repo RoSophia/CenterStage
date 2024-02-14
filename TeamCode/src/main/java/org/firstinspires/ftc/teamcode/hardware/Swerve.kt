@@ -89,7 +89,7 @@ class Swerve {
     private var accelTimer = ElapsedTime()
     fun move(speed: Double, angle: Double, turnPower: Double) {
         if (epsEq(this.speed, speed) && epsEq(this.angle, angle) && epsEq(this.turnPower, turnPower)) {
-            log("KILIKIL", String.format("%.5f - %.5f : %.5f", speed, angle, turnPower))
+            /// TODO: Yeah this fucks up my stop command in auto for some reason
             //return
         }
         log("Swerve_Movement", String.format("%.3f@%.3f : %.3f", speed, angle, turnPower))

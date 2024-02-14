@@ -44,6 +44,7 @@ class Intake {
         ridIntake2.position = kms[p * 2 + 1]
         intake.power = pwr
     }
+
     private fun sint(kms: Vec4, p: Int) = sint(kms, p, IntakePower)
 
     private fun sint(p1: Double, p2: Double, pwr: Double) {
@@ -54,22 +55,24 @@ class Intake {
 
     var status = 0
         set(v) {
-            when (v) {
-                SNothing -> sint(IntakeGet, 1, 0.0)
-                SDown -> sint(IntakeGetUp, 0, 0.0)
-                SUp -> sint(IntakeGetUp, 1, 0.0)
-                SIntake -> sint(IntakeGet, 0, IntakePower)
-                SStack1 -> sint(IntakeStack1, 1)
-                SPStack1 -> sint(IntakeStack1, 0)
-                SStack2 -> sint(IntakeStack2, 1)
-                SPStack2 -> sint(IntakeStack2, 0)
-                SStack3 -> sint(IntakeStack3, 1)
-                SPStack3 -> sint(IntakeStack3, 0)
-                SInvert -> sint(IntakeGet, 1, IntakeOuttakePower)
-                SIdleIntake -> sint(IntakeGetUp, 0)
-                else -> {}
+            if (USE_INTAKE) {
+                when (v) {
+                    SNothing -> sint(IntakeGet, 1, 0.0)
+                    SDown -> sint(IntakeGetUp, 0, 0.0)
+                    SUp -> sint(IntakeGetUp, 1, 0.0)
+                    SIntake -> sint(IntakeGet, 0, IntakePower)
+                    SStack1 -> sint(IntakeStack1, 1)
+                    SPStack1 -> sint(IntakeStack1, 0)
+                    SStack2 -> sint(IntakeStack2, 1)
+                    SPStack2 -> sint(IntakeStack2, 0)
+                    SStack3 -> sint(IntakeStack3, 1)
+                    SPStack3 -> sint(IntakeStack3, 0)
+                    SInvert -> sint(IntakeGet, 1, IntakeOuttakePower)
+                    SIdleIntake -> sint(IntakeGetUp, 0)
+                    else -> {}
+                }
+                field = v
             }
-            field = v
         }
 
     init {

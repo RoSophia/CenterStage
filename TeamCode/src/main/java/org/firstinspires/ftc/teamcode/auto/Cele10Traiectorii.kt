@@ -185,10 +185,12 @@ object Cele10Traiectorii {
             ts.sl(WaitStack)
 
             /// Stack2 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)
-            putPos.sp += bPutOffset * (i + 1)
+            putPos.sp = stack2Pos.ep
+            putPos.ep = putPos.ep + bPutOffset * i
             putTraj = Trajectory(putPos)
             putTraj.addActionS(10.0) { clown.position = GhearaSINCHIS }
             putTraj.addActionE(130.0) { diffy.targetPos = DiffyUp }
+            ts.at(putTraj)
             ts.sl(WaitPut)
             ts.aa { clown.position = GhearaSDESCHIS}
             ts.sl(WaitPut)

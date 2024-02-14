@@ -109,7 +109,7 @@ object PP {
     var PeruEnd: Double = 40.0
 
     @JvmField
-    var PeruMin: Double = 0.40
+    var PeruMin: Double = 0.45
 
     @JvmField
     var PeruMax: Double = 1.0
@@ -121,10 +121,10 @@ object PP {
     var PidLong = PIDFC(0.4, 0.0, 0.0, 0.6)
 
     @JvmField
-    var PidFinalTrans = PIDFC(0.12, 0.0, 0.0, 0.04)
+    var PidFinalTrans = PIDFC(0.1, 0.0, 0.0, 0.55)
 
     @JvmField
-    var PidFinalLong = PIDFC(0.12, 0.0, 0.0, 0.04)
+    var PidFinalLong = PIDFC(0.1, 0.0, 0.0, 0.55)
 
     @JvmField
     var PidAngle = PIDFC(0.4, 0.0, 0.0, 0.00)
@@ -136,7 +136,7 @@ object PP {
     var PPMaxAngPower: Double = 0.5
 
     @JvmField
-    var PPMaxSpeed: Double = 0.8
+    var PPMaxSpeed: Double = 1.0
 
     @JvmField
     var PPStaticSpeed: Double = 0.09
@@ -209,8 +209,8 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         return ctraj[res]
     }
 
-    fun drawTraj(t: Trajectory, tcol: String) = draw(t, localizer.pose, InfPos, 0.0, 0.0, 0.0, tcol)
-    fun drawTraj(t: Trajectory) = draw(t, localizer.pose, InfPos, 0.0, 0.0, 0.0, "#D7C9AA")
+    fun drawTraj(t: Trajectory, tcol: String) = draw(t, InfPos, InfPos, 0.0, 0.0, 0.0, tcol)
+    fun drawTraj(t: Trajectory) = draw(t, InfPos, InfPos, 0.0, 0.0, 0.0, "#D7C9AA")
 
     fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double) = draw(t, p, lk, speed, angle, tspeed, "#D7C9AA")
     fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double, tcol: String) {
@@ -219,7 +219,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         canvas.setStroke(tcol)
         var cc = 0
         for (i in 0 until Checkpoints step Checkpoints / 50) {
-            if ((ctraj.h.x <= (i * ctraj.checkLen)) && ((i * ctraj.checkLen) <= ctraj.h.y)) {
+            if ((t.h.x <= (i * t.checkLen)) && ((i * t.checkLen) <= t.h.y)) {
                 if (cc == 0) {
                     cc = 1
                     canvas.setStrokeWidth(1)
@@ -235,25 +235,25 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
         canvas.setStrokeWidth(1)
         canvas.setStroke("FF0000")
-        for (act in ctraj.actions) {
+        for (act in t.actions) {
             canvas.strokeCircle(t[act.checkNr].x * SCALE, t[act.checkNr].y * SCALE, AR)
         }
         canvas.setStroke("#FF00C3A0")
-        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
 
-        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(gangle(ctraj.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
         canvas.setStroke("#FF20A350")
-        canvas.strokeCircle(ctraj.end.x * SCALE, ctraj.end.y * SCALE, PPStartEnd * SCALE)
+        canvas.strokeCircle(t.end.x * SCALE, t.end.y * SCALE, PPStartEnd * SCALE)
         canvas.setStroke("#F0B550A0")
-        canvas.strokeCircle(ctraj.end.x * SCALE, ctraj.end.y * SCALE, ctraj.peruStart * SCALE)
+        canvas.strokeCircle(t.end.x * SCALE, t.end.y * SCALE, t.peruStart * SCALE)
         canvas.setStroke("#F0B55050")
-        canvas.strokeCircle(ctraj.end.x * SCALE, ctraj.end.y * SCALE, ctraj.peruEnd * SCALE)
+        canvas.strokeCircle(t.end.x * SCALE, t.end.y * SCALE, t.peruEnd * SCALE)
         canvas.setStroke("#3010FF30")
         canvas.strokeLine(p.x * SCALE, p.y * SCALE,
                 (p.x * SCALE + speed * cos(angle + timmy.yaw) * SPC), (p.y * SCALE + speed * sin(angle + timmy.yaw) * SPC))
@@ -411,8 +411,6 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             val tcoef = min(MAX_VEL, ctraj.initVel + MAX_ACC * runningTime.seconds()) * ctraj.maxFraction / MAX_VEL
             var speed = clamp(tcoef * peruP * pcoef + PPStaticSpeed, 0.0, PPMaxSpeed)
             var angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), PPMaxAngPower), -PPMaxAngPower)
-            log("ANGP", angDiff(cp.h, lk.h))
-            log("ANGPOW", angPower)
             if (speed.isNaN()) {
                 log("PurePursuitError", "NaN speed")
                 speed = 0.0
@@ -444,7 +442,6 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             logs("SWERVE_perCoef", pcoef)
         } else {
             if (USE_AUTO_MOVE) {
-                log("MOVEING ZIRO", RobotFuncs.ep.seconds())
                 swerve.move(0.0, swerve.angle, 0.0)
                 swerve.lb.speed = 0.0
                 swerve.rb.speed = 0.0

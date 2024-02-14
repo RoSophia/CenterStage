@@ -138,7 +138,7 @@ object RobotFuncs {
     var ai = 0.0
     var targetAngle = 0.0
     var angt = ElapsedTime()
-    private fun get_angf() = lom.gamepad1.right_stick_x.toDouble()
+    private fun get_angf() = lom.gamepad1.right_stick_x.toDouble() * SwerveManualTurnPower
 
     @JvmStatic
     fun moveSwerve() {
@@ -181,6 +181,7 @@ object RobotFuncs {
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
         log("__InitVoltage", batteryVoltageSensor.voltage)
+        send_log()
         if (TimmyToClose) {
             try {
                 timmy.close()
