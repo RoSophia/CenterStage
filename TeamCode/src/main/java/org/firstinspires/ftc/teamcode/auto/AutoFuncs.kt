@@ -80,9 +80,9 @@ object AutoFuncs {
     }
 
     @JvmStatic
-    fun updateAuto(e: TrajectorySequence, numCycles: Int): TrajectorySequence? {
+    fun updateAuto(e: TrajectorySequence, func: ()->TrajectorySequence): TrajectorySequence? {
         if (JustDraw) {
-            val ce = Cele10Traiectorii.getCycleTrajLongBlue(numCycles, AutoResult)
+            val ce = func()
             ce.draw()
             update()
             return ce

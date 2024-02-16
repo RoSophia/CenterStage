@@ -16,7 +16,7 @@ class RedAuto: LinearOpMode() {
         var e = Cele10Traiectorii.getCycleTrajLongRed(NumCycles, AutoResult)
 
         while (!isStopRequested) {
-            val ce = AutoFuncs.updateAuto(e, NumCycles)
+            val ce = AutoFuncs.updateAuto(e) { Cele10Traiectorii.getCycleTrajLongRed(NumCycles, AutoResult) }
             if (ce != null) {
                 e = ce
             }

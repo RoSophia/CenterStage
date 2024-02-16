@@ -17,7 +17,7 @@ class BlueAuto : LinearOpMode() {
         var e = Cele10Traiectorii.getCycleTrajLongBlue(NumCycles, AutoResult)
 
         while (!isStopRequested) {
-            val ce = updateAuto(e, NumCycles)
+            val ce = updateAuto(e) { Cele10Traiectorii.getCycleTrajLongBlue(NumCycles, AutoResult) }
             if (ce != null) {
                 e = ce
             }

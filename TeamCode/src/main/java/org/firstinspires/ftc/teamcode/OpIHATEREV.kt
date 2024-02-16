@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
+import org.firstinspires.ftc.teamcode.pp.PP
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.localizer
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
@@ -28,6 +30,8 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Photon(maximumParallelCommands = 10)
 @TeleOp(name = "我討厭修訂")
@@ -132,6 +136,14 @@ class OpIHATEREV : LinearOpMode() {
                 intake.status = __IntakeSetStatus
                 __IntakeSetStatus = 20
             }
+
+            val canvas = RobotFuncs.tp.fieldOverlay()
+            canvas.setStrokeWidth(1)
+            canvas.setStroke("#FF00C3")
+            canvas.strokeCircle(localizer.pose.x * PP.SCALE, localizer.pose.y * PP.SCALE, PP.robotRadius)
+            canvas.setStroke("#00FFC3")
+            canvas.strokeLine(localizer.pose.x * PP.SCALE, localizer.pose.y * PP.SCALE,
+                    (localizer.pose.x * PP.SCALE + PP.robotRadius * cos(localizer.pose.h)), (localizer.pose.y * PP.SCALE + PP.robotRadius * sin(localizer.pose.h)))
 
             moveSwerve()
             RobotFuncs.update()

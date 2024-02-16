@@ -60,10 +60,10 @@ object BlueLongP {
     )
 
     @JvmField
-    var bPutPosCase = Vec3(-50.0, -70.0, -90.0)
+    var bPutXCase = Vec3(-50.0, -70.0, -90.0)
 
     @JvmField
-    var bOffsets = Vec3(0.0, 0.0, 0.0)
+    var bPutYOffsetCase = Vec3(0.0, 0.0, 0.0)
 
     @JvmField
     var bStackOffset = Pose(0.0, 0.0, 0.0)
@@ -79,7 +79,7 @@ object BlueLongP {
     )
 
     @JvmField
-    var bparkPos = TrajCoef(
+    var bParkPos = TrajCoef(
             Pose(-120.0, -237.0, 1.57),
             Vec2d(60.0, 1.9), Vec2d(60.0, 1.9)
     )
@@ -88,59 +88,81 @@ object BlueLongP {
 @Config
 object BlueShortP {
     @JvmField
-    var sbPos0 = TrajCoef(
-            Pose(-80.0, 15.0, 0.5),
-            Vec2d(50.0, -2.0), Vec2d(30.0, -1.6),
-            0.45
+    var sbPPos = Vec3T( /// Pos 0 = under thruss, 1 = mid, 2 e odar
+            TrajCoef(
+                    Pose(-79.0, 5.0, 1.57),
+                    Vec2d(50.0, -1.8), Vec2d(30.0, -1.4),
+                    Vec2d(), 0.8,
+                    Vec2d(40.0, 100.0)
+            ),
+            TrajCoef(
+                    Pose(-111.0, -10.0, 0.0),
+                    Vec2d(15.0, -2.3), Vec2d(20.0, -1.0),
+                    0.8, Vec2d(40.0, 100.0)
+            ),
+            TrajCoef(
+                    Pose(-80.0, -40.0, 1.57),
+                    0.8
+            )
     )
 
     @JvmField
-    var sbPos1 = TrajCoef(
-            Pose(-113.0, -16.0, 0.0),
-            Vec2d(40.0, -2.0), Vec2d(15.0, -3.0),
-            0.4
+    var sbPutFromPreloadPos = TrajCoef(
+            Pose(), Pose(0.0, -100.0, 1.57),
+            0.9, Vec2d(30.0, 60.0)
     )
 
     @JvmField
-    var sbPos2 = TrajCoef(
-            Pose(-75.0, -33.0, 1.57),
-            0.5
+    var sbPutXCase = Vec3(-50.0, -70.0, -90.0)
+
+    @JvmField
+    var sbPutYOffsetCase = Vec3(0.0, 0.0, 0.0)
+
+    @JvmField
+    var stackPPose = Vec3T(
+            TrajCoef(
+                    Pose(-20.0, -10.0, 1.57),
+            ),
+            TrajCoef(
+                    Pose(-20.0, 110.0, 1.57),
+                    Vec2d(5.0, 0.7), Vec2d(0.0, 0.0)
+            ),
+            TrajCoef(
+                    Pose(-80.0, 160.0, 1.57),
+                    Vec2d(60.0, 1.57), Vec2d(10.0, 4.0),
+                    1.0, Vec2d(30.0, 60.0)
+            )
     )
 
     @JvmField
-    var sbPos0Stack = TrajCoef(
-            Pose(-60.0, -45.0, 1.57),
-            Vec2d(60.0, -1.7), Vec2d(0.0, 0.0),
-            Vec2d(0.2, 0.7),
-            0.5
+    var stackPPut = Vec3T(
+            TrajCoef(
+                    Pose(-24.0, 130.0, 1.57)
+            ),
+            TrajCoef(
+                    Pose(-27.0, -10.0, 1.57),
+                    Vec2d(5.0, -0.7), Vec2d(0.0, 0.0)
+            ),
+            TrajCoef(
+                    Pose(-60.0, -100.0, 1.57),
+                    Vec2d(10.0, -1.57), Vec2d(10.0, -4.0),
+                    1.0, Vec2d(30.0, 60.0)
+            )
     )
 
     @JvmField
-    var sbPos1Stack = TrajCoef(
-            Pose(-60.0, -45.0, 1.57),
-            Vec2d(30.0, 3.1), Vec2d(40.0, 4.0),
-            0.5
-    )
+    var sbStackOffset = Pose(0.0, 0.0, 0.0)
 
     @JvmField
-    var sbPos2Stack = TrajCoef(
-            Pose(-65.0, -55.0, 1.57),
-            0.5
-    )
+    var sbPutOffset = Pose(0.0, 0.0, 0.0)
 
     @JvmField
-    var sbPutPos = TrajCoef(
-            Pose(), Pose(-65.0, -100.0, 1.57),
-            Vec2d(0.0, 0.5), Vec2d(0.0, 1.9),
-            Vec2d(0.0, 1.0), MAX_FRACTION, Vec2d(80.0, 140.0)
-    )
-
-    @JvmField
-    var sbparkPos = TrajCoef(
-            Pose(-105.0, -90.0, 1.57),
-            Vec2d(30.0, 1.7), Vec2d(30.0, 1.7)
+    var sbParkPos = TrajCoef(
+            Pose(-20.0, -100.0, 1.57),
+            Vec2d(60.0, 0.5), Vec2d(60.0, 2.7)
     )
 }
+
 
 @Config
 object RedLongP {
@@ -278,28 +300,19 @@ object RedShortP {
 @Config
 object AutoVars {
     @JvmField
-    var NumCycles = 2
+    var NumCycles = 3
 
     @JvmField
     var WaitIntake = 0.5
 
     @JvmField
-    var WaitPut = 0.5
+    var WaitPut = 0.25
 
     @JvmField
     var WaitStack = 0.4
 
     @JvmField
-    var cmtime = 20.0 /// TODO: MAKE SMALL
-
-    @JvmField
-    var mtime = 20.0
-
-    @JvmField
     var SLEEPY_TIME = 4.0
-
-    @JvmField
-    var sputPosCase = Vec3(-27.0, -56.0, -70.0)
 
     val colours = arrayOf("#37718E", "#8EE3EF", "#AEF3E7", "#F6BD60", "#F7EDE2", "#F5CAC3", "#84A59D", "#F28482", "#19535F", "#0B7A75", "#D7C9AA", "#7B2D26", "#F0F3F5")
 }

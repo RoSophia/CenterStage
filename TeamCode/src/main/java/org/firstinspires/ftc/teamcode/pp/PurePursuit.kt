@@ -109,7 +109,7 @@ object PP {
     var PeruEnd: Double = 40.0
 
     @JvmField
-    var PeruMin: Double = 0.45
+    var PeruMin: Double = 0.33
 
     @JvmField
     var PeruMax: Double = 1.0
@@ -121,10 +121,10 @@ object PP {
     var PidLong = PIDFC(0.4, 0.0, 0.0, 0.6)
 
     @JvmField
-    var PidFinalTrans = PIDFC(0.1, 0.0, 0.0, 0.55)
+    var PidFinalTrans = PIDFC(0.1, 0.0, 0.0, 0.4)
 
     @JvmField
-    var PidFinalLong = PIDFC(0.1, 0.0, 0.0, 0.55)
+    var PidFinalLong = PIDFC(0.1, 0.0, 0.0, 0.4)
 
     @JvmField
     var PidAngle = PIDFC(0.4, 0.0, 0.0, 0.00)
@@ -330,13 +330,19 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             }
 
             if (!atLast) {
-                if ((ctraj.end - cp).dist() < PPStartEnd) {
+                if (if (ctraj.timeout < 0.001) (lastIndex == Checkpoints) else ((ctraj.end - cp).dist() < PPStartEnd)) {
                     atLast = true
                     atLastT.reset()
+                    if (ctraj.timeout < 0.001) {
+                        done = true
+                        return
+                    }
                 }
-            } else if (atLastT.seconds() > MAX_TIME) {
+            } else if (atLastT.seconds() > ctraj.timeout) {
                 swerve.move(0.0, swerve.angle, 0.0)
-                log("PurePursuitError", "Could not reach the required position in $MAX_TIME (error = ${cp - lk}; Perp = ${(cp - lk).vec().rotated(-gangle(ctraj.deriv(lastIndex).vec()))})")
+                if (ctraj.timeout > 0.001) {
+                    log("PurePursuitError", "Could not reach the required position in ${ctraj.timeout} (error = ${cp - lk}; Perp = ${(cp - lk).vec().rotated(-gangle(ctraj.deriv(lastIndex).vec()))})")
+                }
                 error = true
                 return
             }

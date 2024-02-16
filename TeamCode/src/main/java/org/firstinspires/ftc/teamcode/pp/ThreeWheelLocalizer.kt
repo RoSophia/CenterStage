@@ -115,14 +115,6 @@ class ThreeWheelLocalizer : Localizer {
                 logs("WheelVelPerp", wheelVelocities[2])
             }
 
-            val canvas = RobotFuncs.tp.fieldOverlay()
-            canvas.setStrokeWidth(1)
-            canvas.setStroke("#FF00C3")
-            canvas.strokeCircle(_pose.x * PP.SCALE, _pose.y * PP.SCALE, PP.robotRadius)
-            canvas.setStroke("#00FFC3")
-            canvas.strokeLine(_pose.x * PP.SCALE, _pose.y * PP.SCALE,
-                    (_pose.x * PP.SCALE + PP.robotRadius * cos(_pose.h)), (_pose.y * PP.SCALE + PP.robotRadius * sin(_pose.h)))
-
             lwpos = wheelPositions
         }
     }

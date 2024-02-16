@@ -17,10 +17,10 @@ class RedAutoShort : LinearOpMode() {
         var e = Cele10Traiectorii.getCycleTrajShortBlue(NumCycles, AutoResult)
 
         while (!isStopRequested) {
-            val ce = updateAuto(e, NumCycles)
-            if (ce != null) {
-                e = ce
-            }
+            //val ce = updateAuto(e) { Cele10Traiectorii.getCycleTrajShortRed(NumCycles, AutoResult) }
+            //if (ce != null) {
+                //e = ce
+            //}
         }
 
         automa()
