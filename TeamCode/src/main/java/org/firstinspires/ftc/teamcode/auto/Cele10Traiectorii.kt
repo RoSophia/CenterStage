@@ -5,15 +5,15 @@ import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitIntake
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPut
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack
 import org.firstinspires.ftc.teamcode.auto.AutoVars.colours
-import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutYOffsetCase
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPPos
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPStack
+import org.firstinspires.ftc.teamcode.auto.BlueLongP.bParkPos
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutOffset
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutPos
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutXCase
+import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutYOffsetCase
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bStackOffset
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bStackPos2
-import org.firstinspires.ftc.teamcode.auto.BlueLongP.bParkPos
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.sbPPos
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.sbParkPos
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.sbPutFromPreloadPos
@@ -21,36 +21,25 @@ import org.firstinspires.ftc.teamcode.auto.BlueShortP.sbPutXCase
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.sbPutYOffsetCase
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.stackPPose
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.stackPPut
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rOffsets
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rPos0
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rPos0Stack
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rPos1
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rPos1Stack
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rPos2
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rPos2Stack
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rPutPos
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rPutPosCase
-import org.firstinspires.ftc.teamcode.auto.RedLongP.rparkPos
 import org.firstinspires.ftc.teamcode.hardware.Intakes
-import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyDown
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyUp
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyfDown
-import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyfUp
-import org.firstinspires.ftc.teamcode.utils.RobotVars.GhearaSDESCHIS
-import org.firstinspires.ftc.teamcode.utils.RobotVars.GhearaSINCHIS
 import java.util.Vector
+import kotlin.concurrent.thread
 
+/// -x = Goto: x
 /// 1 = Trajectory
 /// 2 = Function
+/// 3 = SetGoto
+/// 4 = Conditional
 // 10 = None
-class TSE(val type: Int, val initActio: () -> Unit, val checkDone: () -> Boolean, val traj: Trajectory?) {
-    constructor(type: Int, initActio: () -> Unit, checkDone: () -> Boolean) : this(type, initActio, checkDone, null) // Trajectory Sequence Element
+class TSE(val type: Int, val initActio: () -> Unit, val checkDone: () -> Boolean, val conditional: () -> Int, val traj: Trajectory?) {
+    constructor(type: Int, initActio: () -> Unit, checkDone: () -> Boolean, traj: Trajectory?) : this(type, initActio, checkDone, {0}, traj) // Trajectory Sequence Element
+    constructor(type: Int, initActio: () -> Unit, checkDone: () -> Boolean) : this(type, initActio, checkDone, {0}, null) // Trajectory Sequence Element
+    constructor(type: Int, conditional: () -> Int) : this(type, {}, {true}, conditional, null)
+    constructor(type: Int) : this(type, {}, {true}, {0}, null)
 }
 
 class TrajectorySequence {
@@ -104,18 +93,33 @@ class TrajectorySequence {
         e = TSE(10, {}, { true })
     }
 
+    private fun runInitActio(t: TSE) {
+        if (t.type == 4) {
+            val resc = t.conditional()
+            for (i in 0 until steps.size) {
+                if (steps[i].type == -resc) {
+                    ls = i
+                    e = steps[ls]
+                    break
+                }
+            }
+        } else if (t.type > 0) {
+            t.initActio()
+        }
+    }
+
     fun update(): Boolean {
         if (ls < steps.size) {
             if (e.type == 10) {
                 ls = 0
                 e = steps[0]
-                e.initActio()
+                runInitActio(e)
             }
             while (e.checkDone()) {
                 ++ls
                 if (ls < steps.size) {
                     e = steps[ls]
-                    e.initActio()
+                    runInitActio(e)
                 } else {
                     return true
                 }
@@ -124,6 +128,25 @@ class TrajectorySequence {
             return true
         }
         return false
+    }
+
+    fun runAsync() {
+        reset()
+        val t = thread {
+            while (!this.update()) {
+                Thread.sleep(2)
+            }
+        }
+        t.start()
+    }
+
+    fun addTSE(t: TSE) = steps.add(t)
+    fun duplicate(): TrajectorySequence {
+        val ct = TrajectorySequence()
+        for (s in steps) {
+            ct.addTSE(s)
+        }
+        return ct
     }
 }
 
@@ -151,27 +174,27 @@ object Cele10Traiectorii {
 
         val ts = TrajectorySequence()
         /// Start -> Go to preload (Spit out pixel)
-        preloadTraj.addActionE(20.0) { clown.position = GhearaSDESCHIS } /// TODO: Add intake
+        //preloadTraj.addActionE(20.0) { clown.position = GhearaSDESCHIS } /// TODO: Add intake
         ts.at(preloadTraj)
         ts.aa { intake.status = Intakes.SInvert }
         /// Preload -> Stack (Gheara deschisa + intake)
         ts.sl(WaitIntake)
-        ts.aa { intake.status = Intakes.SUp }
+        ts.aa { intake.status = Intakes.SUp; clown.goDown() }
         ts.at(stackTraj)
         ts.sl(WaitStack)
         /// Stack -> Put (Ridicare diffy + gheara deschisa)
-        putTraj.addActionE(100.0) { intake.status = Intakes.SNothing; diffy.targetPos = DiffyUp; diffy.targetDiff = DiffyfDown }
+        putTraj.addActionE(100.0) { intake.status = Intakes.SNothing; clown.goUp(0) }
         ts.at(putTraj)
         ts.sl(WaitPut)
-        ts.aa { clown.position = GhearaSDESCHIS }
+        ts.aa { clown.open() }
         ts.sl(WaitPut)
         for (i in 0 until ncycle - 1) {
             /// Put -> Stack2 (Diffy down + gheara inchisa -> gheara deschisa + intake)
             stack2Pos.sp = putPos.ep
             stack2Pos.ep += bStackOffset * i
             val stack2Traj = Trajectory(stack2Pos)
-            stack2Traj.addActionS(30.0) { clown.position = GhearaSINCHIS; diffy.targetPos = DiffyDown }
-            stack2Traj.addActionE(50.0) { clown.position = GhearaSDESCHIS } /// TODO: Add intake
+            stack2Traj.addActionS(30.0) { clown.goDown() }
+            stack2Traj.addActionE(50.0) {  } /// TODO: Add intake
             ts.at(stack2Traj)
             ts.sl(WaitStack)
 
@@ -179,16 +202,15 @@ object Cele10Traiectorii {
             putPos.sp = stack2Pos.ep
             putPos.ep = putPos.ep + bPutOffset * i
             putTraj = Trajectory(putPos)
-            putTraj.addActionS(10.0) { clown.position = GhearaSINCHIS }
-            putTraj.addActionE(130.0) { diffy.targetPos = DiffyUp }
+            putTraj.addActionE(130.0) { clown.goUp(0) }
             ts.at(putTraj)
             ts.sl(WaitPut)
-            ts.aa { clown.position = GhearaSDESCHIS}
+            ts.aa { clown.open() }
             ts.sl(WaitPut)
         }
         /// Put -> Park
-        parkTraj.addActionS(0.0) { clown.position = GhearaSDESCHIS }
-        parkTraj.addActionS(70.0) { clown.position = GhearaSINCHIS; diffy.targetPos = DiffyDown; diffy.targetDiff = DiffyfUp }
+        parkTraj.addActionS(0.0) { clown.open() }
+        parkTraj.addActionS(70.0) { clown.goDown() }
         ts.at(parkTraj)
         return ts
     }
@@ -237,22 +259,22 @@ object Cele10Traiectorii {
         ts.sl(WaitIntake)
         ts.aa { intake.status = Intakes.SUp }
         /// Preload -> Put (Gheara deschisa + intake)
-        ts.aa { diffy.targetPos = DiffyUp; diffy.targetDiff = DiffyfDown}
+        ts.aa { clown.goUp(0) }
         ts.at(putFromPreloadTraj)
         ts.sl(WaitPut)
-        ts.aa { clown.position = GhearaSDESCHIS }
+        ts.aa { clown.open() }
         ts.sl(WaitPut / 2.0)
         for (i in 0 until ncycle) {
             /// Put -> Inter1 (Diffy down) -> Inter2 -> Stack (Diffy down + gheara inchisa -> gheara deschisa + intake)
             val inter1Traj = Trajectory(inter1Pos)
-            inter1Traj.addActionS(30.0) { intake.status = Intakes.SNothing; diffy.targetPos = DiffyDown; diffy.targetDiff = DiffyfUp }
+            inter1Traj.addActionS(30.0) { intake.status = Intakes.SNothing; clown.goDown() }
             ts.at(inter1Traj)
 
             val inter2Traj = Trajectory(inter2Pos)
             ts.at(inter2Traj)
 
             val inter3Traj = Trajectory(inter3Pos)
-            inter3Traj.addActionE(50.0) { clown.position = GhearaSDESCHIS } /// TODO: Add intake
+            inter3Traj.addActionE(50.0) { } /// TODO: Add intake
             ts.at(inter3Traj)
             ts.sl(WaitStack)
 
@@ -265,60 +287,28 @@ object Cele10Traiectorii {
             ts.at(put2Traj)
 
             val put3Traj = Trajectory(put3Pos)
-            put3Traj.addActionS(10.0) { clown.position = GhearaSINCHIS }
-            put3Traj.addActionE(130.0) { diffy.targetPos = DiffyUp }
+            put3Traj.addActionE(130.0) { clown.goUp(0) }
             ts.at(put3Traj)
             ts.sl(WaitPut)
-            ts.aa { clown.position = GhearaSDESCHIS}
+            ts.aa { clown.open() }
             ts.sl(WaitPut / 2.0)
         }
         /// Put -> Park
         val parkTraj = Trajectory(parkPos)
-        parkTraj.addActionS(0.0) { clown.position = GhearaSDESCHIS }
-        parkTraj.addActionS(70.0) { clown.position = GhearaSINCHIS; diffy.targetPos = DiffyDown; diffy.targetDiff = DiffyfUp }
+        parkTraj.addActionS(0.0) { clown.open() }
+        parkTraj.addActionS(70.0) { clown.goDown() }
         ts.at(parkTraj)
         return ts
     }
 
     @JvmStatic
+    fun getCycleTrajShortRed(ncycle: Int, randomCase: Int): TrajectorySequence {
+        return TrajectorySequence()
+    }
+
+    @JvmStatic
     fun getCycleTrajLongRed(ncycle: Int, randomCase: Int): TrajectorySequence {
-        val ts = TrajectorySequence()
-        val preloadPos: TrajCoef = when (randomCase) {
-            2 -> rPos2
-            1 -> rPos1
-            else -> rPos0
-        }
-        ts.addTrajectory(Trajectory(preloadPos))
-        ts.addAction { intake.status = Intakes.SInvert }
-        ts.sleep(WaitIntake)
-        ts.addAction { intake.status = Intakes.SUp }
-
-        val stackPos: TrajCoef = when (randomCase) {
-            2 -> rPos2Stack
-            1 -> rPos1Stack
-            else -> rPos0Stack
-        }
-        stackPos.sp = preloadPos.ep
-        val stackTraj = Trajectory(stackPos)
-        ts.addTrajectory(stackTraj)
-
-        val cp = rPutPos.duplicate()
-        cp.sp = stackPos.ep
-        cp.ep.y += rOffsets[randomCase]
-        cp.ep.x = rPutPosCase[randomCase]
-        val putTraj = Trajectory(cp)
-        putTraj.addActionE(100.0) { intake.status = Intakes.SNothing; diffy.targetPos = DiffyUp; diffy.targetDiff = DiffyfDown }
-        ts.addTrajectory(putTraj)
-        ts.sleep(0.2)
-        ts.addAction { clown.position = GhearaSDESCHIS }
-        ts.sleep(0.2)
-
-        rparkPos.sp = putTraj.end
-        val goPark = Trajectory(rparkPos)
-        goPark.addActionS(0.0) { clown.position = GhearaSDESCHIS }
-        goPark.addActionS(70.0) { clown.position = GhearaSINCHIS; diffy.targetPos = DiffyDown; diffy.targetDiff = DiffyfUp }
-        ts.addTrajectory(goPark)
-        return ts
+        return TrajectorySequence()
     }
 
 }

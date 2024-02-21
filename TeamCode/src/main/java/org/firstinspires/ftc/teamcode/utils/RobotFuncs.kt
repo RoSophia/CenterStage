@@ -14,7 +14,7 @@ import kotlinx.coroutines.sync.Mutex
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.hardware.CamGirl
 import org.firstinspires.ftc.teamcode.hardware.Controller
-import org.firstinspires.ftc.teamcode.hardware.Diffy
+import org.firstinspires.ftc.teamcode.hardware.Clown
 import org.firstinspires.ftc.teamcode.hardware.Intake
 import org.firstinspires.ftc.teamcode.hardware.Intakes
 import org.firstinspires.ftc.teamcode.hardware.MServo
@@ -28,7 +28,6 @@ import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.openftc.easyopencv.OpenCvPipeline
-import java.util.Vector
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -45,11 +44,10 @@ object RobotFuncs {
     lateinit var swerve: Swerve
     lateinit var controller: Controller
     lateinit var pp: PurePursuit
-    lateinit var diffy: Diffy
+    lateinit var clown: Clown
     lateinit var slides: Slides
     lateinit var intake: Intake
     lateinit var avion: MServo
-    lateinit var clown: MServo
     lateinit var controlHub: LynxModule
     lateinit var expansionHub: LynxModule
     lateinit var cam: CamGirl
@@ -125,7 +123,7 @@ object RobotFuncs {
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
         timmy = Timmy("imu")
-        diffy = Diffy("Dif")
+        clown = Clown("Dif")
         swerve = Swerve()
         controller = Controller()
         localizer = ThreeWheelLocalizer()
@@ -180,6 +178,7 @@ object RobotFuncs {
         expansionHub.setConstant(Color.rgb(255, 100, 20))
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
+        tp = TelemetryPacket()
         log("__InitVoltage", batteryVoltageSensor.voltage)
         send_log()
         if (TimmyToClose) {
@@ -209,8 +208,8 @@ object RobotFuncs {
         swerve.move(0.0, 0.0, 0.0)
         intake = Intake()
         avion = MServo("Pewpew", AvionInchis)
-        clown = MServo("Clown", GhearaSDESCHIS)
-        diffy = Diffy("Dif")
+        //clown = MServo("Clown", GhearaSDESCHIS)
+        clown = Clown("Dif")
         pp = PurePursuit(swerve, localizer)
     }
 
@@ -221,7 +220,7 @@ object RobotFuncs {
             cam = CamGirl(CameraName, CameraOrientation, 640, 480, pipeline, streaming = true, waitForOpen = true)
         }
 
-        clown.position = GhearaSINCHIS
+        //clown.position = GhearaSINCHIS
         intake.status = Intakes.SDown
     }
 

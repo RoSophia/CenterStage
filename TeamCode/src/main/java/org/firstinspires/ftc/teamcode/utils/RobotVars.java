@@ -8,8 +8,6 @@ import org.firstinspires.ftc.teamcode.hardware.PIDFC;
 import org.firstinspires.ftc.teamcode.hardware.Timmy;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.Vector;
-
 @Config
 public class RobotVars {
     public static boolean USE_TELE = true;
@@ -94,24 +92,37 @@ public class RobotVars {
     public static double SwerveAntiRetardationForce = -0.1;
     public static double SwerveAntiRetardationTime = 0.15;
 
-    public static double GhearaSDESCHIS = 0.6;
-    public static double GhearaSINCHIS = 0.42;
+    public static double DiffyLOff = 0;
+    public static double DiffyROff = 0;
+
+    public static double DiffyUp = 1.00;
+    public static double DiffyDown = 0.5;
+    public static double DiffyPrepDown = 0.68;
+    public static double DiffyADown = 0.15;
+    public static double DiffyAUp = -0.20;
+
+    public static double ClownFInchis = 0.7;
+    public static double ClownFDeschis = 0.17;
+    public static double ClownNInchis = 0.76;
+    public static double ClownNDeschis = 0.31;
+    public static double ClownWait1 = 0.1;
+    public static double ClownWait2 = 0.2;
+    public static double ClownWait3 = 0.25;
+    public static double ClownWaitDown1 = 0.2;
+    public static double ClownWaitDown2 = 0.2;
+
+    public static double GelenkCenter = 0.37;
+    public static double GelenkDif = 0.29;
 
     public static double IntakePower = -1.0;
     public static double IntakeOuttakePower = 0.4;
-    public static Vec4 IntakeGet = new Vec4(0.38, 0.155, 0.4, 0.28); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGet = new Vec4(0.38, 0.125, 0.4, 0.28); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGetCostac = new Vec4(0.42, 0.2, 0.0, 0.0); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack1 = new Vec4(0.45, 0.24, 0.40, 0.27); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.38, 0.23); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack3 = new Vec4(0.45, 0.235, 0.40, 0.27); // Prep 1 2 Stack 1 2
     public static int __IntakeSetStatus = 20;
-
-    public static double DiffyUp = 1.05;
-    public static double DiffyDown = 0.6;
-    public static double DiffyfUp = 0.0;
-    public static double DiffyfDown = 0.29;
-    public static double DiffyLOff = 0;
-    public static double DiffyROff = 0;
 
     public static boolean AutoRed = true;
     public static int AutoMinBlocksRed = 20;
@@ -161,11 +172,11 @@ public class RobotVars {
      *         2:
      *         3: RidR
      *     Servos:
-     *         0:
-     *         1: DifRS (5 sus in jos)
-     *         2: DifLS (3 sus in jos)
-     *         3: Clown (1 sus in jos)
-     *         4: SoftStage2VericuRupeAderenta
+     *         0: GhearaFar
+     *         1: DifLS (5 sus in jos)
+     *         2: Gelenk (3 sus in jos)
+     *         3: DifRS (1 sus in jos)
+     *         4: GhearaNear
      *         5: RidIntake (6 sus in jos)
      *      Analog:
      *         0-1: DifLE DifRE
@@ -177,11 +188,11 @@ public class RobotVars {
      *         3: RFM
      *     Servos:
      *         0: RBS
-     *         1:
+     *         1: Pewpew
      *         2: LFS
      *         3: LBS
      *         4: RFS
-     *         5: Pewpew
+     *         5: RidIntakeFar
      *      Analog:
      *         0-1: LFE LBE
      *         2-3: RBE RFE

@@ -6,18 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack1
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack2
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack3
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.pp.PP
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.diffy
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
@@ -77,14 +70,6 @@ class OpIHATEREV : LinearOpMode() {
                 intake.status = if (___DELETE_THIS == 0) SStack1 else if (___DELETE_THIS == 1) SStack2 else SStack3
             }*/
 
-            if (controller.C2RB == controller.JUST_PRESSED) {
-                if (epsEq(clown.position, GhearaSDESCHIS)) {
-                    clown.position = GhearaSINCHIS
-                    intake.status = SNothing
-                } else {
-                    clown.position = GhearaSDESCHIS
-                }
-            }
             if (controller.C2PS == controller.JUST_PRESSED) {
                 if (!slides.RIDICAREEEEEEEEEE) {
                     slides.youShouldHangYourselfNOW()
@@ -99,36 +84,42 @@ class OpIHATEREV : LinearOpMode() {
                     intake.status = SIntake
                 }
             }
-            if (controller.C2A == controller.JUST_PRESSED) {
-                diffy.targetPos = DiffyUp
-                diffy.targetDiff = DiffyfUp
+            if (controller.C2RB == controller.JUST_PRESSED) {
+                clown.ghearaFar.position = ClownFDeschis
             }
-            if (controller.C2X == controller.JUST_PRESSED) {
-                diffy.targetPos = DiffyUp
-                diffy.targetDiff = DiffyfDown
+
+            if (controller.C2LB == controller.JUST_PRESSED) {
+                clown.ghearaNear.position = ClownNDeschis
+            }
+
+            if (controller.C2DL == controller.JUST_PRESSED) {
+                clown.goLeft()
+            }
+            if (controller.C2DR == controller.JUST_PRESSED) {
+                clown.goRight()
+            }
+            if (controller.C2A == controller.JUST_PRESSED) {
+                clown.goUp(0)
             }
             if (controller.C2B == controller.JUST_PRESSED) {
-                diffy.targetPos = DiffyDown
-                diffy.targetDiff = DiffyfUp
-                slides.setTarget(RBOT_POS)
+                clown.goDown()
             }
+            if (controller.C2RSB == controller.JUST_PRESSED) {
+                clown.close()
+            }
+
             val g2coef = 1.0 - 0.6 * gamepad2.right_trigger
             if (!epsEq(gamepad2.right_stick_y.toDouble(), 0.0)) {
                 slides.power = -gamepad2.right_stick_y.toDouble() * g2coef
             }
-            if (controller.C2DU == controller.JUST_PRESSED) {
-                slides.setTarget(RTOP_POS)
-            }
-            if (controller.C2DR == controller.JUST_PRESSED) {
-                slides.setTarget(RMID_POS)
-            }
             if (controller.C2LT == controller.JUST_PRESSED) {
                 avion.position = AvionDeschis
             }
-            if (controller.C2DD == controller.JUST_PRESSED) {
+
+            if (controller.C2DU == controller.JUST_PRESSED) {
                 avion.position = AvionInchis
             }
-            if (controller.C2DL == controller.JUST_PRESSED) {
+            if (controller.C2DD == controller.JUST_PRESSED) {
                 intake.status = SInvert
             }
 

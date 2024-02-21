@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import org.firstinspires.ftc.teamcode.utils.Vec4
@@ -29,12 +30,13 @@ object Intakes {
     const val SInvert = 12
     const val SDown = 13
     const val SUp = 14
+    const val SUpulLuiCostacu = 15
 }
 
 class Intake {
     private val intake = Motor("Intake", encoder = false, rev = false, overdrive = true)
-    private val ridIntake1 = MServo("RidIntake")
-    private val ridIntake2 = MServo("SoftStage2VericuRupeAderenta")
+    val ridIntake1 = MServo("RidIntake")
+    val ridIntake2 = MServo("RidIntakeFar")
 
     val running: Boolean
         get() = !epsEq(intake.power, 0.0)
@@ -67,8 +69,9 @@ class Intake {
                     SPStack2 -> sint(IntakeStack2, 0)
                     SStack3 -> sint(IntakeStack3, 1)
                     SPStack3 -> sint(IntakeStack3, 0)
-                    SInvert -> sint(IntakeGet, 1, IntakeOuttakePower)
+                    SInvert -> sint(IntakeGet, 0)
                     SIdleIntake -> sint(IntakeGetUp, 0)
+                    SUpulLuiCostacu -> sint(IntakeGetCostac, 0, 0.0)
                     else -> {}
                 }
                 field = v

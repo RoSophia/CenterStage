@@ -14,13 +14,13 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoResult
 class RedAutoShort : LinearOpMode() {
     override fun runOpMode() {
         totBordu(this, true)
-        var e = Cele10Traiectorii.getCycleTrajShortBlue(NumCycles, AutoResult)
+        var e = Cele10Traiectorii.getCycleTrajShortRed(NumCycles, AutoResult)
 
         while (!isStopRequested) {
-            //val ce = updateAuto(e) { Cele10Traiectorii.getCycleTrajShortRed(NumCycles, AutoResult) }
-            //if (ce != null) {
-                //e = ce
-            //}
+            val ce = updateAuto(e) { Cele10Traiectorii.getCycleTrajShortRed(NumCycles, AutoResult) }
+            if (ce != null) {
+                e = ce
+            }
         }
 
         automa()
