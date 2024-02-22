@@ -130,14 +130,15 @@ class TrajectorySequence {
         return false
     }
 
-    fun runAsync() {
+    fun runAsync(): Thread {
         reset()
         val t = thread {
-            while (!this.update()) {
+            while (!this.update() && !Thread.currentThread().isInterrupted) {
                 Thread.sleep(2)
             }
         }
         t.start()
+        return t
     }
 
     fun addTSE(t: TSE) = steps.add(t)

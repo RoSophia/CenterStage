@@ -1,16 +1,25 @@
 package org.firstinspires.ftc.teamcode
 
+import android.provider.MediaStore
 import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack1
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack2
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack3
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.pp.PP
+import org.firstinspires.ftc.teamcode.utils.IntiVal
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
@@ -29,15 +38,20 @@ import kotlin.math.sin
 @Photon(maximumParallelCommands = 10)
 @TeleOp(name = "我討厭修訂")
 class OpIHATEREV : LinearOpMode() {
-    override fun runOpMode() {
+    override fun runOpMode() { /// TODO: dashboard.sendImage(NekoArc)
         preinit()
         initma(this)
+        var ivi = 5
+        val valProv = IntiVal({ ivi }, { v: Int -> ivi = v })
+        dashboard.addConfigVariable("NuStiiTu", "Ivi", valProv, true)
+        //MediaStore.Images.Media.getBit
 
         waitForStart()
 
         startma()
 
         while (!isStopRequested) {
+            log("IVIII", ivi)
             if (controller.C1A == controller.PRESSED) {
                 swerve.locked = true
                 swerve.move(0.1, 0.0, 0.0)
@@ -45,7 +59,6 @@ class OpIHATEREV : LinearOpMode() {
                 swerve.locked = false
             }
 
-            /*
             /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
             /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
             /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
@@ -68,7 +81,15 @@ class OpIHATEREV : LinearOpMode() {
             }
             if (controller.C1LB == controller.JUST_PRESSED) {
                 intake.status = if (___DELETE_THIS == 0) SStack1 else if (___DELETE_THIS == 1) SStack2 else SStack3
-            }*/
+            }
+            if (controller.C1Y == controller.JUST_PRESSED) {
+                if (intake.running) {
+                    intake.status = SNothing
+                } else {
+                    intake.status = SIntake
+                }
+            }
+
 
             if (controller.C2PS == controller.JUST_PRESSED) {
                 if (!slides.RIDICAREEEEEEEEEE) {

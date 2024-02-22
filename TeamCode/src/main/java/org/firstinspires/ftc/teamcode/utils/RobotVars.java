@@ -97,26 +97,26 @@ public class RobotVars {
 
     public static double DiffyUp = 1.00;
     public static double DiffyDown = 0.5;
-    public static double DiffyPrepDown = 0.68;
-    public static double DiffyADown = 0.15;
+    public static double DiffyPrepDown = 0.685;
+    public static double DiffyADown = 0.145;
     public static double DiffyAUp = -0.20;
 
     public static double ClownFInchis = 0.7;
-    public static double ClownFDeschis = 0.17;
+    public static double ClownFDeschis = 0.0;
     public static double ClownNInchis = 0.76;
-    public static double ClownNDeschis = 0.31;
+    public static double ClownNDeschis = 0.30;
     public static double ClownWait1 = 0.1;
     public static double ClownWait2 = 0.2;
     public static double ClownWait3 = 0.25;
-    public static double ClownWaitDown1 = 0.2;
-    public static double ClownWaitDown2 = 0.2;
+    public static double ClownWaitDown1 = 0.19;
+    public static double ClownWaitDown2 = 0.3;
 
-    public static double GelenkCenter = 0.37;
-    public static double GelenkDif = 0.29;
+    public static double GelenkCenter = 0.63;
+    public static double GelenkDif = 0.20;
 
     public static double IntakePower = -1.0;
     public static double IntakeOuttakePower = 0.4;
-    public static Vec4 IntakeGet = new Vec4(0.38, 0.125, 0.4, 0.28); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGet = new Vec4(0.38, 0.11, 0.4, 0.28); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetCostac = new Vec4(0.42, 0.2, 0.0, 0.0); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack1 = new Vec4(0.45, 0.24, 0.40, 0.27); // Prep 1 2 Stack 1 2
@@ -161,6 +161,7 @@ public class RobotVars {
     public static double EncoderAccelFuckery = 0.00;
     public static double ___CURRENT_SCHWERVE_SWPEED = 0.0;
     public static double ___CURRENT_SCHWERVE_ACCEL = 0.0;
+    public static int ___DELETE_THIS = 0;
 
     public static Pose InfPos = new Pose(10000000000.0, 1000000000000.0, 0.0);
 
@@ -182,12 +183,12 @@ public class RobotVars {
      *         0-1: DifLE DifRE
      * Control:
      *     Motors:
-     *         0: LBM
+     *         0: LBADM
      *         1: LFM
      *         2: RBM
      *         3: RFM
      *     Servos:
-     *         0: RBS
+     *         0: RBS (3 dreapta stanga)
      *         1: Pewpew
      *         2: LFS
      *         3: LBS

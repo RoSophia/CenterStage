@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.utils
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.config.ValueProvider
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor
 import com.qualcomm.hardware.lynx.LynxModule
@@ -262,4 +265,15 @@ object RobotFuncs {
             TimmyToClose = false
         }
     }
+
+    @JvmStatic
+    fun create_god() {
+        val bmap = BitmapFactory.decodeFile("")
+        dashboard.sendImage(bmap)
+    }
+}
+
+class IntiVal<T>(val g: () -> T, val s: (v: T) -> Unit) : ValueProvider<T> {
+    override fun get() = g()
+    override fun set(v: T) = s(v)
 }
