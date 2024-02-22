@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.auto.AutoFuncs.automa
 import org.firstinspires.ftc.teamcode.auto.AutoVars.NumCycles
-import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoResult
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 
 @Autonomous
 @Photon

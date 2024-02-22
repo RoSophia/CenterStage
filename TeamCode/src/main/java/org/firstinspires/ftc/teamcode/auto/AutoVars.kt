@@ -13,18 +13,18 @@ object BlueLongP {
     @JvmField
     var bPPos = Vec3T( /// Pos 0 = under thruss, 1 = mid, 2 e odar
             TrajCoef(
-                    Pose(-75.0, -23.0, -1.57),
+                    Pose(-71.0, -23.0, -1.57),
                     Vec2d(50.0, 1.8), Vec2d(30.0, 1.4),
                     Vec2d(), 0.8,
                     Vec2d(40.0, 100.0)
             ),
             TrajCoef(
-                    Pose(-111.0, 0.0, 0.0),
+                    Pose(-107.0, 0.0, 0.0),
                     Vec2d(15.0, 2.3), Vec2d(20.0, 1.0),
                     0.8, Vec2d(40.0, 100.0)
             ),
             TrajCoef(
-                    Pose(-94.0, 13.0, 0.5),
+                    Pose(-90.0, 13.0, 0.5),
                     0.8, Vec2d(40.0, 100.0)
             )
     )
@@ -32,22 +32,22 @@ object BlueLongP {
     @JvmField
     var bPStack = Vec3T(
             TrajCoef(
-                    Pose(-128.0, 55.0, 1.57),
+                    Pose(-124.0, 55.0, 1.57),
                     Vec2d(60.0, 1.7), Vec2d(0.0, 0.0),
                     Vec2d(0.2, 0.7),
                     0.7
             ),
 
             TrajCoef(
-                    Pose(-128.0, 55.0, 1.57),
+                    Pose(-124.0, 55.0, 1.57),
                     Vec2d(50.0, 3.1), Vec2d(20.0, 4.0),
                     0.7
             ),
 
             TrajCoef(
-                    Pose(-128.0, 55.0, 1.57),
+                    Pose(-124.0, 55.0, 1.57),
                     Vec2d(60.0, 4.4), Vec2d(0.0, 4.0),
-                    0.7
+                    0.7, Vec2d(50.0, 120.0)
             )
     )
 
@@ -55,12 +55,12 @@ object BlueLongP {
     @JvmField
     var bPutPos = TrajCoef(
             Pose(), Pose(0.0, -215.0, 1.57),
-            Vec2d(200.0, 4.5), Vec2d(80.0, 1.9),
+            Vec2d(200.0, 4.7), Vec2d(80.0, 2.3),
             Vec2d(0.0, 1.0), 1.0, Vec2d(50.0, 120.0)
     )
 
     @JvmField
-    var bPutXCase = Vec3(-50.0, -70.0, -90.0)
+    var bPutXCase = Vec3(-46.0, -66.0, -86.0)
 
     @JvmField
     var bPutYOffsetCase = Vec3(0.0, 0.0, 0.0)
@@ -73,14 +73,14 @@ object BlueLongP {
 
     @JvmField
     var bStackPos2 = TrajCoef(
-            Pose(), Pose(-130.0, 50.0, 1.57),
-            Vec2d(100.0, -3.5), Vec2d(100.0, -1.35),
+            Pose(), Pose(-126.0, 50.0, 1.57),
+            Vec2d(80.0, -3.5), Vec2d(100.0, -1.5),
             Vec2d(), MAX_FRACTION, Vec2d(60.0, 100.0)
     )
 
     @JvmField
     var bParkPos = TrajCoef(
-            Pose(-120.0, -237.0, 1.57),
+            Pose(-116.0, -237.0, 1.57),
             Vec2d(60.0, 1.9), Vec2d(60.0, 1.9)
     )
 }
@@ -90,18 +90,18 @@ object BlueShortP {
     @JvmField
     var sbPPos = Vec3T( /// Pos 0 = under thruss, 1 = mid, 2 e odar
             TrajCoef(
-                    Pose(-79.0, 5.0, 1.57),
+                    Pose(-75.0, 5.0, 1.57),
                     Vec2d(50.0, -1.8), Vec2d(30.0, -1.4),
                     Vec2d(), 0.8,
                     Vec2d(40.0, 100.0)
             ),
             TrajCoef(
-                    Pose(-111.0, -10.0, 0.0),
+                    Pose(-107.0, -10.0, 0.0),
                     Vec2d(15.0, -2.3), Vec2d(20.0, -1.0),
                     0.8, Vec2d(40.0, 100.0)
             ),
             TrajCoef(
-                    Pose(-80.0, -40.0, 1.57),
+                    Pose(-76.0, -40.0, 1.57),
                     0.8
             )
     )
@@ -113,7 +113,7 @@ object BlueShortP {
     )
 
     @JvmField
-    var sbPutXCase = Vec3(-50.0, -70.0, -90.0)
+    var sbPutXCase = Vec3(-46.0, -66.0, -86.0)
 
     @JvmField
     var sbPutYOffsetCase = Vec3(0.0, 0.0, 0.0)
@@ -121,30 +121,31 @@ object BlueShortP {
     @JvmField
     var stackPPose = Vec3T(
             TrajCoef(
-                    Pose(-20.0, -10.0, 1.57),
+                    Pose(-16.0, -10.0, 1.57),
             ),
             TrajCoef(
-                    Pose(-20.0, 110.0, 1.57),
+                    Pose(-16.0, 110.0, 1.57),
                     Vec2d(5.0, 0.7), Vec2d(0.0, 0.0)
             ),
             TrajCoef(
-                    Pose(-80.0, 160.0, 1.57),
+                    Pose(-76.0, 160.0, 1.57),
                     Vec2d(60.0, 1.57), Vec2d(10.0, 4.0),
-                    1.0, Vec2d(30.0, 60.0)
+                    1.0, Vec2d(40.0, 90.0)
             )
     )
 
     @JvmField
     var stackPPut = Vec3T(
             TrajCoef(
-                    Pose(-24.0, 130.0, 1.57)
+                    Pose(-20.0, 130.0, 1.57),
+                    Vec2d(10.0, 4.0), Vec2d(60.0, 1.57)
             ),
             TrajCoef(
-                    Pose(-27.0, -10.0, 1.57),
+                    Pose(-22.0, -10.0, 1.57),
                     Vec2d(5.0, -0.7), Vec2d(0.0, 0.0)
             ),
             TrajCoef(
-                    Pose(-60.0, -100.0, 1.57),
+                    Pose(-56.0, -100.0, 1.57),
                     Vec2d(10.0, -1.57), Vec2d(10.0, -4.0),
                     1.0, Vec2d(30.0, 60.0)
             )
@@ -158,7 +159,7 @@ object BlueShortP {
 
     @JvmField
     var sbParkPos = TrajCoef(
-            Pose(-20.0, -100.0, 1.57),
+            Pose(-16.0, -100.0, 1.57),
             Vec2d(60.0, 0.5), Vec2d(60.0, 2.7)
     )
 }

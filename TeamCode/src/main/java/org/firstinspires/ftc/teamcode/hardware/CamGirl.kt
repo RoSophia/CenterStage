@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.acmerobotics.dashboard.FtcDashboard
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.create_god
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logst
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
@@ -89,7 +91,8 @@ class CamGirl(
         if (opened) {
             camera.closeCameraDeviceAsync { }
             if (dashboardStreaming) {
-                FtcDashboard.getInstance().stopCameraStream();
+                FtcDashboard.getInstance().stopCameraStream()
+                create_god()
             }
         }
     }

@@ -28,11 +28,11 @@ import java.util.Vector
 
 class Clown(name: String) {
     val threads = Vector<Thread>()
-    val RS = MServo(name + "RS", false, DiffyPrepDown / 2.0 + DiffyADown)
-    val LS = MServo(name + "LS", true, DiffyPrepDown / 2.0 - DiffyADown)
-    val ghearaNear = MServo("GhearaNear", true, ClownNDeschis)
-    val ghearaFar = MServo("GhearaFar", false, ClownFDeschis)
-    val gelenk = MServo("Gelenk", false, GelenkCenter)
+    val RS = MServo(name + "RS", false, if (USE_DIFFY) DiffyPrepDown / 2.0 + DiffyADown else null)
+    val LS = MServo(name + "LS", true, if (USE_DIFFY) DiffyPrepDown / 2.0 - DiffyADown else null)
+    val ghearaNear = MServo("GhearaNear", true, if (USE_DIFFY) ClownNDeschis else null)
+    val ghearaFar = MServo("GhearaFar", false, if (USE_DIFFY) ClownFDeschis else null)
+    val gelenk = MServo("Gelenk", false, if (USE_DIFFY) GelenkCenter else null)
 
     private fun updateTarget() {
         if (USE_DIFFY) {
@@ -88,86 +88,98 @@ class Clown(name: String) {
         for (t in threads) {
             if (t.isAlive) {
                 log("KIlling thread ${t.id} at", etime.seconds())
-                t.interrupt()
+                t.join()
             }
         }
         threads.clear()
     }
 
     fun goLeft() {
-        killextrathreads()
-        if (curAngle == -100) {
-            goUp(-1)
-        } else {
-            if (curAngle > -2) {
-                --curAngle
-                updateAngle()
+        if (USE_DIFFY) {
+            killextrathreads()
+            if (curAngle == -100) {
+                goUp(-1)
+            } else {
+                if (curAngle > -2) {
+                    --curAngle
+                    updateAngle()
+                }
             }
         }
     }
 
     fun goRight() {
-        killextrathreads()
-        if (curAngle == -100) {
-            goUp(1)
-        } else {
-            if (curAngle < 2) {
-                ++curAngle
-                updateAngle()
+        if (USE_DIFFY) {
+            killextrathreads()
+            if (curAngle == -100) {
+                goUp(1)
+            } else {
+                if (curAngle < 2) {
+                    ++curAngle
+                    updateAngle()
+                }
             }
         }
     }
 
     fun close() {
-        ghearaNear.position = ClownNInchis
-        ghearaFar.position = ClownFInchis
+        if (USE_DIFFY) {
+            ghearaNear.position = ClownNInchis
+            ghearaFar.position = ClownFInchis
+        }
     }
 
     fun open() {
-        ghearaNear.position = ClownNDeschis
-        ghearaFar.position = ClownFDeschis
+        if (USE_DIFFY) {
+            ghearaNear.position = ClownNDeschis
+            ghearaFar.position = ClownFDeschis
+        }
     }
 
     var nextA = 0
 
     fun goUp(a: Int) { ////// TODO:    REMOVEMOMOVEMOVE
-        killextrathreads()
-        ////// TODO:    REMOVEMOMOVEMOVE ////// TODO:    REMOVEMOMOVEMOVE ////// TODO:    REMOVEMOMOVEMOVE ////// TODO:    REMOVEMOMOVEMOVE
-
-        ////// TODO:    REMOVEMOMOVEMOVE
-        ////// TODO:    REMOVEMOMOVEMOVE
-        goUpTraj = TrajectorySequence()
-        goUpTraj.aa {
-            targetPos = DiffyDown
-            targetAngle = DiffyADown
-            gelenk.position = GelenkCenter
-            intake.status = SUpulLuiCostacu
-        }
-        goUpTraj.sl(ClownWait1)
-        goUpTraj.aa { close() }
-        goUpTraj.sl(ClownWait2)
-        goUpTraj.aa {
-            curAngle = nextA
-            targetPos = DiffyUp
-        }
-        goUpTraj.sl(ClownWait3)
-        goUpTraj.aa {
-            gelenk.position = GelenkCenter + curAngle * GelenkDif
-            targetAngle = DiffyAUp
-        }
-        if (curAngle == -100) {
-            nextA = a
+        if (USE_DIFFY) {
             killextrathreads()
-            threads.add(goUpTraj.runAsync())
-        } else {
-            curAngle = a
-            updateAngle()
+            ////// TODO:    REMOVEMOMOVEMOVE ////// TODO:    REMOVEMOMOVEMOVE ////// TODO:    REMOVEMOMOVEMOVE ////// TODO:    REMOVEMOMOVEMOVE
+
+            ////// TODO:    REMOVEMOMOVEMOVE
+            ////// TODO:    REMOVEMOMOVEMOVE
+            goUpTraj = TrajectorySequence()
+            goUpTraj.aa {
+                targetPos = DiffyDown
+                targetAngle = DiffyADown
+                gelenk.position = GelenkCenter
+                intake.status = SUpulLuiCostacu
+            }
+            goUpTraj.sl(ClownWait1)
+            goUpTraj.aa { close() }
+            goUpTraj.sl(ClownWait2)
+            goUpTraj.aa {
+                curAngle = nextA
+                targetPos = DiffyUp
+            }
+            goUpTraj.sl(ClownWait3)
+            goUpTraj.aa {
+                gelenk.position = GelenkCenter + curAngle * GelenkDif
+                targetAngle = DiffyAUp
+            }
+            if (curAngle == -100) {
+                nextA = a
+                killextrathreads()
+                threads.add(goUpTraj.runAsync())
+            } else {
+                curAngle = a
+                updateAngle()
+            }
         }
     }
 
     fun goDown() {
-        killextrathreads()
-        threads.add(goDownTraj.runAsync())
+        if (USE_DIFFY) {
+            killextrathreads()
+            threads.add(goDownTraj.runAsync())
+        }
     }
 
     var targetAngle = 0.0

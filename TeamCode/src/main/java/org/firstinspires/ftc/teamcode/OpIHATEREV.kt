@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.create_god
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
@@ -41,17 +42,13 @@ class OpIHATEREV : LinearOpMode() {
     override fun runOpMode() { /// TODO: dashboard.sendImage(NekoArc)
         preinit()
         initma(this)
-        var ivi = 5
-        val valProv = IntiVal({ ivi }, { v: Int -> ivi = v })
-        dashboard.addConfigVariable("NuStiiTu", "Ivi", valProv, true)
-        //MediaStore.Images.Media.getBit
+        create_god()
 
         waitForStart()
 
         startma()
 
         while (!isStopRequested) {
-            log("IVIII", ivi)
             if (controller.C1A == controller.PRESSED) {
                 swerve.locked = true
                 swerve.move(0.1, 0.0, 0.0)

@@ -268,8 +268,12 @@ object RobotFuncs {
 
     @JvmStatic
     fun create_god() {
-        val bmap = BitmapFactory.decodeFile("")
-        dashboard.sendImage(bmap)
+        try {
+            val bmap = BitmapFactory.decodeFile("/storage/self/primary/Hot.png")
+            FtcDashboard.getInstance().sendImage(bmap)
+        } catch (e: Exception) {
+            logst("God could not be created. This is your fault.")
+        }
     }
 }
 

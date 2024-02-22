@@ -4,10 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.utils.NanoClock
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
-import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoRed
 import kotlin.math.roundToInt
 
 class Encoder(val name: String, private val direction: Int) {

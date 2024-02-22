@@ -1,21 +1,20 @@
 package org.firstinspires.ftc.teamcode.auto
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 import org.firstinspires.ftc.teamcode.pp.PP.JustDraw
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.cam
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.create_god
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initAuto
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.localizer
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
-import org.firstinspires.ftc.teamcode.utils.RobotVars
-import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoRed
-import org.firstinspires.ftc.teamcode.utils.RobotVars.AutoResult
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyToClose
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyCurOff
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyAddKILLLLLLLL

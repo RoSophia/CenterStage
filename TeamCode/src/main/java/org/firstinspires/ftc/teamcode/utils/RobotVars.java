@@ -11,10 +11,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Config
 public class RobotVars {
     public static boolean USE_TELE = true;
-    public static boolean USE_CAMERA = false;
+    public static boolean USE_CAMERA = true;
     public static boolean USE_LOCALIZER = true;
     public static boolean USE_FIELD_CENTRIC = true;
-    public static boolean USE_DIFFY = true;
+    public static boolean USE_DIFFY = false;
     public static boolean USE_IMU_LOCALIZER = true;
     public static boolean USE_RIDICARE = true;
     public static boolean USE_SWERVE = true;
@@ -66,11 +66,6 @@ public class RobotVars {
     public static PIDFC WheelPidRBF = new PIDFC(0.4, 0.0, 0.003, 0.0, 0.02);
     */
 
-    public static double PaiplainMinSat = 50.00;
-    public static double PaiplainMinVal = 40.00;
-    public static double PaiplainBloo = 2.7;
-    public static double PaiplainMaxBloo = 0.2;
-
     // LF RF RB LB
     public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -0.6482802389555943, -3.533453402390716, -2.237612437685438);
     public static Vec4P SwervePids = new Vec4P(
@@ -97,7 +92,7 @@ public class RobotVars {
 
     public static double DiffyUp = 1.00;
     public static double DiffyDown = 0.5;
-    public static double DiffyPrepDown = 0.685;
+    public static double DiffyPrepDown = 0.647;
     public static double DiffyADown = 0.145;
     public static double DiffyAUp = -0.20;
 
@@ -111,23 +106,17 @@ public class RobotVars {
     public static double ClownWaitDown1 = 0.19;
     public static double ClownWaitDown2 = 0.3;
 
-    public static double GelenkCenter = 0.63;
+    public static double GelenkCenter = 0.64;
     public static double GelenkDif = 0.20;
 
     public static double IntakePower = -1.0;
-    public static double IntakeOuttakePower = 0.4;
-    public static Vec4 IntakeGet = new Vec4(0.38, 0.11, 0.4, 0.28); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGet = new Vec4(0.39, 0.11, 0.4, 0.28); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
-    public static Vec4 IntakeGetCostac = new Vec4(0.42, 0.2, 0.0, 0.0); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGetCostac = new Vec4(0.42, 0.32, 0.0, 0.0); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack1 = new Vec4(0.45, 0.24, 0.40, 0.27); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.38, 0.23); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack3 = new Vec4(0.45, 0.235, 0.40, 0.27); // Prep 1 2 Stack 1 2
     public static int __IntakeSetStatus = 20;
-
-    public static boolean AutoRed = true;
-    public static int AutoMinBlocksRed = 20;
-    public static int AutoMinBlocksBlue = 45;
-    public static int AutoResult = 1;
 
     public static boolean __LOG_STATUS = false;
 

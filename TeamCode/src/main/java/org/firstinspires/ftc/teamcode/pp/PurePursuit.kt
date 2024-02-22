@@ -109,7 +109,7 @@ object PP {
     var PeruEnd: Double = 40.0
 
     @JvmField
-    var PeruMin: Double = 0.33
+    var PeruMin: Double = 0.28
 
     @JvmField
     var PeruMax: Double = 1.0
