@@ -36,37 +36,6 @@ import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.max
-import kotlin.math.sqrt
-
-class Box2d(x: Int, y: Int, w: Int, h: Int) : Comparable<Box2d> {
-    var sx: Int = 0
-    var sy: Int = 0
-    var width: Int = 0
-    var height: Int = 0
-
-    constructor() : this(0, 0, 0, 0)
-
-    init {
-        sx = x
-        sy = y
-        width = w
-        height = h
-    }
-
-    fun gdist(): Double {
-        val xd = sx.toDouble() + width.toDouble() / 2
-        val yd = sy.toDouble() + height.toDouble() / 2
-        return sqrt(xd * xd + yd * yd)
-    }
-
-    override fun compareTo(other: Box2d): Int {
-        return if (gdist() < other.gdist()) {
-            1
-        } else {
-            -1
-        }
-    }
-}
 
 @Config
 object CameraControls {
@@ -134,8 +103,7 @@ object CameraControls {
     var AutoResult = 1
 }
 
-
-class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
+class ZaPaiplain : OpenCvPipeline() {
     private fun isRed(col: DoubleArray): Boolean {
         val h = (col[0] / 255.0) * PI * 2
         val s = col[1]
@@ -160,16 +128,16 @@ class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
         }
     }
 
+    private val frame = Mat()
+    private val ff = Mat()
     override fun processFrame(input: Mat): Mat {
         if (input.empty()) {
             return input
         }
         if (DO_I_EVEN_PROCESS_FRAME) {
-            val frame = Mat()
             input.copyTo(frame)
             Imgproc.cvtColor(frame, frame, COLOR_RGB2HSV)
 
-            val ff = Mat()
             if (DRAW_BOXES || DRAW_MEDIAN) {
                 frame.copyTo(ff)
             }
@@ -181,7 +149,8 @@ class ZaPaiplain(width: Int, height: Int) : OpenCvPipeline() {
 
             for (cx in -LUT + XOFF..LUT + XOFF step PSTEP) {
                 for (cy in -LUP + YOFF..LUP + YOFF step PSTEP) {
-                    val vl = frame[cx, cy] ?: continue
+                    val vl = frame[cy, cx] ?: continue
+                    //log ("KMSKMS", "${vl[0]} ${vl[1]} ${vl[2]}")
                     if (checkCol(vl)) {
                         if (cx < CameraMidPos) {
                             ++midBlocks

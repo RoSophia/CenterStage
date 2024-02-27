@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.CamGirl
 import org.firstinspires.ftc.teamcode.hardware.Controller
 import org.firstinspires.ftc.teamcode.hardware.Clown
@@ -29,9 +30,11 @@ import org.firstinspires.ftc.teamcode.pp.Localizer
 import org.firstinspires.ftc.teamcode.pp.PurePursuit
 import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
 
@@ -134,34 +137,58 @@ object RobotFuncs {
         pp = PurePursuit(swerve, localizer)
     }
 
-    var ale = 0.0
+    val hp = PID(SwerveTurnPIDC)
     var at = ElapsedTime()
-    var ai = 0.0
     var targetAngle = 0.0
     var angt = ElapsedTime()
-    private fun get_angf() = lom.gamepad1.right_stick_x.toDouble() * SwerveManualTurnPower
+    private fun get_angf(fn: Boolean): Double {
+        val tx = lom.gamepad1.right_stick_x.toDouble()
+        if (fn) {
+            if (at.seconds() < SwerveTurnWaitTime) {
+                targetAngle = localizer.pose.h
+            }
+            log("TargetAngle", targetAngle)
+            return if (abs(tx) > 0.05) {
+                at.reset()
+                hp.reset()
+                tx * SwerveManualTurnPower
+            } else {
+                val er = angDiff(localizer.pose.h, targetAngle)
+                if (abs(er) < SwerveTurnMinDif) {
+                    0.0
+                } else {
+                    hp.update(er)
+                }
+            }
+        } else {
+            return tx * SwerveManualTurnPower
+        }
+    }
 
     @JvmStatic
-    fun moveSwerve() {
+    fun moveSwerve(fn: Boolean = false) {
         controller.update()
         if (controller.C1PS == controller.JUST_PRESSED) {
             TimmyCurOff += timmy.yaw
+            at.reset()
             log("ResetHeading", TimmyCurOff)
         }
         val speed = hypot(lom.gamepad1.left_stick_x, lom.gamepad1.left_stick_y).toDouble()
         val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2 - if (USE_FIELD_CENTRIC) timmy.yaw else 0.0)
         //val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2)
-        val correctAngForce = get_angf()
+        val correctAngForce = get_angf(fn)
         val fcoef = -(1.0 - lom.gamepad1.right_trigger * 0.6) // No clue why this has to be negative
         swerve.move(speed * fcoef, angle, correctAngForce * fcoef)
     }
 
     @JvmStatic
-    fun initma(lopm: LinearOpMode) { /// Init all hardware info
+    fun initma(lopm: LinearOpMode, isauto: Boolean) { /// Init all hardware info
         if (TimmyAddKILLLLLLLL) {
             TimmyCurOff += PI
             TimmyAddKILLLLLLLL = false
         }
+        __IsAuto = isauto
+        ___KILL_DIFFY_THREADS = false
         angt.reset()
         SwerveCanInvertMotor = false
         lom = lopm
@@ -213,13 +240,20 @@ object RobotFuncs {
         avion = MServo("Pewpew", AvionInchis)
         //clown = MServo("Clown", GhearaSDESCHIS)
         clown = Clown("Dif")
+        if (!__IsAuto && USE_DIFFY) {
+            val rr = TrajectorySequence()
+            rr.aa { clown.targetPos = DiffyMidUp; clown.targetAngle = DiffyADown }
+            rr.sl(0.4)
+            rr.aa { clown.targetPos = DiffyPrepDown; clown.targetAngle = DiffyADown }
+            rr.runAsyncDiffy()
+        }
         pp = PurePursuit(swerve, localizer)
     }
 
     @JvmStatic
     fun initAuto() {
         if (USE_CAMERA) {
-            pipeline = ZaPaiplain(640, 480)
+            pipeline = ZaPaiplain()
             cam = CamGirl(CameraName, CameraOrientation, 640, 480, pipeline, streaming = true, waitForOpen = true)
         }
 

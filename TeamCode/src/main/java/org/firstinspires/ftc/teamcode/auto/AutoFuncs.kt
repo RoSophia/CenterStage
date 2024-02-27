@@ -42,7 +42,7 @@ object AutoFuncs {
         TimmyToClose = true
         AutoRed = isRed
         preinit()
-        initma(lom)
+        initma(lom, true)
         initAuto()
         val i = checkCamera()
         lom.waitForStart()
