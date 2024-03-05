@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SDown
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIdleIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
@@ -13,6 +15,10 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import org.firstinspires.ftc.teamcode.utils.Vec4
@@ -55,23 +61,58 @@ class Intake {
         intake.power = pwr
     }
 
+    private var checkVibr = false
+    private var vibeTime = ElapsedTime()
+    fun update() {
+        if (checkVibr && __UPDATE_SENSORS) {
+            val ro = clown.sensorReadout()
+            log("GotReadout", "$ro at ${etime.seconds()}")
+            if (ro == 3) {
+                if (vibeTime.seconds() > 0.2) {
+                    lom.gamepad2.rumble(1.0, 1.0, 500)
+                    checkVibr = false
+                }
+            } else {
+                vibeTime.reset()
+                if (ro > 0) {
+                    lom.gamepad2.rumble(0.3, 0.3, 100)
+                }
+            }
+        }
+    }
+
     var status = 0
         set(v) {
             if (USE_INTAKE) {
                 when (v) {
-                    SNothing -> sint(IntakeGet, 1, 0.0)
+                    SNothing -> {
+                        sint(IntakeGet, 1, 0.0)
+                        checkVibr = false
+                        __UPDATE_SENSORS = false
+                    }
+
                     SDown -> sint(IntakeGetUp, 0, 0.0)
                     SUp -> sint(IntakeGetUp, 1, 0.0)
-                    SIntake -> sint(IntakeGet, 0, IntakePower)
+                    SIntake -> {
+                        sint(IntakeGet, 0, IntakePower)
+                        checkVibr = true
+                        __UPDATE_SENSORS = true
+                    }
+
                     SStack1 -> sint(IntakeStack1, 1)
-                    SPStack1 -> sint(IntakeStack1, 0)
+                    SPStack1 -> sint(IntakeStack1, 0, 0.0)
                     SStack2 -> sint(IntakeStack2, 1)
                     SPStack2 -> sint(IntakeStack2, 0)
                     SStack3 -> sint(IntakeStack3, 1)
                     SPStack3 -> sint(IntakeStack3, 0)
                     SInvert -> sint(IntakeGetCostac, 1, IntakeRevPower)
                     SIdleIntake -> sint(IntakeGetUp, 0)
-                    SUpulLuiCostacu -> sint(IntakeGetCostac, 0, 0.0)
+                    SUpulLuiCostacu -> {
+                        sint(IntakeGetCostac, 0, 0.0)
+                        checkVibr = false
+                        __UPDATE_SENSORS = false
+                    }
+
                     else -> {}
                 }
                 field = v

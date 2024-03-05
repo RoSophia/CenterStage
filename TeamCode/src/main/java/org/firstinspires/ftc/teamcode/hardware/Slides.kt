@@ -6,10 +6,10 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 
 class Slides {
-    val enc = Encoder(RidicareEncoderName, RidicareEncoderDir)
-    val l = Motor("RidL", encoder = false, rev = false, overdrive = true)
-    val r = Motor("RidR", encoder = false, rev = true, overdrive = true)
-    val p = PIDF(l, r, enc, 2.0)
+    private val enc = Encoder(RidicareEncoderName, RidicareEncoderDir)
+    private val l = Motor("RidL", encoder = false, rev = false, overdrive = true)
+    private val r = Motor("RidR", encoder = false, rev = true, overdrive = true)
+    private val p = PIDF(l, r, enc, 2.0)
 
     val pos: Int
         get() = enc.pos
@@ -34,9 +34,16 @@ class Slides {
 
     private var tryMove = false
     var RIDICAREEEEEEEEEE = false
-    var richd = false
+    private var richd = false
 
     val ep = ElapsedTime()
+
+    private var pwr: Double = 0.0
+        set(v) {
+            l.power = v
+            r.power = v
+            field = v
+        }
 
     /**
      * Eu cedez
@@ -51,13 +58,11 @@ class Slides {
             if (RIDICAREEEEEEEEEE) {
                 val ep = enc.pos
                 if (ep < RidicareHaveIHangedMyself) {
-                    l.power = RidicareHANGEDMYSELF
-                    r.power = RidicareHANGEDMYSELF
+                    pwr = RidicareHANGEDMYSELF
                     richd = true
                 } else if (!richd) {
                     if (ep > RidicareIHaventHangedMyslef) {
-                        l.power = RidicareHANGINGMYSELF
-                        r.power = RidicareHANGINGMYSELF
+                        pwr = RidicareHANGINGMYSELF
                         richd = false
                     }
                 }
@@ -71,20 +76,15 @@ class Slides {
                     ep.reset()
                 }
                 if (ep.seconds() < RidicareMaxTime) {
-                    p.set_target(pos, 0.0)
+                    setTarget(pos, 0.0)
                 }
-                /*log("RidicareCurPos", pos)
-                logs("RidicareTryMove", tryMove)
-                logs("RidicareTargetPower", power)*/
                 if (tryMove) {
-                    r.power = power
-                    l.power = power
+                    pwr = power
                 }
                 tryMove = false
             }
         } else {
-            r.power = 0.0
-            l.power = 0.0
+            pwr = 0.0
         }
     }
 }

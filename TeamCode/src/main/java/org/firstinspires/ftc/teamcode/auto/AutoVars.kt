@@ -19,10 +19,10 @@ object BlueLongP {
                     Vec2d(34.0, 50.0)
             ),
             TrajCoef(
-                    Pose(-104.0, 40.0, 1.8),
+                    Pose(-100.0, 40.0, 1.8),
                     Vec2d(60.0, 1.8), Vec2d(0.0, 0.0),
                     Vec2d(0.0, 0.8), 0.8,
-                    Vec2d(34.0, 60.0)
+                    Vec2d(20.0, 80.0)
             ),
             TrajCoef(
                     Pose(-100.0, 54.0, 2.1),
@@ -35,31 +35,37 @@ object BlueLongP {
     @JvmField
     var bPStack = Vec3T(
             TrajCoef(
-                    Pose(-130.0, 58.0, 1.57),
-                    Vec2d(0.0, 1.7), Vec2d(0.0, 0.0),
+                    Pose(-140.0, 66.0, 1.57),
+                    Vec2d(30.0, 1.7), Vec2d(30.0, -1.0),
                     Vec2d(0.2, 0.7),
                     0.8
             ),
 
             TrajCoef(
-                    Pose(-130.0, 58.0, 1.57),
-                    Vec2d(0.0, 3.1), Vec2d(0.0, 4.0),
+                    Pose(-140.0, 73.0, 1.57),
+                    Vec2d(50.0, 1.6), Vec2d(80.0, -0.9),
                     0.8
             ),
 
             TrajCoef(
-                    Pose(-130.0, 58.0, 1.57),
-                    Vec2d(60.0, 4.4), Vec2d(0.0, 4.0),
+                    Pose(-140.0, 66.0, 1.57),
+                    Vec2d(00.0, 4.4), Vec2d(30.0, -1.0),
                     0.8, Vec2d(50.0, 120.0)
             )
+    )
+
+    @JvmField
+    var bPAfterShave = TrajCoef(
+            Pose(-120.0, 60.0, 1.50),
+            1.0, Vec2d(999.0, 1000.0)
     )
 
 
     @JvmField
     var bPutPos = TrajCoef(
-            Pose(), Pose(0.0, -220.0, 1.57),
-            Vec2d(200.0, 4.5), Vec2d(80.0, 2.3),
-            Vec2d(0.0, 1.0), 1.0, Vec2d(50.0, 120.0)
+            Pose(), Pose(0.0, -225.0, 1.59),
+            Vec2d(200.0, 4.5), Vec2d(80.0, 2.2),
+            Vec2d(0.0, 0.1), 1.0, Vec2d(40.0, 100.0)
     )
 
     @JvmField
@@ -76,9 +82,15 @@ object BlueLongP {
 
     @JvmField
     var bStackPos2 = TrajCoef(
-            Pose(), Pose(-136.0, 58.0, 1.57),
-            Vec2d(80.0, -3.5), Vec2d(100.0, -1.5),
-            Vec2d(), 1.0, Vec2d(70.0, 110.0)
+            Pose(), Pose(-137.0, 73.0, 1.57),
+            Vec2d(80.0, -3.6), Vec2d(100.0, -1.2),
+            Vec2d(), 1.0, Vec2d(40.0, 70.0)
+    )
+
+    @JvmField
+    var bPAfterAfterShave = TrajCoef(
+            Pose(), Pose(-110.0, 60.0, 1.57),
+            1.0, Vec2d(999.0, 1000.0)
     )
 
     @JvmField

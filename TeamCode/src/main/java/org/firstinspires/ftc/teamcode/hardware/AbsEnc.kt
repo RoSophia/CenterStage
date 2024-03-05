@@ -29,10 +29,20 @@ class AbsEnc(private val name: String, private val off: Double, private val inve
         get() {
             val ccv = enc.voltage
             maxVoltage = min(max(maxVoltage, ccv), 3.3)
-            val v = if (inverted) -ccv else ccv + ___CURRENT_SCHWERVE_SWPEED * EncoderPowerFuckery + ___CURRENT_SCHWERVE_ACCEL * EncoderAccelFuckery
+            val v = (if (inverted) -ccv else ccv) + ___CURRENT_SCHWERVE_SWPEED * EncoderPowerFuckery + ___CURRENT_SCHWERVE_ACCEL * EncoderAccelFuckery
             logs("${name}_cv", v)
 
             val cv = v / maxVoltage
+            return angNorm(cv * angPer01 + off)
+        }
+
+    val kmsang: Double
+        get() {
+            val ccv = enc.voltage
+            val v = if (inverted) -ccv else ccv
+            logs("${name}_cv", v)
+
+            val cv = v / 3.28
             return angNorm(cv * angPer01 + off)
         }
 }

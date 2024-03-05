@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pp
 
+import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.pp.PP.Checkpoints
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_FRACTION
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_TIME
@@ -58,6 +59,7 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
 
 class Trajectory(val start: Pose, var initVel: Double, val end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double, var timeout: Double) {
     override fun toString() = "$start - $end ($v1e $v2e $h) - $maxFraction ${Vec2d(peruStart, peruEnd)}"
+
     constructor(tc: TrajCoef) : this(tc.sp, tc.initVel, tc.ep, tc.v1, tc.v2, tc.h, tc.mf, tc.peru.x, tc.peru.y, tc.timeout)
     constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d, maxFraction: Double, peruStart: Double, peruEnd: Double) : this(sp, initVel, ep, v1e, v2e, h, maxFraction, peruStart, peruEnd, MAX_TIME)
     constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d, maxFraction: Double) : this(sp, initVel, ep, v1e, v2e, h, maxFraction, PeruStart, PeruEnd)
@@ -96,6 +98,11 @@ class Trajectory(val start: Pose, var initVel: Double, val end: Pose, val v1e: V
         actions.sortBy { it.checkNr }
     }
 
+    fun addActionT(timeFromStart: Double, act: () -> Unit) {
+        actions.add(Action(0) { TrajectorySequence().sl(timeFromStart).aa(act).runAsync() })
+        actions.sortBy { it.checkNr }
+    }
+
     fun addActionE(distFromEnd: Double, act: () -> Unit) {
         for (i in Checkpoints downTo 0) {
             if ((end - get(i)).dist() >= distFromEnd) {
@@ -115,6 +122,6 @@ class Trajectory(val start: Pose, var initVel: Double, val end: Pose, val v1e: V
                 actions[lastCompletedAction]
             }
 
-    operator fun get(i: Int) = if (i < 0) start else if (i > Checkpoints) end else Pose(cubX[i * checkLen], cubY[i* checkLen], angNorm(start.h + angDiff(start.h, end.h) * getHeading(i.toDouble() * checkLen)))
+    operator fun get(i: Int) = if (i < 0) start else if (i > Checkpoints) end else Pose(cubX[i * checkLen], cubY[i * checkLen], angNorm(start.h + angDiff(start.h, end.h) * getHeading(i.toDouble() * checkLen)))
     fun deriv(i: Int) = Pose(cubX.deriv(i.toDouble() * checkLen), cubY.deriv(i.toDouble() * checkLen), 0.0)
 }

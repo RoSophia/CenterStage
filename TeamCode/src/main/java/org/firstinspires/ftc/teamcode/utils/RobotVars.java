@@ -15,6 +15,7 @@ public class RobotVars {
     public static boolean USE_LOCALIZER = true;
     public static boolean USE_FIELD_CENTRIC = true;
     public static boolean USE_DIFFY = true;
+    public static boolean USE_SENSORS = true;
     public static boolean USE_IMU_LOCALIZER = true;
     public static boolean USE_RIDICARE = true;
     public static boolean USE_SWERVE = true;
@@ -41,7 +42,7 @@ public class RobotVars {
     public static double RidicareHANGINGMYSELF = -1.0;
 
     public static int RBOT_POS = 1;
-    public static int RMID_POS = 1;
+    public static int RMID_POS = 300;
     public static int RTOP_POS = 1400;
 
     //public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -2.237612437685438, -0.6482802389555943, -3.533453402390716);
@@ -86,8 +87,8 @@ public class RobotVars {
     public static boolean __SwerveMove = true;
     public static double SwerveAntiRetardationForce = -0.1;
     public static double SwerveAntiRetardationTime = 0.15;
-    public static double SwerveTurnWaitTime = 0.15;
-    public static double SwerveTurnMinDif = 0.10;
+    public static double SwerveTurnWaitTime = 0.2;
+    public static double SwerveTurnMaxDif = 0.2;
     public static PIDFC SwerveTurnPIDC = new PIDFC(-0.5, 0.0, 0.0, 0.0);
 
     public static double DiffyLOff = 0;
@@ -95,16 +96,17 @@ public class RobotVars {
 
     public static boolean KILLMYSELF = false;
     public static double DiffyWaitUpTurn = 0.6;
+    public static double DiffyWaitDownTurn = 0.6;
     public static double DiffyPreloadUp = 1.21;
     public static double DiffyUpSafe = 1.21;
     public static double DiffyAUp = -0.20;
-    public static double DiffyADown = 0.145;
+    public static double DiffyADown = 0.12;
     public static double DiffyUp = 1.00;
     public static double DiffyDown = 0.5;
-    public static double DiffyPrepDown = 0.628;
+    public static double DiffyPrepDown = 0.633;
     public static double DiffyMidUp = 0.78;
-    public static double DiffyEncROff = -1.2;
-    public static double DiffyEncLOff = -2.7;
+    public static double DiffyEncROff = -1.5;
+    public static double DiffyEncLOff = -2.4;
 
     public static double ClownFInchis = 0.692;
     public static double ClownFDeschis = 0.14;
@@ -114,8 +116,10 @@ public class RobotVars {
     public static double ClownWait2 = 0.1;
     public static double ClownWait3 = 0.2;
     public static double ClownWait4 = 0.25;
-    public static double ClownWaitDown1 = 0.1;
+    public static double ClownWaitDown1 = 0.05;
     public static double ClownWaitDown2 = 0.2;
+
+    public static int SensorsMinDist = 160;
 
     public static double ClownPWait1 = 0.1;
     public static double ClownPWait2 = 0.2;
@@ -127,10 +131,10 @@ public class RobotVars {
 
     public static double IntakePower = -1.0;
     public static double IntakeRevPower = 0.8;
-    public static Vec4 IntakeGet = new Vec4(0.38, 0.14, 0.4, 0.28); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGet = new Vec4(0.38, 0.155, 0.4, 0.28); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
-    public static Vec4 IntakeGetCostac = new Vec4(0.413, 0.32, 0.41, 0.16); // Get 1 2 Up 1 2
-    public static Vec4 IntakeStack1 = new Vec4(0.45, 0.27, 0.40, 0.264); // Prep 1 2 Stack 1 2
+    public static Vec4 IntakeGetCostac = new Vec4(0.395, 0.32, 0.40, 0.14); // Get 1 2 Up 1 2
+    public static Vec4 IntakeStack1 = new Vec4(0.41, 0.15, 0.39, 0.255); // AfterShave 1 2 Stack 1 2
     public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.4, 0.21); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack3 = new Vec4(0.45, 0.235, 0.40, 0.27); // Prep 1 2 Stack 1 2
     public static int __IntakeSetStatus = 20;
@@ -167,6 +171,8 @@ public class RobotVars {
     public static double EncoderAccelFuckery = 0.00;
     public static boolean OpModeKMS = false;
     public static boolean __IsAuto = false;
+    public static boolean __UPDATE_SENSORS = false;
+    public static boolean __UPDATE_DIFFY = false;
     public static double ___CURRENT_SCHWERVE_SWPEED = 0.0;
     public static double ___CURRENT_SCHWERVE_ACCEL = 0.0;
     public static boolean ___KILL_DIFFY_THREADS = false;
@@ -205,5 +211,8 @@ public class RobotVars {
      *      Analog:
      *         0-1: LFE LBE
      *         2-3: RBE RFE
+     *      i2c:
+     *         2: SensorFar
+     *         3: SensorNear
      */
 }

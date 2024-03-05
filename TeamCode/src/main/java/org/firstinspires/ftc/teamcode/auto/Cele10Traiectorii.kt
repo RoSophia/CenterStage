@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.auto
 
+import com.outoftheboxrobotics.photoncore.PeriodicSupplier
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitIntake
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPut
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack
 import org.firstinspires.ftc.teamcode.auto.AutoVars.colours
+import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPAfterAfterShave
+import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPAfterShave
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPPos
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPStack
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bParkPos
@@ -21,20 +24,27 @@ import org.firstinspires.ftc.teamcode.auto.BlueShortP.sbPutXCase
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.sbPutYOffsetCase
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.stackPPose
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.stackPPut
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SDown
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack1
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
+import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotVars.ClownFDeschis
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyAUp
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyUp
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyUpSafe
+import org.firstinspires.ftc.teamcode.utils.RobotVars.RBOT_POS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.RMID_POS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.RidicareTime
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___KILL_DIFFY_THREADS
 import java.util.Vector
 import kotlin.concurrent.thread
@@ -68,22 +78,32 @@ class TrajectorySequence {
         }
     }
 
-    fun addTrajectory(t: Trajectory) {
+    fun addTrajectory(t: Trajectory): TrajectorySequence {
         steps.add(
                 TSE(1,
                         { pp.startFollowTraj(t) },
                         { !pp.busy },
                         t
                 ))
+        return this
     }
 
     fun at(t: Trajectory) = addTrajectory(t)
 
-    fun st(goto: Int) = steps.add(TSE(-goto))
+    fun st(goto: Int): TrajectorySequence {
+        steps.add(TSE(-goto))
+        return this
+    }
 
-    fun gt(cond: () -> Int) = steps.add(TSE(4, cond))
+    fun gt(cond: () -> Int): TrajectorySequence {
+        steps.add(TSE(4, cond))
+        return this
+    }
 
-    fun addAction(a: () -> Unit, checkDone: () -> Boolean) = steps.add(TSE(2, a, checkDone))
+    fun addAction(a: () -> Unit, checkDone: () -> Boolean): TrajectorySequence {
+        steps.add(TSE(2, a, checkDone))
+        return this
+    }
 
     fun aa(a: () -> Unit) = addAction(a) { true }
 
@@ -91,11 +111,12 @@ class TrajectorySequence {
 
     fun wt(checkDone: () -> Boolean) = addAction({}, checkDone)
 
-    fun sleep(s: Double) {
+    fun sleep(s: Double): TrajectorySequence {
         steps.add(
                 TSE(2, { stimer.reset() })
                 { stimer.seconds() > s }
         )
+        return this
     }
 
     fun sl(s: Double) = sleep(s)
@@ -103,30 +124,21 @@ class TrajectorySequence {
     private var ls = 0
     private var e = TSE(10, {}, { true })
 
-    fun reset() {
+    fun reset(): TrajectorySequence {
         ls = 0
         e = TSE(10, {}, { true })
+        return this
     }
 
     private fun runInitActio(t: TSE) {
-        //log("RunInitActio", t)
         if (t.type == 4) {
-            log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAAAAAAA")
-            return
-            //log("Taip", t)
             val resc = t.conditional()
             for (i in 0 until steps.size) {
                 if (steps[i].type == -resc) {
-                    //log("Got step ", steps[i].type)
                     ls = i
                     e = steps[ls]
                     break
                 }
-            }
-        } else if (t.type == 5) {
-            while (t.conditional() == 0) {
-                //log("COND", t.conditional())
-                Thread.sleep(10)
             }
         } else if (t.type > 0) {
             t.initActio()
@@ -156,23 +168,37 @@ class TrajectorySequence {
         return false
     }
 
+    fun runAsync(): Thread {
+        reset()
+        val t = thread {
+            while (!this.update()) {
+                Thread.sleep(5)
+            }
+        }
+        t.setUncaughtExceptionHandler { _, _ -> }
+        t.start()
+        return t
+    }
+
     fun runAsyncDiffy(): Thread {
         reset()
         val t = thread {
             while (!___KILL_DIFFY_THREADS && !this.update()) { /// Is interrupted fuckery
-                Thread.sleep(1)
+                Thread.sleep(5)
             }
             if (___KILL_DIFFY_THREADS) {
                 log("KILLED ${Thread.currentThread().id}", ___KILL_DIFFY_THREADS)
             }
         }
-        //t.setUncaughtExceptionHandler { thread, throwable -> log("Uncaught exception on ${thread.id}", throwable.printStackTrace()) }
-        t.setUncaughtExceptionHandler { thread, throwable -> }
+        t.setUncaughtExceptionHandler { _, _ -> }
         t.start()
         return t
     }
 
-    fun addTSE(t: TSE) = steps.add(t)
+    fun addTSE(t: TSE): TrajectorySequence {
+        steps.add(t)
+        return this
+    }
 
     fun duplicate(): TrajectorySequence {
         val ct = TrajectorySequence()
@@ -191,15 +217,21 @@ object Cele10Traiectorii {
 
         val stackPos = bPStack[randomCase].duplicate()
         stackPos.sp = preloadPos.ep
+        stackPos.timeout = 0.0
         val stackTraj = Trajectory(stackPos)
 
+        val afterShavePos = bPAfterShave.duplicate()
+        afterShavePos.sp = stackPos.ep
+        val afterShaveTraj = Trajectory(afterShavePos)
+
         val putPos = bPutPos.duplicate()
-        putPos.sp = stackPos.ep
+        putPos.sp = afterShavePos.ep
         putPos.ep.y += bPutYOffsetCase[randomCase]
         putPos.ep.x = bPutXCase[randomCase]
         var putTraj = Trajectory(putPos)
 
         val stack2Pos = bStackPos2.duplicate()
+        val afterAfterShavePos = bPAfterAfterShave.duplicate()
 
         val parkPos = bParkPos.duplicate()
         parkPos.sp = putPos.ep
@@ -211,14 +243,14 @@ object Cele10Traiectorii {
         ts.at(preloadTraj)
         ts.aa { clown.ghearaFar?.position = ClownFDeschis }
         /// Preload -> Stack (Gheara deschisa + intake)
-        ts.sl(WaitIntake)
-        ts.aa { clown.goPreloadDown(); intake.status = SStack1 }
+        ts.aa { clown.goPreloadDown(); intake.status = SPStack1 }
         ts.at(stackTraj)
-        ts.sl(WaitStack)
+        afterShaveTraj.addActionT(1.0) { intake.status = SIntake }
+        ts.at(afterShaveTraj)
         /// Stack -> Put (Ridicare diffy + gheara deschisa)
-        putTraj.addActionS(30.0) { clown.catchPixel() }
-        putTraj.addActionS(50.0) { intake.status = SInvert }
-        putTraj.addActionE(100.0) { clown.goUp(0) }
+        putTraj.addActionS(70.0) { clown.catchPixel() }
+        putTraj.addActionS(100.0) { intake.status = SInvert }
+        putTraj.addActionE(130.0) { clown.goUp(2) }
         ts.at(putTraj)
         ts.sl(WaitPut)
         ts.aa { clown.open() }
@@ -226,21 +258,25 @@ object Cele10Traiectorii {
         for (i in 0 until ncycle - 1) {
             /// Put -> Stack2 (Diffy down + gheara inchisa -> gheara deschisa + intake)
             stack2Pos.sp = putPos.ep
-            stack2Pos.ep += bStackOffset * i
+            stack2Pos.ep = bStackPos2.ep + bStackOffset * i
             val stack2Traj = Trajectory(stack2Pos)
-            stack2Traj.addActionS(30.0) { clown.goDown() }
+            stack2Traj.addActionS(5.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
             stack2Traj.addActionE(100.0) { intake.status = SIntake }
-            stack2Traj.addActionE(50.0) { intake.status = if (i == 0) SStack2 else SIntake }
+            stack2Traj.timeout = 0.0
+            //stack2Traj.addActionE(50.0) { intake.status = if (i == 0) SStack2 else SIntake }
+
             ts.at(stack2Traj)
-            ts.sl(WaitStack)
+            afterAfterShavePos.sp = stack2Pos.ep
+            val afterAfterShaveTraj = Trajectory(afterAfterShavePos)
+            ts.at(afterAfterShaveTraj)
 
             /// Stack2 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)
             putPos.sp = stack2Pos.ep
             putPos.ep = putPos.ep + bPutOffset * i
             putTraj = Trajectory(putPos)
-            putTraj.addActionS(30.0) { clown.catchPixel() }
-            putTraj.addActionS(50.0) { intake.status = SInvert }
-            putTraj.addActionE(100.0) { clown.goUp(0) }
+            putTraj.addActionS(70.0) { clown.catchPixel() }
+            putTraj.addActionS(100.0) { intake.status = SInvert }
+            putTraj.addActionE(130.0) { clown.goUp(-2); slides.setTarget(RMID_POS) }
             ts.at(putTraj)
             ts.sl(WaitPut)
             ts.aa { clown.open() }
@@ -248,7 +284,7 @@ object Cele10Traiectorii {
         }
         /// Put -> Park
         parkTraj.addActionS(0.0) { clown.open() }
-        parkTraj.addActionS(70.0) { clown.goDown() }
+        parkTraj.addActionS(70.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
         ts.at(parkTraj)
         return ts
     }

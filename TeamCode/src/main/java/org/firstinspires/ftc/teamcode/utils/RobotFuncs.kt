@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.utils
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import com.acmerobotics.dashboard.FtcDashboard
@@ -27,6 +26,7 @@ import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.hardware.Timmy
 import org.firstinspires.ftc.teamcode.hardware.ZaPaiplain
 import org.firstinspires.ftc.teamcode.pp.Localizer
+import org.firstinspires.ftc.teamcode.pp.PP
 import org.firstinspires.ftc.teamcode.pp.PurePursuit
 import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
@@ -36,7 +36,9 @@ import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.hypot
+import kotlin.math.sin
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -154,7 +156,7 @@ object RobotFuncs {
                 tx * SwerveManualTurnPower
             } else {
                 val er = angDiff(localizer.pose.h, targetAngle)
-                if (abs(er) < SwerveTurnMinDif) {
+                if (abs(er) < SwerveTurnMaxDif) {
                     0.0
                 } else {
                     hp.update(er)
@@ -238,16 +240,39 @@ object RobotFuncs {
         swerve.move(0.0, 0.0, 0.0)
         intake = Intake()
         avion = MServo("Pewpew", AvionInchis)
-        //clown = MServo("Clown", GhearaSDESCHIS)
         clown = Clown("Dif")
-        if (!__IsAuto && USE_DIFFY) {
-            val rr = TrajectorySequence()
-            rr.aa { clown.targetPos = DiffyMidUp; clown.targetAngle = DiffyADown }
-            rr.sl(0.4)
-            rr.aa { clown.targetPos = DiffyPrepDown; clown.targetAngle = DiffyADown }
-            rr.runAsyncDiffy()
+        if (USE_DIFFY) {
+            if (!__IsAuto) {
+                TrajectorySequence()
+                        .aa { clown.targetPos = DiffyMidUp; clown.targetAngle = DiffyADown }
+                        .sl(0.4)
+                        .aa { clown.targetPos = DiffyPrepDown; clown.targetAngle = DiffyADown }
+                        .runAsyncDiffy()
+            } else {
+                TrajectorySequence()
+                        .aa { clown.targetPos = DiffyPrepDown; clown.targetAngle = DiffyADown }
+                        .sl(0.3)
+                        .aa { clown.targetPos = DiffyDown; clown.targetAngle = DiffyADown }
+                        .sl(0.5)
+                        .aa { clown.ghearaFar?.position = ClownFInchis }
+                        .sl(0.3)
+                        .aa { clown.targetPos = DiffyPrepDown }
+                        .runAsyncDiffy()
+
+            }
         }
         pp = PurePursuit(swerve, localizer)
+    }
+
+    @JvmStatic
+    fun drawRobot() {
+        val canvas = tp.fieldOverlay()
+        canvas.setStrokeWidth(1)
+        canvas.setStroke("#FF00C3")
+        canvas.strokeCircle(localizer.pose.x * PP.SCALE, localizer.pose.y * PP.SCALE, PP.robotRadius)
+        canvas.setStroke("#00FFC3")
+        canvas.strokeLine(localizer.pose.x * PP.SCALE, localizer.pose.y * PP.SCALE,
+                (localizer.pose.x * PP.SCALE + PP.robotRadius * cos(localizer.pose.h)), (localizer.pose.y * PP.SCALE + PP.robotRadius * sin(localizer.pose.h)))
     }
 
     @JvmStatic
@@ -268,6 +293,7 @@ object RobotFuncs {
         swerve.update()
         slides.update()
         localizer.update()
+        intake.update()
         controlHub.clearBulkCache()
         /*
         log("Timmy", timmy.yaw)

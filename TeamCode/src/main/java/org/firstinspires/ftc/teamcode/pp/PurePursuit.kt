@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.pp
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.util.ElapsedTime
-import com.sun.tools.javac.comp.Check
 import org.firstinspires.ftc.teamcode.hardware.PIDFC
 import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.pp.PP.AR
@@ -17,9 +16,7 @@ import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_VEL
 import org.firstinspires.ftc.teamcode.pp.PP.PidLong
 import org.firstinspires.ftc.teamcode.pp.PP.LookaheadScale
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_ACC
-import org.firstinspires.ftc.teamcode.pp.PP.MAX_TIME
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_VEL
-import org.firstinspires.ftc.teamcode.pp.PP.NUSHANG
 import org.firstinspires.ftc.teamcode.pp.PP.PPMaxAngPower
 import org.firstinspires.ftc.teamcode.pp.PP.PPMaxSpeed
 import org.firstinspires.ftc.teamcode.pp.PP.PPPPPPP
@@ -35,6 +32,7 @@ import org.firstinspires.ftc.teamcode.pp.PP.lkr
 import org.firstinspires.ftc.teamcode.utils.PID
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.drawRobot
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.ep
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
@@ -109,7 +107,7 @@ object PP {
     var PeruEnd: Double = 40.0
 
     @JvmField
-    var PeruMin: Double = 0.28
+    var PeruMin: Double = 0.20
 
     @JvmField
     var PeruMax: Double = 1.0
@@ -143,9 +141,6 @@ object PP {
 
     @JvmField
     var Checkpoints: Int = 2000
-
-    @JvmField
-    var NUSHANG: Double = 1.0
 
     @JvmField
     var LookaheadScale: Vec2d = Vec2d(50.0, 30.0)
@@ -413,6 +408,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
                 log("0PeruCd2", peruC.dist2())
                 log("0PeruCd", peruC.dist())
             }
+            drawRobot()
 
             val tcoef = min(MAX_VEL, ctraj.initVel + MAX_ACC * runningTime.seconds()) * ctraj.maxFraction / MAX_VEL
             var speed = clamp(tcoef * peruP * pcoef + PPStaticSpeed, 0.0, PPMaxSpeed)

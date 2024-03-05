@@ -1,14 +1,32 @@
 package org.firstinspires.ftc.teamcode
 
+import androidx.core.graphics.alpha
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
+import com.outoftheboxrobotics.photoncore.PeriodicSupplier
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.hardware.Gamepad.LedEffect
 import org.firstinspires.ftc.teamcode.hardware.Intakes
 import org.firstinspires.ftc.teamcode.pp.PP
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.create_god
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.drawRobot
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.localizer
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
-import org.firstinspires.ftc.teamcode.utils.RobotVars
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.tp
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
+import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util
 import kotlin.math.cos
 import kotlin.math.sin
@@ -16,19 +34,20 @@ import kotlin.math.sin
 object tilipo {
     fun runOpMode(lom: LinearOpMode, fn: Boolean) { /// TODO: dashboard.sendImage(NekoArc)
         preinit()
-        initma(lom, RobotVars.OpModeKMS)
+        initma(lom, OpModeKMS)
         create_god()
 
         lom.waitForStart()
 
         startma()
+        //lom.gamepad2.ledQueue.add(st)
 
         while (!lom.isStopRequested) {
-            if (RobotFuncs.controller.C1A == RobotFuncs.controller.PRESSED) {
-                RobotFuncs.swerve.locked = true
-                RobotFuncs.swerve.move(0.1, 0.0, 0.0)
+            if (controller.C1A == controller.PRESSED) {
+                swerve.locked = true
+                swerve.move(0.1, 0.0, 0.0)
             } else {
-                RobotFuncs.swerve.locked = false
+                swerve.locked = false
             }
 
             /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
@@ -38,7 +57,7 @@ object tilipo {
             /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
             /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
             /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
-            if (RobotFuncs.controller.C1RB == RobotFuncs.controller.JUST_PRESSED) { /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
+            if (controller.C1RB == controller.JUST_PRESSED) { /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
@@ -49,110 +68,115 @@ object tilipo {
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
-                RobotFuncs.intake.status = Intakes.SStack2
+                intake.status = Intakes.SStack2
             }
-            if (RobotFuncs.controller.C1DU == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.catchPixel()
+            if (controller.C1DU == controller.JUST_PRESSED) {
+                clown.catchPixel()
             }
-            if (RobotFuncs.controller.C1DD == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.goUp(0)
+            if (controller.C1DD == controller.JUST_PRESSED) {
+                clown.goUp(0)
             }
-            if (RobotFuncs.controller.C1B == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.goDown()
+            if (controller.C1B == controller.JUST_PRESSED) {
+                clown.goDown()
+                lom.gamepad1.rumble(1.0, 0.0, 1000)
             }
-            if (RobotFuncs.controller.C1RSB == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.goPreloadUp()
+            if (controller.C1RSB == controller.JUST_PRESSED) {
+                clown.goPreloadUp()
             }
-            if (RobotFuncs.controller.C1LSB == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.goPreloadDown()
+            if (controller.C1LSB == controller.JUST_PRESSED) {
+                clown.goPreloadDown()
+                lom.gamepad1.rumble(0.0, 1.0, 1000)
+                val st = LedEffect.Builder().addStep(1.0, 0.0, 1.0, 200).addStep(0.0, 1.0, 1.0, 200).setRepeating(true).build()
+                lom.gamepad1.runLedEffect(st)
             }
-            if (RobotFuncs.controller.C1LB == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.intake.status = Intakes.SStack1
+            if (controller.C1LB == controller.JUST_PRESSED) {
+                intake.status = Intakes.SStack1
             }
-            if (RobotFuncs.controller.C1Y == RobotFuncs.controller.JUST_PRESSED) {
-                if (RobotFuncs.intake.running) {
-                    RobotFuncs.intake.status = Intakes.SNothing
+            if (controller.C1Y == controller.JUST_PRESSED) {
+                if (intake.running) {
+                    intake.status = Intakes.SNothing
                 } else {
-                    RobotFuncs.intake.status = Intakes.SIntake
+                    intake.status = Intakes.SIntake
                 }
             }
 
-            if (RobotFuncs.controller.C2PS == RobotFuncs.controller.JUST_PRESSED) {
-                if (!RobotFuncs.slides.RIDICAREEEEEEEEEE) {
-                    RobotFuncs.slides.youShouldHangYourselfNOW()
+            if (controller.C2PS == controller.JUST_PRESSED) {
+                if (!slides.RIDICAREEEEEEEEEE) {
+                    slides.youShouldHangYourselfNOW()
                 } else {
-                    RobotFuncs.slides.RIDICAREEEEEEEEEE = false
+                    slides.RIDICAREEEEEEEEEE = false
                 }
             }
 
-            if (RobotFuncs.controller.C2Y == RobotFuncs.controller.JUST_PRESSED) {
-                if (RobotFuncs.intake.running) {
-                    RobotFuncs.intake.status = Intakes.SNothing
+            if (controller.C2Y == controller.JUST_PRESSED) {
+                if (intake.running) {
+                    intake.status = Intakes.SNothing
                 } else {
-                    RobotFuncs.intake.status = Intakes.SIntake
+                    intake.status = Intakes.SIntake
                 }
             }
-            if (RobotFuncs.controller.C2RB == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.ghearaFar?.position = RobotVars.ClownFDeschis
+
+            if (controller.C2RB == controller.JUST_PRESSED) {
+                clown.ghearaFar?.position = ClownFDeschis
+                lom.gamepad2.rumble(1.0, 1.0, 100)
+                val st = LedEffect.Builder().addStep(1.0, 0.0, 1.0, 200).addStep(0.0, 1.0, 1.0, 200).setRepeating(true).build()
+                lom.gamepad2.runLedEffect(st)
             }
 
-            if (RobotFuncs.controller.C2LB == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.ghearaNear?.position = RobotVars.ClownNDeschis
+            if (controller.C2LB == controller.JUST_PRESSED) {
+                clown.ghearaNear?.position = ClownNDeschis
             }
 
-            if (RobotFuncs.controller.C2DL == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.goLeft()
+            if (controller.C2DL == controller.JUST_PRESSED) {
+                clown.goLeft()
             }
-            if (RobotFuncs.controller.C2DR == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.goRight()
+            if (controller.C2DR == controller.JUST_PRESSED) {
+                clown.goRight()
             }
-            if (RobotFuncs.controller.C2A == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.goUp(0)
+            if (controller.C2A == controller.JUST_PRESSED) {
+                clown.goUp(0)
             }
-            if (RobotFuncs.controller.C2B == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.goDown()
+            if (controller.C2B == controller.JUST_PRESSED) {
+                clown.goDown()
             }
-            if (RobotFuncs.controller.C2RSB == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.clown.close()
+            if (controller.C2RSB == controller.JUST_PRESSED) {
+                clown.close()
             }
 
             val g2coef = 1.0 - 0.6 * lom.gamepad2.right_trigger
             if (!Util.epsEq(lom.gamepad2.right_stick_y.toDouble(), 0.0)) {
-                RobotFuncs.slides.power = -lom.gamepad2.right_stick_y.toDouble() * g2coef
+                slides.power = -lom.gamepad2.right_stick_y.toDouble() * g2coef
             }
-            if (RobotFuncs.controller.C2LT == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.avion.position = RobotVars.AvionDeschis
-            }
-
-            if (RobotFuncs.controller.C2DU == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.avion.position = RobotVars.AvionInchis
-            }
-            if (RobotFuncs.controller.C2DD == RobotFuncs.controller.JUST_PRESSED) {
-                RobotFuncs.intake.status = Intakes.SInvert
+            if (controller.C2LT == controller.JUST_PRESSED) {
+                avion.position = AvionDeschis
             }
 
-            if (RobotVars.__IntakeSetStatus != 20) {
-                RobotFuncs.intake.status = RobotVars.__IntakeSetStatus
-                RobotVars.__IntakeSetStatus = 20
+            if (controller.C2LSB == controller.JUST_PRESSED) {
+                avion.position = AvionInchis
+            }
+            if (controller.C2DU == controller.JUST_PRESSED) {
+                clown.catchPixel()
+            }
+            if (controller.C2DD == controller.JUST_PRESSED) {
+                intake.status = Intakes.SInvert
             }
 
-            if (RobotVars.__LOG_STATUS) {
-                RobotFuncs.log("DiffyActualPos", RobotFuncs.clown.actualDiffyPos)
+            if (__IntakeSetStatus != 20) {
+                intake.status = __IntakeSetStatus
+                __IntakeSetStatus = 20
             }
 
-            val canvas = RobotFuncs.tp.fieldOverlay()
-            canvas.setStrokeWidth(1)
-            canvas.setStroke("#FF00C3")
-            canvas.strokeCircle(RobotFuncs.localizer.pose.x * PP.SCALE, RobotFuncs.localizer.pose.y * PP.SCALE, PP.robotRadius)
-            canvas.setStroke("#00FFC3")
-            canvas.strokeLine(RobotFuncs.localizer.pose.x * PP.SCALE, RobotFuncs.localizer.pose.y * PP.SCALE,
-                    (RobotFuncs.localizer.pose.x * PP.SCALE + PP.robotRadius * cos(RobotFuncs.localizer.pose.h)), (RobotFuncs.localizer.pose.y * PP.SCALE + PP.robotRadius * sin(RobotFuncs.localizer.pose.h)))
+            if (__LOG_STATUS) {
+                log("DiffyActualPos", clown.actualDiffyPos)
+            }
 
-            RobotFuncs.moveSwerve(fn)
-            RobotFuncs.update()
+            drawRobot()
+
+            moveSwerve(fn)
+            update()
         }
 
-        RobotVars.TimmyToClose = true
-        RobotFuncs.endma()
+        TimmyToClose = true
+        endma()
     }
 }
