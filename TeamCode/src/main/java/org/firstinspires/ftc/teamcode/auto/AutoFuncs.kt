@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyToClose
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyCurOff
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyAddKILLLLLLLL
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_CAMERA
+import org.firstinspires.ftc.teamcode.utils.RobotVars.__AutoShort
 import java.lang.Thread.sleep
 
 object AutoFuncs {
@@ -38,9 +39,10 @@ object AutoFuncs {
     }
 
     @JvmStatic
-    fun totBordu(lom: LinearOpMode, isRed: Boolean): Int {
+    fun totBordu(lom: LinearOpMode, isRed: Boolean, isShort: Boolean): Int {
         TimmyToClose = true
         AutoRed = isRed
+        __AutoShort = isShort
         preinit()
         initma(lom, true)
         initAuto()

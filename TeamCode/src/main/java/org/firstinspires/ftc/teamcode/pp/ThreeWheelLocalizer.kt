@@ -32,9 +32,9 @@ class ThreeWheelLocalizer : Localizer {
     private val forwardSolver: DecompositionSolver
 
     private var wheelPositions = listOf(
-            WheelsParRPos,
-            WheelsParLPos,
-            WheelsPerpPos
+            WheelsParRPos + WheelsAdjPose,
+            WheelsParLPos + WheelsAdjPose,
+            WheelsPerpPos + WheelsAdjPose
     )
     private lateinit var encoders: List<Encoder>
 
@@ -91,6 +91,8 @@ class ThreeWheelLocalizer : Localizer {
             val robotPoseDelta = calculatePoseDelta(wheelDeltas)
             val cpose = relativeOdometryUpdate(_pose, robotPoseDelta)
             _pose = Pose(cpose.x, cpose.y, cpose.h)
+            _pose.h = angNorm(timmy.yaw)
+            /*
             if (!timmy.localizerAccessed) {
                 timmy.localizerAccessed = true
                 ++updatedWith
@@ -100,7 +102,7 @@ class ThreeWheelLocalizer : Localizer {
                     log("ph2", angNorm(timmy.yaw))
                     log("ph", angNorm(_pose.h))
                 }
-            }
+            }*/
             ++updated
             log("CurPos", _pose)
 

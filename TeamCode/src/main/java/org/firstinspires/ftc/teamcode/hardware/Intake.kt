@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SDown
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIdleIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SKeep
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack1
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack2
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacuIn
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
@@ -37,6 +39,8 @@ object Intakes {
     const val SDown = 13
     const val SUp = 14
     const val SUpulLuiCostacu = 15
+    const val SUpulLuiCostacuIn = 16
+    const val SKeep = 17
 }
 
 class Intake {
@@ -70,12 +74,14 @@ class Intake {
             if (ro == 3) {
                 if (vibeTime.seconds() > 0.2) {
                     lom.gamepad2.rumble(1.0, 1.0, 500)
+                    lom.gamepad1.rumble(1.0, 1.0, 500)
                     checkVibr = false
                 }
             } else {
                 vibeTime.reset()
                 if (ro > 0) {
                     lom.gamepad2.rumble(0.3, 0.3, 100)
+                    lom.gamepad1.rumble(0.3, 0.3, 100)
                 }
             }
         }
@@ -112,7 +118,8 @@ class Intake {
                         checkVibr = false
                         __UPDATE_SENSORS = false
                     }
-
+                    SUpulLuiCostacuIn -> sint(IntakeGetCostac, 0, -0.5)
+                    SKeep -> sint(IntakeGet, 0, -0.5)
                     else -> {}
                 }
                 field = v

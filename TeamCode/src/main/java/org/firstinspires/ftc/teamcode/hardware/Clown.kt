@@ -1,22 +1,20 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import androidx.core.graphics.alpha
-import com.qualcomm.hardware.rev.RevColorSensorV3
 import com.qualcomm.robotcore.hardware.ColorSensor
-import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacuIn
 import org.firstinspires.ftc.teamcode.utils.PeriodicRunner
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.expansionHub
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import java.util.Vector
 import kotlin.Exception
 
@@ -26,13 +24,13 @@ class Clown(name: String) {
     private var USE_GELENK = true
 
     private val threads = Vector<Thread>()
-    private val RS = MServo(name + "RS", false, if (USE_DIFFY) if (__IsAuto) DiffyDown / 2.0 + DiffyADown else DiffyPrepDown / 2.0 + DiffyADown else null)
-    private val LS = MServo(name + "LS", true, if (USE_DIFFY) if (__IsAuto) DiffyDown / 2.0 - DiffyADown else DiffyPrepDown / 2.0 - DiffyADown else null)
+    private val RS = MServo(name + "RS", false, if (USE_DIFFY) if (__IsAuto) DiffyMidUp / 2.0 + DiffyAUp else DiffyPrepDown / 2.0 + DiffyADown else null)
+    private val LS = MServo(name + "LS", true, if (USE_DIFFY) if (__IsAuto) DiffyMidUp / 2.0 - DiffyAUp else DiffyPrepDown / 2.0 - DiffyADown else null)
     private val RSE = AbsEnc(name + "RSE", DiffyEncROff)
     private val LSE = AbsEnc(name + "LSE", DiffyEncLOff, true)
-    val ghearaNear = if (USE_GHEARA_NEAR) MServo("GhearaNear", true, if (USE_DIFFY) if (__IsAuto) ClownNDeschis else ClownNDeschis else null) else null
-    val ghearaFar = if (USE_GHEARA_FAR) MServo("GhearaFar", false, if (USE_DIFFY) if (__IsAuto) ClownNInchis else ClownFDeschis else null) else null
-    private val gelenk = if (USE_GELENK) MServo("Gelenk", false, if (USE_DIFFY) GelenkCenter else null) else null
+    val ghearaNear = if (USE_GHEARA_NEAR) MServo("GhearaNear", true, if (USE_DIFFY) if (__IsAuto && AutoRed) ClownNDeschis else ClownNDeschis else null) else null
+    val ghearaFar = if (USE_GHEARA_FAR) MServo("GhearaFar", false, if (USE_DIFFY) if (__IsAuto && AutoRed) ClownNDeschis else ClownFDeschis else null) else null
+    val gelenk = if (USE_GELENK) MServo("Gelenk", false, if (USE_DIFFY) GelenkCenter else null) else null
 
     private val sensorNear = if (USE_SENSORS) hardwareMap.get(ColorSensor::class.java, "SensorNear") else null
     private val sensorFar = if (USE_SENSORS) hardwareMap.get(ColorSensor::class.java, "SensorFar") else null
@@ -102,6 +100,8 @@ class Clown(name: String) {
     private var goPreloadUpTraj = TrajectorySequence()
     private var goDownTraj = TrajectorySequence()
     private var goPreloadDownTraj = TrajectorySequence()
+    private var ampUp = AsymmetricMotionProfile(Diffy__UMVEL, Diffy__UMAC, Diffy__UMDC)
+    private var ampDown = AsymmetricMotionProfile(Diffy__MVEL, Diffy__MAC, Diffy__MDC)
 
     init {
         run {
@@ -111,27 +111,13 @@ class Clown(name: String) {
                 gelenk?.position = GelenkCenter
             }
                     .sl(ClownWait1)
-                    .aa {
-                        close()
-                    }
+                    .aa { close(); intake.status = SUpulLuiCostacu }
                     .sl(ClownWait2)
-                    .aa {
-                        intake.status = SUpulLuiCostacu
-                        //__UPDATE_DIFFY = true
-                    }
-                    .sl(ClownWait3)
-                    .aa {
-                        curState = nextA
-                        targetPos = DiffyUp
-                    }
-                    .sl(ClownWait4)
-                    //goUpTraj.wt { lastDiffyPos > DiffyWaitUpTurn }
-                    .aa {
-                        //__UPDATE_DIFFY = false
-                        gelenk?.position = GelenkCenter + curState * GelenkDif
-                        targetAngle = DiffyAUp
-                        targetPos = DiffyUp
-                    }
+                    .aa { ampUp.setMotion(DiffyPrepDown, DiffyUp, 0.0); curState = nextA }
+                    .wt { ampUp.update(); targetPos = ampUp.position;
+                        if (targetPos > DiffyWaitUpTurn) { targetAngle = DiffyAUp; gelenk?.position = GelenkCenter + curState * GelenkDif }
+                        epsEq(ampUp.position, ampUp.finalPosition) }
+                    .aa { targetAngle = DiffyAUp; targetPos = DiffyUp }
         } /// GoUp
 
         run {
@@ -141,9 +127,7 @@ class Clown(name: String) {
                 gelenk?.position = GelenkCenter
             }
                     .sl(ClownWait1)
-                    .aa {
-                        close()
-                    }
+                    .aa { close() }
                     .sl(ClownWait2)
                     .aa {
                         curState = -102
@@ -170,52 +154,31 @@ class Clown(name: String) {
         } /// Go Up Already Taken
 
         run {
-            goDownTraj.aa { /// TODO: Check if already open
-                open()
-            }
+            goDownTraj.aa { open() }
                     .sl(ClownWaitDown1)
-                    .aa {
-                        curState = -100
-                        targetPos = DiffyPrepDown
-                        gelenk?.position = GelenkCenter
-                        //__UPDATE_DIFFY = true
-                    }
+                    .aa { ampDown.setMotion(DiffyUp, DiffyPrepDown, 0.0); }
+                    .wt { ampDown.update(); targetPos = ampDown.position
+                        if (targetPos < DiffyWaitDownTurn) { targetAngle = DiffyADown; gelenk?.position = GelenkCenter }
+                        epsEq(ampDown.position, ampDown.finalPosition) }
                     .sl(ClownWaitDown2)
-                    //goDownTraj.wt { lastDiffyPos < DiffyWaitDownTurn }
-                    .aa {
-                        //__UPDATE_DIFFY = false
-                        targetPos = DiffyPrepDown
-                        targetAngle = DiffyADown
-                        gelenk?.position = GelenkCenter
-                    }
+                    .aa { curState = -100; targetPos = DiffyPrepDown; gelenk?.position = GelenkCenter }
         } /// Go Down
 
         run {
-            goPreloadUpTraj.aa {
-                intake.status = SUpulLuiCostacu
-            }
-                    .sl(ClownPWait2)
-                    .aa { targetPos = DiffyPreloadUp }
-                    .sl(ClownPWait3)
-                    .aa {
-                        targetAngle = DiffyAUp
-                    }
+            goPreloadUpTraj.aa { targetPos = DiffyPreloadUp }
         } /// GoPreloadUp
 
         run {
             goPreloadDownTraj.aa {
                 curState = -100
-                targetPos = DiffyPrepDown
+                targetPos = DiffyMidDown
                 gelenk?.position = GelenkCenter
                 ghearaFar?.position = ClownFDeschis
-                //__UPDATE_DIFFY = true
             }
-                    .sl(ClownWaitDown2)
-                    //goPreloadDownTraj.wt { lastDiffyPos < DiffyWaitDownTurn }
-                    .aa {
-                        targetAngle = DiffyADown
-                        //__UPDATE_DIFFY = false
-                    }
+                    .sl(ClownWaitDown4)
+                    .aa { targetAngle = DiffyADown }
+                    .sl(ClownWaitDown5)
+                    .aa { targetPos = DiffyPrepDown }
         } /// GoPreloadDown
     }
 
@@ -323,7 +286,11 @@ class Clown(name: String) {
     fun goDown() {
         if (USE_DIFFY) {
             killextrathreads()
-            threads.add(goDownTraj.runAsyncDiffy())
+            if (curState != -102) {
+                threads.add(goDownTraj.runAsyncDiffy())
+            } else {
+                open()
+            }
         }
     }
 

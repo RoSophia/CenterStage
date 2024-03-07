@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 @Photon
 class RedAuto: LinearOpMode() {
     override fun runOpMode() {
-        totBordu(this, true)
+        totBordu(this, true, false)
         var e = Cele10Traiectorii.getCycleTrajLongRed(NumCycles, AutoResult)
 
         while (!isStopRequested) {

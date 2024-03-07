@@ -16,10 +16,12 @@ import kotlinx.coroutines.sync.Mutex
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.CamGirl
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.Controller
 import org.firstinspires.ftc.teamcode.hardware.Clown
 import org.firstinspires.ftc.teamcode.hardware.Intake
 import org.firstinspires.ftc.teamcode.hardware.Intakes
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.hardware.MServo
 import org.firstinspires.ftc.teamcode.hardware.Slides
 import org.firstinspires.ftc.teamcode.hardware.Swerve
@@ -180,7 +182,7 @@ object RobotFuncs {
         //val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2)
         val correctAngForce = get_angf(fn)
         val fcoef = -(1.0 - lom.gamepad1.right_trigger * 0.6) // No clue why this has to be negative
-        swerve.move(speed * fcoef, angle, correctAngForce * fcoef)
+        swerve.move(speed * fcoef * __FUNNY_SWERVE_COEF, angle, correctAngForce * fcoef)
     }
 
     @JvmStatic
@@ -211,7 +213,7 @@ object RobotFuncs {
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
         tp = TelemetryPacket()
-        log("__InitVoltage", batteryVoltageSensor.voltage)
+        TrajectorySequence().sl(0.5).aa { log("__InitVoltage", batteryVoltageSensor.voltage) }.runAsync()
         send_log()
         if (TimmyToClose) {
             try {
@@ -250,13 +252,11 @@ object RobotFuncs {
                         .runAsyncDiffy()
             } else {
                 TrajectorySequence()
-                        .aa { clown.targetPos = DiffyPrepDown; clown.targetAngle = DiffyADown }
-                        .sl(0.3)
-                        .aa { clown.targetPos = DiffyDown; clown.targetAngle = DiffyADown }
+                        //.aa { clown.targetPos = DiffyPrepDown; clown.targetAngle = DiffyADown }
+                        //.sl(0.3)
+                        .aa { clown.ghearaFar?.position = ClownFInchis; clown.ghearaNear?.position = if (__AutoShort) ClownNInchis else ClownNDeschis; }
                         .sl(0.5)
-                        .aa { clown.ghearaFar?.position = ClownFInchis }
-                        .sl(0.3)
-                        .aa { clown.targetPos = DiffyPrepDown }
+                        .aa { clown.targetPos = DiffyMidUp; clown.targetAngle = DiffyAUp }
                         .runAsyncDiffy()
 
             }

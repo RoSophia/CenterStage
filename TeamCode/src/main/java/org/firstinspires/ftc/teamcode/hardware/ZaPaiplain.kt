@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.acmerobotics.dashboard.config.Config
-import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoMinBlocksBlue
-import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoMinBlocksRed
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoMinBlocks
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.COL_INDEX
@@ -22,9 +21,11 @@ import org.firstinspires.ftc.teamcode.hardware.CameraControls.PaiplainMinVal
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.PaiplainColRed
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.XOFF
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.YOFF
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initAuto
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
+import org.firstinspires.ftc.teamcode.utils.RobotVars.__AutoShort
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.opencv.core.Mat
 import org.opencv.core.Point
@@ -32,6 +33,7 @@ import org.opencv.core.Rect
 import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.COLOR_RGB2HSV
+import org.opencv.imgproc.Imgproc.COLOR_RGB2HSV_FULL
 import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.PI
 import kotlin.math.abs
@@ -85,19 +87,16 @@ object CameraControls {
     var PaiplainColBloo = 2.4
 
     @JvmField
-    var PaiplainColRed = 0.2
+    var PaiplainColRed = 0.0
 
     @JvmField
-    var PaiplainMaxRed = 0.2
+    var PaiplainMaxRed = 0.4
 
     @JvmField
     var AutoRed = true
 
     @JvmField
-    var AutoMinBlocksRed = 20
-
-    @JvmField
-    var AutoMinBlocksBlue = 45
+    var AutoMinBlocks = 200
 
     @JvmField
     var AutoResult = 1
@@ -136,7 +135,7 @@ class ZaPaiplain : OpenCvPipeline() {
         }
         if (DO_I_EVEN_PROCESS_FRAME) {
             input.copyTo(frame)
-            Imgproc.cvtColor(frame, frame, COLOR_RGB2HSV)
+            Imgproc.cvtColor(frame, frame, COLOR_RGB2HSV_FULL)
 
             if (DRAW_BOXES || DRAW_MEDIAN) {
                 frame.copyTo(ff)
@@ -146,6 +145,11 @@ class ZaPaiplain : OpenCvPipeline() {
 
             var midBlocks = 0
             var rightBlocks = 0
+
+            run {
+                val f = frame[-LUT + XOFF, -LUP + YOFF]
+                log("First block", "${f[0] * PI * 2.0 / 255.0} ${f[1]} ${f[2]}")
+            }
 
             for (cx in -LUT + XOFF..LUT + XOFF step PSTEP) {
                 for (cy in -LUP + YOFF..LUP + YOFF step PSTEP) {
@@ -177,24 +181,25 @@ class ZaPaiplain : OpenCvPipeline() {
             lom.telemetry.addData("RightBoxes", rightBlocks)
             log("MidBoxes", midBlocks)
             log("RightBoxes", rightBlocks)
-            send_log()
-            AutoResult = if (AutoRed) {
-                if (midBlocks > AutoMinBlocksRed) {
-                    1
-                } else if (rightBlocks > AutoMinBlocksRed) {
-                    0
-                } else {
-                    2
-                }
+            AutoResult = if (midBlocks > AutoMinBlocks && rightBlocks > AutoMinBlocks) {
+                if (midBlocks > rightBlocks) 1 else 2
             } else {
-                if (midBlocks > AutoMinBlocksBlue) {
+                if (midBlocks > AutoMinBlocks) {
                     1
-                } else if (rightBlocks > AutoMinBlocksBlue) {
+                } else if (rightBlocks > AutoMinBlocks) {
                     2
                 } else {
                     0
                 }
             }
+            if (AutoRed) {
+                AutoResult = 3 - AutoResult
+            }
+            if (__AutoShort) {
+                AutoResult = 3 - AutoResult
+            }
+            log("AutoResult", AutoResult)
+            send_log()
             lom.telemetry.addData("GOT RESULT", AutoResult)
             lom.telemetry.update()
 

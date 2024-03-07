@@ -46,7 +46,7 @@ object AUTest {
 @Autonomous(name = "我愛修訂")
 class AuTest : LinearOpMode() {
     override fun runOpMode() {
-        totBordu(this, false)
+        totBordu(this, false, false)
 
         val updateTraj = {
             val cc = TrajectorySequence()

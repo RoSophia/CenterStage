@@ -7,6 +7,7 @@ import androidx.core.graphics.red
 import com.outoftheboxrobotics.photoncore.PeriodicSupplier
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.Gamepad.LedEffect
+import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.Intakes
 import org.firstinspires.ftc.teamcode.pp.PP
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
@@ -34,6 +35,7 @@ import kotlin.math.sin
 object tilipo {
     fun runOpMode(lom: LinearOpMode, fn: Boolean) { /// TODO: dashboard.sendImage(NekoArc)
         preinit()
+        __AutoShort = OpModeKMSShort
         initma(lom, OpModeKMS)
         create_god()
 
@@ -68,7 +70,17 @@ object tilipo {
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
-                intake.status = Intakes.SStack2
+                intake.status = Intakes.SStack1
+            }
+            if (controller.C1LB == controller.JUST_PRESSED) {
+                TrajectorySequence()
+                        .aa{intake.status = Intakes.SStack2}
+                        .sl(INTAKEWAIT2)
+                        .aa{intake.status = Intakes.SStack3}
+                        .runAsync()
+            }
+            if (controller.C1X == controller.JUST_PRESSED) {
+                intake.status = Intakes.SInvert
             }
             if (controller.C1DU == controller.JUST_PRESSED) {
                 clown.catchPixel()
@@ -85,12 +97,6 @@ object tilipo {
             }
             if (controller.C1LSB == controller.JUST_PRESSED) {
                 clown.goPreloadDown()
-                lom.gamepad1.rumble(0.0, 1.0, 1000)
-                val st = LedEffect.Builder().addStep(1.0, 0.0, 1.0, 200).addStep(0.0, 1.0, 1.0, 200).setRepeating(true).build()
-                lom.gamepad1.runLedEffect(st)
-            }
-            if (controller.C1LB == controller.JUST_PRESSED) {
-                intake.status = Intakes.SStack1
             }
             if (controller.C1Y == controller.JUST_PRESSED) {
                 if (intake.running) {

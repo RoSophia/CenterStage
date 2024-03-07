@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 @Autonomous
 class BlueAuto : LinearOpMode() {
     override fun runOpMode() {
-        totBordu(this, false)
+        totBordu(this, false, false)
         var e = Cele10Traiectorii.getCycleTrajLongBlue(NumCycles, AutoResult)
 
         while (!isStopRequested) {

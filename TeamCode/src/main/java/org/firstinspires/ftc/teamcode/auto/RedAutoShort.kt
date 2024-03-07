@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 @Autonomous
 class RedAutoShort : LinearOpMode() {
     override fun runOpMode() {
-        totBordu(this, true)
+        totBordu(this, true, true)
         var e = Cele10Traiectorii.getCycleTrajShortRed(NumCycles, AutoResult)
 
         while (!isStopRequested) {

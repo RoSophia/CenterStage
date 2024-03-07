@@ -54,13 +54,29 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
     constructor(ep: Pose, mf: Double) : this(Pose(), ep, mf)
     constructor(ep: Pose) : this(Pose(), ep)
 
+    fun setNoEndBegin() {
+        peru = Vec2d(0.1, 0.2)
+        initVel = 0.0
+        timeout = 0.0
+    }
+
+    fun setNoEndContinue() {
+        peru = Vec2d(0.1, 0.2)
+        initVel = 1000000.0
+        timeout = 0.0
+    }
+
+    fun setNoEndEnd() {
+        initVel = 1000000.0
+    }
+
     fun duplicate() = TrajCoef(sp.duplicate(), ep.duplicate(), v1.duplicate(), v2.duplicate(), h.duplicate(), mf, peru.duplicate(), initVel, timeout)
 }
 
 class Trajectory(val start: Pose, var initVel: Double, val end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double, var timeout: Double) {
     override fun toString() = "$start - $end ($v1e $v2e $h) - $maxFraction ${Vec2d(peruStart, peruEnd)}"
 
-    constructor(tc: TrajCoef) : this(tc.sp, tc.initVel, tc.ep, tc.v1, tc.v2, tc.h, tc.mf, tc.peru.x, tc.peru.y, tc.timeout)
+    constructor(tc: TrajCoef) : this(tc.sp.duplicate(), tc.initVel, tc.ep.duplicate(), tc.v1.duplicate(), tc.v2.duplicate(), tc.h.duplicate(), tc.mf, tc.peru.x, tc.peru.y, tc.timeout) /// TODO Add duplicate to all other
     constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d, maxFraction: Double, peruStart: Double, peruEnd: Double) : this(sp, initVel, ep, v1e, v2e, h, maxFraction, peruStart, peruEnd, MAX_TIME)
     constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d, maxFraction: Double) : this(sp, initVel, ep, v1e, v2e, h, maxFraction, PeruStart, PeruEnd)
     constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d) : this(sp, initVel, ep, v1e, v2e, h, MAX_FRACTION)

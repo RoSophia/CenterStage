@@ -140,6 +140,30 @@ class Vec3T(@JvmField var a: TrajCoef, @JvmField var b: TrajCoef, @JvmField var 
     fun duplicate() = Vec3T(a.duplicate(), b.duplicate(), c.duplicate())
 }
 
+class Vec4T(@JvmField var a: TrajCoef, @JvmField var b: TrajCoef, @JvmField var c: TrajCoef, @JvmField var d: TrajCoef) {
+    var x: TrajCoef = a
+        get() = a
+        set(v) { a = v; field = v }
+    var y: TrajCoef = b
+        get() = b
+        set(v) { b = v; field = v }
+    var z: TrajCoef = c
+        get() = c
+        set(v) { c = v; field = v }
+    var w: TrajCoef = d
+        get() = d
+        set(v) { d = v; field = v }
+
+    operator fun get(i: Int) = when (i) {
+        0 -> a
+        1 -> b
+        2 -> c
+        else -> d
+    }
+
+    fun duplicate() = Vec3T(a.duplicate(), b.duplicate(), c.duplicate())
+}
+
 class Vec4P(@JvmField var a: PIDFC, @JvmField var b: PIDFC, @JvmField var c: PIDFC, @JvmField var d: PIDFC) {
     var x: PIDFC = a
         get() = a

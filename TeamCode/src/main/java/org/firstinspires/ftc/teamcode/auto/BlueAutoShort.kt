@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 @Photon
 class BlueAutoShort : LinearOpMode() {
     override fun runOpMode() {
-        AutoFuncs.totBordu(this, false)
+        AutoFuncs.totBordu(this, false, true)
         var e = Cele10Traiectorii.getCycleTrajShortBlue(NumCycles, AutoResult)
 
         while (!isStopRequested) {
