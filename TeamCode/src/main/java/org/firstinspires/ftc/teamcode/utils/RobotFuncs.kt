@@ -151,7 +151,6 @@ object RobotFuncs {
             if (at.seconds() < SwerveTurnWaitTime) {
                 targetAngle = localizer.pose.h
             }
-            log("TargetAngle", targetAngle)
             return if (abs(tx) > 0.05) {
                 at.reset()
                 hp.reset()
@@ -192,6 +191,11 @@ object RobotFuncs {
             TimmyAddKILLLLLLLL = false
         }
         __IsAuto = isauto
+        Diffy__UMDC = if (isauto) {
+            Diffy__UMDCAuto
+        } else {
+            Diffy__UMDCOp
+        }
         ___KILL_DIFFY_THREADS = false
         angt.reset()
         SwerveCanInvertMotor = false
@@ -311,6 +315,7 @@ object RobotFuncs {
     fun startma() {
         SwerveCanInvertMotor = true
         timmy.initThread()
+        localizer.pose = Pose()
         etime.reset()
         at.reset()
     }

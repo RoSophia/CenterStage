@@ -80,7 +80,7 @@ object tilipo {
                         .runAsync()
             }
             if (controller.C1X == controller.JUST_PRESSED) {
-                intake.status = Intakes.SInvert
+                intake.intake.power = IntakeRevPower
             }
             if (controller.C1DU == controller.JUST_PRESSED) {
                 clown.catchPixel()

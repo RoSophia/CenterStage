@@ -84,7 +84,7 @@ object CameraControls {
     var PaiplainMaxBloo = 0.2
 
     @JvmField
-    var PaiplainColBloo = 2.4
+    var PaiplainColBloo = 3.8
 
     @JvmField
     var PaiplainColRed = 0.0

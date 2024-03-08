@@ -42,7 +42,7 @@ public class RobotVars {
     public static double RidicareHANGINGMYSELF = -1.0;
 
     public static int RBOT_POS = -5;
-    public static int RMID_POS = 700;
+    public static int RMID_POS = 300;
     public static int RTOP_POS = 1400;
 
     //public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -2.237612437685438, -0.6482802389555943, -3.533453402390716);
@@ -98,12 +98,12 @@ public class RobotVars {
     public static double DiffyWaitUpTurn = 0.88;
     public static double DiffyWaitDownTurn = 0.98;
     public static double DiffyPreloadUp = 1.21;
-    public static double DiffyUpSafe = 1.21;
-    public static double DiffyAUp = -0.13;
+    public static double DiffyUpSafe = 1.2;
+    public static double DiffyAUp = -0.155;
     public static double DiffyADown = 0.12;
     public static double DiffyUp = 1.03;
     public static double DiffyDown = 0.5;
-    public static double DiffyPrepDown = 0.642;
+    public static double DiffyPrepDown = 0.637;
     public static double DiffyMidUp = 0.72;
     public static double DiffyMid2Up = 0.85;
     public static double DiffyMidDown = 0.70;
@@ -111,7 +111,9 @@ public class RobotVars {
     public static double DiffyEncLOff = -2.4;
     public static double Diffy__UMVEL = 3;
     public static double Diffy__UMAC = 8;
-    public static double Diffy__UMDC = 1.9;
+    public static double Diffy__UMDC = 1.5;
+    public static double Diffy__UMDCAuto = 0.7;
+    public static double Diffy__UMDCOp = 1.5;
 
     public static double Diffy__MVEL = 4;
     public static double Diffy__MAC = 6;
@@ -147,8 +149,8 @@ public class RobotVars {
     public static double IntakeRevPower = 0.8;
     public static Vec4 IntakeGet = new Vec4(0.38, 0.155, 0.4, 0.28); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
-    public static Vec4 IntakeGetCostac = new Vec4(0.395, 0.17, 0.40, 0.14); // Get 1 2 Up 1 2
-    public static Vec4 IntakeStack1 = new Vec4(0.41, 0.18, 0.43, 0.26); // AfterShave 1 2 Stack 1 2
+    public static Vec4 IntakeGetCostac = new Vec4(0.41, 0.17, 0.40, 0.14); // Get 1 2 Up 1 2
+    public static Vec4 IntakeStack1 = new Vec4(0.41, 0.18, 0.43, 0.27); // AfterShave 1 2 Stack 1 2
     public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.42, 0.25); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack3 = new Vec4(0.45, 0.235, 0.36, 0.26); // Prep 1 2 Stack 1 2
     public static int __IntakeSetStatus = 20;
@@ -198,7 +200,7 @@ public class RobotVars {
     public static double ___CURRENT_SCHWERVE_SWPEED = 0.0;
     public static double ___CURRENT_SCHWERVE_ACCEL = 0.0;
     public static boolean ___KILL_DIFFY_THREADS = false;
-    public static double __FUNNY_SWERVE_COEF = 1.0;
+    public static double __FUNNY_SWERVE_COEF = 1.1;
 
     public static Pose InfPos = new Pose(10000000000.0, 1000000000000.0, 0.0);
 

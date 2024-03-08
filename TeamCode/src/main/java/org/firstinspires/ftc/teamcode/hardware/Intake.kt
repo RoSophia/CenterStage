@@ -44,7 +44,7 @@ object Intakes {
 }
 
 class Intake {
-    private val intake = Motor("Intake", encoder = false, rev = false, overdrive = true)
+    val intake = Motor("Intake", encoder = false, rev = false, overdrive = true)
     val ridIntake1 = MServo("RidIntake")
     val ridIntake2 = MServo("RidIntakeFar")
 

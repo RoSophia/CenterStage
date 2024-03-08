@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.auto
 
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.auto.AutoVars.Min3Pixel
+import org.firstinspires.ftc.teamcode.auto.AutoVars.Min3PixelSpeed
+import org.firstinspires.ftc.teamcode.auto.AutoVars.TimeoutWaitFirstStack
 import org.firstinspires.ftc.teamcode.auto.AutoVars.Wait2
-import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitAfterShave
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitIntake
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPreload
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPut
@@ -16,11 +18,13 @@ import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPAfterShave
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPPos
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPStack
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bParkPos
-import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutOffset
+import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPut1Pos
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutPos
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutXCase
+import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutY
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bPutYOffsetCase
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bStackOffset
+import org.firstinspires.ftc.teamcode.auto.BlueLongP.bStackPos12
 import org.firstinspires.ftc.teamcode.auto.BlueLongP.bStackPos2
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.sbPPos
 import org.firstinspires.ftc.teamcode.auto.BlueShortP.sbParkPos
@@ -34,11 +38,14 @@ import org.firstinspires.ftc.teamcode.auto.RedLongP.rPAfterShave
 import org.firstinspires.ftc.teamcode.auto.RedLongP.rPPos
 import org.firstinspires.ftc.teamcode.auto.RedLongP.rPStack
 import org.firstinspires.ftc.teamcode.auto.RedLongP.rParkPos
+import org.firstinspires.ftc.teamcode.auto.RedLongP.rPut1Pos
 import org.firstinspires.ftc.teamcode.auto.RedLongP.rPutOffset
 import org.firstinspires.ftc.teamcode.auto.RedLongP.rPutPos
 import org.firstinspires.ftc.teamcode.auto.RedLongP.rPutXCase
+import org.firstinspires.ftc.teamcode.auto.RedLongP.rPutY
 import org.firstinspires.ftc.teamcode.auto.RedLongP.rPutYOffsetCase
 import org.firstinspires.ftc.teamcode.auto.RedLongP.rStackOffset
+import org.firstinspires.ftc.teamcode.auto.RedLongP.rStackPos12
 import org.firstinspires.ftc.teamcode.auto.RedLongP.rStackPos2
 import org.firstinspires.ftc.teamcode.auto.RedShortP.srPPos
 import org.firstinspires.ftc.teamcode.auto.RedShortP.srParkPos
@@ -58,13 +65,13 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.pp.Trajectory
+import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
-import org.firstinspires.ftc.teamcode.utils.RobotVars
 import org.firstinspires.ftc.teamcode.utils.RobotVars.ClownFDeschis
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyAUp
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyUp
@@ -77,7 +84,9 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.INTAKEWAIT3
 import org.firstinspires.ftc.teamcode.utils.RobotVars.INTAKEWAIT4
 import org.firstinspires.ftc.teamcode.utils.RobotVars.RBOT_POS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.RMID_POS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.__UPDATE_SENSORS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___KILL_DIFFY_THREADS
+import org.firstinspires.ftc.teamcode.utils.Vec2d
 import java.util.Vector
 import kotlin.concurrent.thread
 
@@ -86,6 +95,7 @@ import kotlin.concurrent.thread
 /// 2 = Function
 /// 3 = SetGoto
 /// 4 = Conditional
+/// 5 = CondDir
 // 10 = None
 class TSE(val type: Int, val initActio: () -> Unit, val checkDone: () -> Boolean, val conditional: () -> Int, val traj: Trajectory?) {
     constructor(type: Int, initActio: () -> Unit, checkDone: () -> Boolean, traj: Trajectory?) : this(type, initActio, checkDone, { 0 }, traj) // Trajectory Sequence Element
@@ -115,6 +125,16 @@ class TrajectorySequence {
                 TSE(1,
                         { pp.startFollowTraj(t) },
                         { !pp.busy },
+                        t
+                ))
+        return this
+    }
+
+    fun addCondDir(cond: ()->Boolean, t: Trajectory): TrajectorySequence {
+        steps.add(
+                TSE(1,
+                        { pp.startFollowTraj(t) },
+                        {cond() || !pp.busy},
                         t
                 ))
         return this
@@ -242,93 +262,8 @@ class TrajectorySequence {
 }
 
 object Cele10Traiectorii {
-    @JvmStatic
-    fun getCycleTrajLongBlueBetter(ncycle: Int, randomCase: Int): TrajectorySequence {
-        val preloadPos = bPPos[randomCase].duplicate()
-        preloadPos.timeout = 0.6
-        val preloadTraj = Trajectory(preloadPos)
-
-        val stackPos = bPStack[randomCase].duplicate()
-        stackPos.sp = preloadPos.ep
-        stackPos.timeout = 0.0
-        val stackTraj = Trajectory(stackPos)
-
-        val afterShavePos = bPAfterShave.duplicate()
-        afterShavePos.sp = stackPos.ep
-        afterShavePos.initVel = 10000000.0
-        val afterShaveTraj = Trajectory(afterShavePos)
-
-        val putPos = bPutPos.duplicate()
-        putPos.sp = afterShavePos.ep
-        putPos.ep.y += bPutYOffsetCase[randomCase]
-        putPos.ep.x = bPutXCase[randomCase]
-        var putTraj = Trajectory(putPos)
-
-        val stack2Pos = bStackPos2.duplicate()
-        val afterAfterShavePos = bPAfterAfterShave.duplicate()
-
-        val parkPos = bParkPos.duplicate()
-        parkPos.sp = putPos.ep
-        val parkTraj = Trajectory(parkPos)
-
-        val ts = TrajectorySequence()
-        /// Start -> Go to preload (Spit out pixel)
-        preloadTraj.addActionS(50.0) { clown.goPreloadUp() }
-        ts.at(preloadTraj)
-        ts.aa { clown.ghearaFar?.position = ClownFDeschis }
-        /// Preload -> Stack (Gheara deschisa + intake)
-        ts.sl(WaitPreload)
-        ts.aa { clown.goPreloadDown(); intake.status = SIntake }
-        ts.at(stackTraj)
-        //afterShaveTraj.addActionT(WaitAfterShave) { intake.status = SIntake }
-        ts.at(afterShaveTraj)
-        /// Stack -> Put (Ridicare diffy + gheara deschisa)
-        ts.sl(WaitStack15)
-        ts.aa { clown.catchPixel() }
-        ts.sl(WaitStack2)
-        putTraj.addActionT(WaitStack3) { intake.status = SInvert }
-        putTraj.addActionE(100.0) { clown.goUp(2) }
-        ts.at(putTraj)
-        ts.sl(WaitPut)
-        ts.aa { clown.open() }
-        ts.sl(WaitPut)
-        for (i in 0 until ncycle - 1) {
-            /// Put -> Stack2 (Diffy down + gheara inchisa -> gheara deschisa + intake)
-            stack2Pos.sp = putPos.ep
-            stack2Pos.ep = bStackPos2.ep + bStackOffset * i
-            val stack2Traj = Trajectory(stack2Pos)
-            stack2Traj.addActionS(40.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
-            stack2Traj.addActionE(100.0) { intake.status = SIntake }
-            stack2Traj.timeout = 0.0
-            //stack2Traj.addActionE(50.0) { intake.status = if (i == 0) SStack2 else SIntake }
-
-            ts.at(stack2Traj)
-            afterAfterShavePos.sp = stack2Pos.ep
-            afterAfterShavePos.initVel = 100000000.0
-            val afterAfterShaveTraj = Trajectory(afterAfterShavePos)
-            ts.at(afterAfterShaveTraj)
-            /// Stack2 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)
-            putPos.sp = afterAfterShavePos.ep
-            putPos.ep.x = bPutXCase[3]
-            putPos.ep += rPutOffset * i
-            putTraj = Trajectory(putPos)
-            ts.sl(WaitStack1)
-            ts.aa { clown.catchPixel() }
-            ts.sl(WaitStack2)
-            putTraj.addActionT(WaitStack3) { intake.status = SInvert }
-            putTraj.addActionE(100.0) { clown.goUp(-2); slides.setTarget(RMID_POS) }
-            ts.at(putTraj)
-            ts.sl(WaitPut)
-            ts.aa { clown.open() }
-            ts.sl(WaitPut)
-        }
-        /// Put -> Park
-        parkTraj.addActionS(0.0) { clown.open() }
-        parkTraj.addActionS(70.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
-        ts.at(parkTraj)
-        ts.aa { clown.gelenk?.position = GelenkCenter }
-        return ts
-    }
+    var genTime = ElapsedTime()
+    var genTime2 = ElapsedTime()
 
     @JvmStatic
     fun getCycleTrajLongBlue(ncycle: Int, randomCase: Int): TrajectorySequence {
@@ -338,22 +273,32 @@ object Cele10Traiectorii {
 
         val stackPos = bPStack[randomCase].duplicate()
         stackPos.sp = preloadPos.ep
-        stackPos.timeout = 0.0
+        stackPos.setNoEndBegin()
         val stackTraj = Trajectory(stackPos)
 
         val afterShavePos = bPAfterShave.duplicate()
         afterShavePos.sp = stackPos.ep
-        afterShavePos.initVel = 10000000.0
+        stackPos.setNoEndEnd()
         val afterShaveTraj = Trajectory(afterShavePos)
 
+        val put1Pos = bPut1Pos.duplicate()
+        put1Pos.sp = afterShavePos.ep
+        put1Pos.setNoEndBegin()
+        val put1Traj = Trajectory(put1Pos)
+
         val putPos = bPutPos.duplicate()
-        putPos.sp = afterShavePos.ep
+        putPos.sp = put1Pos.ep
         putPos.ep.y += bPutYOffsetCase[randomCase]
         putPos.ep.x = bPutXCase[randomCase]
+        put1Pos.setNoEndEnd()
         var putTraj = Trajectory(putPos)
 
+        val stack12Pos = bStackPos12.duplicate()
+        stack12Pos.setNoEndBegin()
         val stack2Pos = bStackPos2.duplicate()
+        stack2Pos.setNoEndEnd()
         val afterAfterShavePos = bPAfterAfterShave.duplicate()
+        afterAfterShavePos.sp.y = afterAfterShavePos.ep.y
 
         val parkPos = bParkPos.duplicate()
         parkPos.sp = putPos.ep
@@ -361,51 +306,79 @@ object Cele10Traiectorii {
 
         val ts = TrajectorySequence()
         /// Start -> Go to preload (Spit out pixel)
+        ts.aa { intake.status = SKeep }
         preloadTraj.addActionS(50.0) { clown.goPreloadUp() }
         ts.at(preloadTraj)
+
         ts.aa { clown.ghearaFar?.position = ClownFDeschis }
         /// Preload -> Stack (Gheara deschisa + intake)
         ts.sl(WaitPreload)
-        ts.aa { clown.goPreloadDown(); intake.status = SIntake }
+        ts.aa { clown.goPreloadDown(); intake.status = SKeep; }
+        stackTraj.addActionE(40.0) { intake.status = SStack1 }
         ts.at(stackTraj)
-        //afterShaveTraj.addActionT(WaitAfterShave) { intake.status = SIntake }
-        ts.at(afterShaveTraj)
-        /// Stack -> Put (Ridicare diffy + gheara deschisa)
-        ts.sl(WaitStack15)
-        ts.aa { clown.catchPixel() }
+
+        ts.sl(0.2)
+        ts.aa { intake.status = SStack3 }
+        ts.aa { genTime.reset(); __UPDATE_SENSORS = true }
+        ts.addCondDir(
+                {
+                    if (clown.sensorReadout() != 3) { genTime2.reset() }
+                    (genTime2.seconds() > Min3Pixel) || (genTime.seconds() > TimeoutWaitFirstStack)
+                },
+                Trajectory(stackPos.ep, 100000.0, stackPos.ep + Pose(0.0, 100.0, 0.0), Vec2d(), Vec2d(), Vec2d(), Min3PixelSpeed)
+        )
+        ts.sl(0.2)
+        ts.aa { clown.catchPixel(); __UPDATE_SENSORS = false }
         ts.sl(WaitStack2)
-        putTraj.addActionT(WaitStack3) { intake.status = SInvert }
-        putTraj.addActionE(100.0) { clown.goUp(2) }
+        put1Traj.addActionT(WaitStack3) { intake.status = SInvert }
+        put1Traj.addActionE(20.0) { clown.goUp(if (randomCase == 2) -2 else 2) }
+        ts.at(put1Traj)
+
+        putTraj.initVel = 10000000.0
         ts.at(putTraj)
+
         ts.sl(WaitPut)
         ts.aa { clown.open() }
         ts.sl(WaitPut)
+
         for (i in 0 until ncycle - 1) {
             /// Put -> Stack2 (Diffy down + gheara inchisa -> gheara deschisa + intake)
-            stack2Pos.sp = putPos.ep
+            stack12Pos.sp = putPos.ep
+            val stack12Traj = Trajectory(stack12Pos)
+            ts.at(stack12Traj)
+            stack2Pos.sp = stack12Pos.ep
             stack2Pos.ep = bStackPos2.ep + bStackOffset * i
             val stack2Traj = Trajectory(stack2Pos)
-            stack2Traj.addActionS(40.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
+            stack2Traj.addActionS(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
             stack2Traj.addActionE(100.0) { intake.status = SIntake }
             stack2Traj.timeout = 0.0
             //stack2Traj.addActionE(50.0) { intake.status = if (i == 0) SStack2 else SIntake }
 
             ts.at(stack2Traj)
+
             afterAfterShavePos.sp = stack2Pos.ep
             afterAfterShavePos.initVel = 100000000.0
             val afterAfterShaveTraj = Trajectory(afterAfterShavePos)
             ts.at(afterAfterShaveTraj)
+
             /// Stack2 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)
-            putPos.sp = afterAfterShavePos.ep
-            putPos.ep.x = bPutXCase[3]
-            putPos.ep += rPutOffset * i
-            putTraj = Trajectory(putPos)
             ts.sl(WaitStack1)
             ts.aa { clown.catchPixel() }
             ts.sl(WaitStack2)
-            putTraj.addActionT(WaitStack3) { intake.status = SInvert }
-            putTraj.addActionE(100.0) { clown.goUp(-2); slides.setTarget(RMID_POS) }
+
+            val newPut1Traj = Trajectory(put1Pos)
+            newPut1Traj.addActionT(WaitStack3) { intake.status = SInvert }
+            ts.at(newPut1Traj)
+            ts.aa { clown.goUp(-2); slides.setTarget(RMID_POS) }
+
+            putPos.sp = put1Pos.ep
+            putPos.ep.x = bPutXCase[3]
+            putPos.ep.y = bPutY
+            putPos.ep += rPutOffset * i
+            putTraj = Trajectory(putPos)
+            putTraj.initVel = 10000000.0
             ts.at(putTraj)
+
             ts.sl(WaitPut)
             ts.aa { clown.open() }
             ts.sl(WaitPut)
@@ -426,21 +399,30 @@ object Cele10Traiectorii {
 
         val stackPos = rPStack[randomCase].duplicate()
         stackPos.sp = preloadPos.ep
-        stackPos.timeout = 0.0
+        stackPos.setNoEndBegin()
         val stackTraj = Trajectory(stackPos)
 
         val afterShavePos = rPAfterShave.duplicate()
         afterShavePos.sp = stackPos.ep
-        afterShavePos.initVel = 10000000.0
+        stackPos.setNoEndEnd()
         val afterShaveTraj = Trajectory(afterShavePos)
 
+        val put1Pos = rPut1Pos.duplicate()
+        put1Pos.sp = afterShavePos.ep
+        put1Pos.setNoEndBegin()
+        val put1Traj = Trajectory(put1Pos)
+
         val putPos = rPutPos.duplicate()
-        putPos.sp = afterShavePos.ep
+        putPos.sp = put1Pos.ep
         putPos.ep.y += rPutYOffsetCase[randomCase]
         putPos.ep.x = rPutXCase[randomCase]
+        putPos.setNoEndEnd()
         var putTraj = Trajectory(putPos)
 
+        val stack12Pos = rStackPos12.duplicate()
+        stack12Pos.setNoEndBegin()
         val stack2Pos = rStackPos2.duplicate()
+        stack2Pos.setNoEndEnd()
         val afterAfterShavePos = rPAfterAfterShave.duplicate()
 
         val parkPos = rParkPos.duplicate()
@@ -449,53 +431,68 @@ object Cele10Traiectorii {
 
         val ts = TrajectorySequence()
         /// Start -> Go to preload (Spit out pixel)
-        preloadTraj.addActionS(20.0) { clown.goPreloadUp() }
+        preloadTraj.addActionS(50.0) { clown.goPreloadUp() }
         ts.at(preloadTraj)
+
         ts.aa { clown.ghearaFar?.position = ClownFDeschis }
         /// Preload -> Stack (Gheara deschisa + intake)
-        ts.aa { clown.goPreloadDown(); intake.status = SPStack1 }
+        ts.sl(WaitPreload)
+        ts.aa { clown.goPreloadDown(); intake.status = SKeep; }
+        stackTraj.addActionE(40.0) { intake.status = SStack1 }
         ts.at(stackTraj)
-        afterShaveTraj.addActionT(WaitAfterShave) { intake.status = SIntake }
-        ts.at(afterShaveTraj)
-        /// Stack -> Put (Ridicare diffy + gheara deschisa)
+
+        ts.aa { intake.status = SStack3 }
+        ts.sl(INTAKEWAIT2)
         ts.sl(WaitStack15)
         ts.aa { clown.catchPixel() }
         ts.sl(WaitStack2)
-        ts.aa { intake.status = SInvert }
-        ts.sl(WaitStack3)
-        putTraj.addActionE(100.0) { clown.goUp(2) }
+        put1Traj.addActionT(WaitStack3) { intake.status = SInvert }
+        put1Traj.addActionE(20.0) { clown.goUp(2) }
+        ts.at(put1Traj)
+
         ts.at(putTraj)
+
         ts.sl(WaitPut)
         ts.aa { clown.open() }
         ts.sl(WaitPut)
+
         for (i in 0 until ncycle - 1) {
             /// Put -> Stack2 (Diffy down + gheara inchisa -> gheara deschisa + intake)
-            stack2Pos.sp = putPos.ep
+            stack12Pos.sp = putPos.ep
+            val stack12Traj = Trajectory(stack12Pos)
+            ts.at(stack12Traj)
+            stack2Pos.sp = stack12Pos.ep
             stack2Pos.ep = rStackPos2.ep + rStackOffset * i
             val stack2Traj = Trajectory(stack2Pos)
-            stack2Traj.addActionS(5.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
+            stack2Traj.addActionS(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
             stack2Traj.addActionE(100.0) { intake.status = SIntake }
             stack2Traj.timeout = 0.0
             //stack2Traj.addActionE(50.0) { intake.status = if (i == 0) SStack2 else SIntake }
 
             ts.at(stack2Traj)
+
             afterAfterShavePos.sp = stack2Pos.ep
             afterAfterShavePos.initVel = 100000000.0
             val afterAfterShaveTraj = Trajectory(afterAfterShavePos)
             ts.at(afterAfterShaveTraj)
-            /// Stack2 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)
-            putPos.sp = afterAfterShavePos.ep
-            putPos.ep.x = rPutXCase[3]
-            putPos.ep += rPutOffset * i
 
-            putTraj = Trajectory(putPos)
+            /// Stack2 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)
             ts.sl(WaitStack1)
             ts.aa { clown.catchPixel() }
             ts.sl(WaitStack2)
-            ts.aa { intake.status = SInvert }
-            ts.sl(WaitStack3)
-            putTraj.addActionE(100.0) { clown.goUp(-2); slides.setTarget(RMID_POS) }
+
+            val newPut1Traj = Trajectory(put1Pos)
+            newPut1Traj.addActionT(WaitStack3) { intake.status = SInvert }
+            newPut1Traj.addActionE(0.0) { clown.goUp(-2); slides.setTarget(RMID_POS) }
+            ts.at(newPut1Traj)
+
+            putPos.sp = put1Pos.ep
+            putPos.ep.x = rPutXCase[3]
+            putPos.ep.y = rPutY
+            putPos.ep += rPutOffset * i
+            putTraj = Trajectory(putPos)
             ts.at(putTraj)
+
             ts.sl(WaitPut)
             ts.aa { clown.open() }
             ts.sl(WaitPut)
@@ -635,6 +632,7 @@ object Cele10Traiectorii {
         }
         ts.at(putFromPreloadTraj)
         ts.aa { clown.open() }
+        ts.sl(0.1)
         for (i in 0 until ncycle) {
             /// Put -> Inter1 (Diffy down) -> Inter2 -> Stack (Diffy down + gheara inchisa -> gheara deschisa + intake)
             val inter1Pos = srStackPPose[0].duplicate()
@@ -668,7 +666,7 @@ object Cele10Traiectorii {
             put3Pos.setNoEndEnd()
 
             val inter1Traj = Trajectory(inter1Pos)
-            inter1Traj.addActionS(0.0) { intake.status = SIntake; clown.goDown(); slides.setTarget(RBOT_POS) }
+            inter1Traj.addActionS(50.0) { intake.status = SIntake; clown.goDown(); slides.setTarget(RBOT_POS) }
             ts.at(inter1Traj)
 
             val inter2Traj = Trajectory(inter2Pos)

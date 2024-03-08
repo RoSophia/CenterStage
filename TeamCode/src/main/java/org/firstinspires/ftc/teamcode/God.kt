@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode
 import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
@@ -17,19 +18,11 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.KILLMYSELF
 class CreateGod : LinearOpMode() {
     override fun runOpMode() {
         preinit()
-        /*
-        val ep = ElapsedTime()
-        val tr = TrajectorySequence()
-        tr.st(1)
-        tr.aa { log("Cycle", ep.seconds()) }
-        tr.gt { if (KILLMYSELF) 1 else 2 }
-        tr.st(2)
-        tr.aa { log("Done", ep.seconds()) }
-        while (tr.update()) {
-            send_log()
-        }*/
-
 
         create_god()
+
+        gamepad1.runLedEffect(Gamepad.LedEffect.Builder().addStep(0.0, 1.0, 0.0, 300).addStep(1.0, 1.0, 1.0, 300).setRepeating(true).build())
+
+        waitForStart()
     }
 }
