@@ -119,7 +119,9 @@ object BlueLongP {
 }
 
 @Config
-object RedLongP {
+object
+
+RedLongP {
     @JvmField
     var rPPos = Vec3T(
             /// Pos 0 = under thruss, 1 = mid, 2 e odar
@@ -146,13 +148,13 @@ object RedLongP {
     @JvmField
     var rPStack = Vec3T(
             TrajCoef(
-                    Pose(-132.0, -62.0, -1.57),
+                    Pose(-134.0, -62.0, -1.57),
                     Vec2d(0.0, 2.0), Vec2d(30.0, 2.0),
                     0.8, Vec2d(50.0, 120.0)
             ),
 
             TrajCoef(
-                    Pose(-132.0, -62.0, -1.57),
+                    Pose(-135.0, -55.0, -1.57),
                     Vec2d(0.0, 2.0), Vec2d(30.0, 2.0),
                     Vec2d(0.2, 0.7),
                     0.8
@@ -346,7 +348,7 @@ object RedShortP {
     @JvmField
     var srStackPPose = Vec4T(
             TrajCoef(
-                    Pose(-16.0, 10.0, -1.57),
+                    Pose(-19.0, 15.0, -1.57),
             ),
             TrajCoef(
                     Pose(-16.0, -110.0, -1.57),

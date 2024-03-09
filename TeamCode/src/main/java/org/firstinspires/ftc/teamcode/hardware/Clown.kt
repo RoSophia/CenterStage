@@ -114,7 +114,7 @@ class Clown(name: String) {
                     .aa { close(); intake.status = SUpulLuiCostacu }
                     .sl(ClownWait2)
                     .aa { ampUp.setMotion(DiffyPrepDown, DiffyUp, 0.0); curState = nextA }
-                    .wt { ampUp.update(); targetPos = ampUp.position;
+                    .wt { ampUp.update(); targetPos = ampUp.position
                         if (targetPos > DiffyWaitUpTurn) { targetAngle = DiffyAUp; gelenk?.position = GelenkCenter + curState * GelenkDif }
                         epsEq(ampUp.position, ampUp.finalPosition) }
                     .aa { targetAngle = DiffyAUp; targetPos = DiffyUp }

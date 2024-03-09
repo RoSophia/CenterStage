@@ -96,7 +96,7 @@ public class RobotVars {
 
     public static boolean KILLMYSELF = false;
     public static double DiffyWaitUpTurn = 0.88;
-    public static double DiffyWaitDownTurn = 0.98;
+    public static double DiffyWaitDownTurn = 0.93;
     public static double DiffyPreloadUp = 1.21;
     public static double DiffyUpSafe = 1.2;
     public static double DiffyAUp = -0.155; /// Unghi cu pixel sus
