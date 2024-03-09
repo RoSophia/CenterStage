@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SDown
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIdleIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SKeep
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack1
@@ -41,6 +42,7 @@ object Intakes {
     const val SUpulLuiCostacu = 15
     const val SUpulLuiCostacuIn = 16
     const val SKeep = 17
+    const val SInvert2 = 18
 }
 
 class Intake {
@@ -120,6 +122,7 @@ class Intake {
                     }
                     SUpulLuiCostacuIn -> sint(IntakeGetCostac, 0, -0.5)
                     SKeep -> sint(IntakeGet, 0, -0.5)
+                    SInvert2 -> sint(IntakeGetCostac, 0, IntakeRevPower)
                     else -> {}
                 }
                 field = v

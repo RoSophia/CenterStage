@@ -99,11 +99,13 @@ public class RobotVars {
     public static double DiffyWaitDownTurn = 0.98;
     public static double DiffyPreloadUp = 1.21;
     public static double DiffyUpSafe = 1.2;
-    public static double DiffyAUp = -0.155;
-    public static double DiffyADown = 0.12;
-    public static double DiffyUp = 1.03;
+    public static double DiffyAUp = -0.155; /// Unghi cu pixel sus
+    public static double DiffyADown = 0.12; /// Unghi fara pixel jos
+    public static double DiffyUp = 1.03; /// Pozitie cu pixel sus
     public static double DiffyDown = 0.5;
-    public static double DiffyPrepDown = 0.637;
+    public static double DiffyPrepDown = 0.637; /// Pozitie sta jos asteapta
+
+
     public static double DiffyMidUp = 0.72;
     public static double DiffyMid2Up = 0.85;
     public static double DiffyMidDown = 0.70;
@@ -112,7 +114,7 @@ public class RobotVars {
     public static double Diffy__UMVEL = 3;
     public static double Diffy__UMAC = 8;
     public static double Diffy__UMDC = 1.5;
-    public static double Diffy__UMDCAuto = 0.7;
+    public static double Diffy__UMDCAuto = 0.1;
     public static double Diffy__UMDCOp = 1.5;
 
     public static double Diffy__MVEL = 4;
@@ -160,7 +162,7 @@ public class RobotVars {
     public static double SERVO_GEAR_RATIO = 1.000;
 
     public static double AvionInchis = 1.0;
-    public static double AvionDeschis = 0.8;
+    public static double AvionDeschis = 0.7;
 
     public static double WheelsAlignMin = 0.60;
     public static double WheelsAlignMax = 1.00;

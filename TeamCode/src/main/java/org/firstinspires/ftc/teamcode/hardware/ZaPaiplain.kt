@@ -75,16 +75,16 @@ object CameraControls {
     var CameraMidPos: Double = 400.0
 
     @JvmField
-    var PaiplainMinSat = 20
+    var PaiplainMinSat = 56
 
     @JvmField
     var PaiplainMinVal = 20
 
     @JvmField
-    var PaiplainMaxBloo = 0.2
+    var PaiplainMaxBloo = 1.1
 
     @JvmField
-    var PaiplainColBloo = 3.8
+    var PaiplainColBloo = 4.0
 
     @JvmField
     var PaiplainColRed = 0.0
@@ -193,10 +193,10 @@ class ZaPaiplain : OpenCvPipeline() {
                 }
             }
             if (AutoRed) {
-                AutoResult = 3 - AutoResult
+                AutoResult = 2 - AutoResult
             }
             if (__AutoShort) {
-                AutoResult = 3 - AutoResult
+                AutoResult = 2 - AutoResult
             }
             log("AutoResult", AutoResult)
             send_log()
