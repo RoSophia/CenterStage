@@ -278,7 +278,7 @@ object BlueShortP {
             ),
             TrajCoef(
                     //frommid2tostack
-                    Pose(-67.0, 172.0, 1.57), 0.8
+                    Pose(-70.0, 174.0, 1.57), 0.8
             )
     )
 
@@ -290,7 +290,7 @@ object BlueShortP {
                     Vec2d(0.2, 0.4), 1.0
             ),
             TrajCoef(
-                    Pose(-14.0, -45.0, 1.57),
+                    Pose(-16.0, -45.0, 1.57),
                     Vec2d(0.0, -0.7), Vec2d(0.0, 0.0), 1.0
             ),
             TrajCoef(
