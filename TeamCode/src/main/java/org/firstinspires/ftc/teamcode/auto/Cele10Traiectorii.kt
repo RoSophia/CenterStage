@@ -316,7 +316,7 @@ object Cele10Traiectorii {
         stackTraj.addActionE(40.0) { intake.status = SStack1 }
         ts.at(stackTraj)
 
-        ts.sl(0.2)
+        //ts.sl(0.1)
         ts.aa { intake.status = SStack3 }
         ts.aa { genTime.reset(); __UPDATE_SENSORS = true }
         ts.addCondDir(
