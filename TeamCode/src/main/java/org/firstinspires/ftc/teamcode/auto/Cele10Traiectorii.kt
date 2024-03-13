@@ -657,7 +657,7 @@ object Cele10Traiectorii {
         }
         ts.at(putFromPreloadTraj)
         ts.aa { clown.open() }
-        ts.sl(0.1)
+        //ts.sl(0.1)
         for (i in 0 until ncycle) {
             /// Put -> Inter1 (Diffy down) -> Inter2 -> Stack (Diffy down + gheara inchisa -> gheara deschisa + intake)
             val inter1Pos = srStackPPose[0].duplicate()
