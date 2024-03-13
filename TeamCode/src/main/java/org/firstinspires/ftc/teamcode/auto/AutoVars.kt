@@ -119,9 +119,7 @@ object BlueLongP {
 }
 
 @Config
-object
-
-RedLongP {
+object RedLongP {
     @JvmField
     var rPPos = Vec3T(
             /// Pos 0 = under thruss, 1 = mid, 2 e odar
@@ -148,13 +146,13 @@ RedLongP {
     @JvmField
     var rPStack = Vec3T(
             TrajCoef(
-                    Pose(-134.0, -62.0, -1.57),
+                    Pose(-132.0, -62.0, -1.57),
                     Vec2d(0.0, 2.0), Vec2d(30.0, 2.0),
                     0.8, Vec2d(50.0, 120.0)
             ),
 
             TrajCoef(
-                    Pose(-135.0, -55.0, -1.57),
+                    Pose(-132.0, -62.0, -1.57),
                     Vec2d(0.0, 2.0), Vec2d(30.0, 2.0),
                     Vec2d(0.2, 0.7),
                     0.8
@@ -278,7 +276,7 @@ object BlueShortP {
             ),
             TrajCoef(
                     //frommid2tostack
-                    Pose(-70.0, 174.0, 1.57), 0.8
+                    Pose(-67.0, 172.0, 1.57), 0.8
             )
     )
 
@@ -290,7 +288,7 @@ object BlueShortP {
                     Vec2d(0.2, 0.4), 1.0
             ),
             TrajCoef(
-                    Pose(-16.0, -45.0, 1.57),
+                    Pose(-14.0, -45.0, 1.57),
                     Vec2d(0.0, -0.7), Vec2d(0.0, 0.0), 1.0
             ),
             TrajCoef(
@@ -348,7 +346,7 @@ object RedShortP {
     @JvmField
     var srStackPPose = Vec4T(
             TrajCoef(
-                    Pose(-19.0, 15.0, -1.57),
+                    Pose(-16.0, 10.0, -1.57),
             ),
             TrajCoef(
                     Pose(-16.0, -110.0, -1.57),
@@ -360,23 +358,23 @@ object RedShortP {
                     Vec2d(0.4, 0.9), 1.0, Vec2d(40.0, 90.0)
             ),
             TrajCoef(
-                    Pose(-62.0, -183.0, -1.57), 0.8
+                    Pose(-60.0, -174.0, -1.57), 0.8
             )
     )
 
     @JvmField
     var srStackPPut = Vec3T(
             TrajCoef(
-                    Pose(-12.0, -150.0, -1.77),
+                    Pose(-5.0, -150.0, -1.77),
                     Vec2d(70.0, -2.2), Vec2d(00.0, -1.57),
                     Vec2d(0.2, 0.4), 1.0
             ),
             TrajCoef(
-                    Pose(-12.0, 45.0, -1.57),
+                    Pose(-6.0, 45.0, -1.57),
                     Vec2d(0.0, 0.7), Vec2d(0.0, 0.0), 1.0
             ),
             TrajCoef(
-                    Pose(-63.0, 97.0, -1.57),
+                    Pose(-61.0, 100.0, -1.57),
                     Vec2d(30.0, 1.57), Vec2d(30.0, -1.7),
                     1.0, Vec2d(30.0, 60.0)
             )

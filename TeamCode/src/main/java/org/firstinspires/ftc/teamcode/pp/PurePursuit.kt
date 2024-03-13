@@ -20,6 +20,9 @@ import org.firstinspires.ftc.teamcode.pp.PP.MAX_VEL
 import org.firstinspires.ftc.teamcode.pp.PP.PPMaxAngPower
 import org.firstinspires.ftc.teamcode.pp.PP.PPMaxSpeed
 import org.firstinspires.ftc.teamcode.pp.PP.PPPPPPP
+import org.firstinspires.ftc.teamcode.pp.PP.PPStallDist
+import org.firstinspires.ftc.teamcode.pp.PP.PPStallSpeed
+import org.firstinspires.ftc.teamcode.pp.PP.PPStallTime
 import org.firstinspires.ftc.teamcode.pp.PP.PPStartEnd
 import org.firstinspires.ftc.teamcode.pp.PP.PPStaticSpeed
 import org.firstinspires.ftc.teamcode.pp.PP.PeruMin
@@ -32,11 +35,14 @@ import org.firstinspires.ftc.teamcode.pp.PP.lkr
 import org.firstinspires.ftc.teamcode.utils.PID
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.drawRobot
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.ep
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.clamp
@@ -138,6 +144,15 @@ object PP {
 
     @JvmField
     var PPStaticSpeed: Double = 0.09
+
+    @JvmField
+    var PPStallSpeed: Double = 0.7
+
+    @JvmField
+    var PPStallTime: Double = 5.0
+
+    @JvmField
+    var PPStallDist: Double = 15.0
 
     @JvmField
     var Checkpoints: Int = 2000
@@ -272,10 +287,12 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         atLastt = false
         atLastT.reset()
         ep.reset()
+        stallPoint = ctraj.start
         runningTime.reset()
         longP.reset()
         transP.reset()
         angleP.reset()
+        stallTime.reset()
         log("ctraj", ctraj)
     }
 
@@ -312,6 +329,8 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
     private fun drawVector(pos: Vec2d, v: Vec2d, col: String) = drawVector(pos, v, col, 2, PPPPPPP)
     private fun drawVector(pos: Vec2d, v: Vec2d) = drawVector(pos, v, "#FF000070")
+    private val stallTime = ElapsedTime()
+    private var stallPoint = Pose()
 
     fun update() { /// TODO: Add bump detection
         if (busy) {
@@ -427,6 +446,25 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             }
 
             if (USE_AUTO_MOVE) {
+                //log("StallDist", (cp - stallPoint).dist())
+                //log("StallTime", stallTime.seconds())
+                if ((speed < PPStallSpeed) || ((cp - stallPoint).dist() > PPStallDist)) {
+                    stallPoint = cp
+                    stallTime.reset()
+                }
+                if (stallTime.seconds() > PPStallTime) {
+                    error = true
+                    log("Stalling!!!!!!!!!!!!!!!!!!!!!!!!!", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    swerve.move(0.0, 0.0, 0.0)
+                    val kmstime = ElapsedTime()
+                    slides.setTarget(RBOT_POS)
+                    clown.open()
+                    clown.targetPos = DiffyMidUp
+                    clown.targetAngle = DiffyADown
+                    while (kmstime.seconds() < 2.0 && !lom.isStopRequested) {}
+                    lom.requestOpModeStop()
+                    return
+                }
                 swerve.move(speed, angle, angPower)
             } else if (USE_SWERVE) {
                 moveSwerve()

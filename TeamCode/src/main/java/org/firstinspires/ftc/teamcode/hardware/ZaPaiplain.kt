@@ -75,16 +75,16 @@ object CameraControls {
     var CameraMidPos: Double = 400.0
 
     @JvmField
-    var PaiplainMinSat = 56
+    var PaiplainMinSat = 100
 
     @JvmField
-    var PaiplainMinVal = 20
+    var PaiplainMinVal = 40
 
     @JvmField
     var PaiplainMaxBloo = 1.1
 
     @JvmField
-    var PaiplainColBloo = 4.0
+    var PaiplainColBloo = 3.9
 
     @JvmField
     var PaiplainColRed = 0.0

@@ -123,8 +123,8 @@ public class RobotVars {
 
     public static double ClownFInchis = 0.692;
     public static double ClownFDeschis = 0.12;
-    public static double ClownNInchis = 0.769;
-    public static double ClownNDeschis = 0.3;
+    public static double ClownNInchis = 0.64;
+    public static double ClownNDeschis = 0.20;
     public static double ClownWait1 = 0.1;
     public static double ClownWait2 = 0.1;
     public static double ClownWait3 = 0.2;
@@ -154,7 +154,7 @@ public class RobotVars {
     public static Vec4 IntakeGetCostac = new Vec4(0.41, 0.17, 0.40, 0.14); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack1 = new Vec4(0.41, 0.18, 0.43, 0.27); // AfterShave 1 2 Stack 1 2
     public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.42, 0.25); // Prep 1 2 Stack 1 2
-    public static Vec4 IntakeStack3 = new Vec4(0.45, 0.235, 0.36, 0.26); // Prep 1 2 Stack 1 2
+    public static Vec4 IntakeStack3 = new Vec4(0.38, 0.195, 0.36, 0.26); // Prep 1 2 Stack 1 2
     public static int __IntakeSetStatus = 20;
 
     public static boolean __LOG_STATUS = false;
@@ -186,11 +186,6 @@ public class RobotVars {
     public static int CameraGain = 60;
     public static int CameraExposure = 60;
 
-    public static double INTAKEWAIT1 = 0.2;
-    public static double INTAKEWAIT2 = 0.6;
-    public static double INTAKEWAIT3 = 0.6;
-    public static double INTAKEWAIT4 = 0.4;
-
     public static double EncoderPowerFuckery = 0.06;
     public static double EncoderAccelFuckery = 0.00;
     public static boolean OpModeKMS = false;
@@ -199,6 +194,7 @@ public class RobotVars {
     public static boolean __AutoShort = false;
     public static boolean __UPDATE_SENSORS = false;
     public static boolean __UPDATE_DIFFY = false;
+    public static boolean __UPDATE_INTAKE = false;
     public static double ___CURRENT_SCHWERVE_SWPEED = 0.0;
     public static double ___CURRENT_SCHWERVE_ACCEL = 0.0;
     public static boolean ___KILL_DIFFY_THREADS = false;
