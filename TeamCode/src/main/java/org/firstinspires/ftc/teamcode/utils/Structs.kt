@@ -77,6 +77,7 @@ class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
 }
 
 class Vec3(@JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Double) {
+    constructor() : this(0.0, 0.0, 0.0)
     var x: Double = a
         get() = a
         set(v) { a = v; field = v }
@@ -121,6 +122,7 @@ class Vec4(@JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Do
 }
 
 class Vec3T(@JvmField var a: TrajCoef, @JvmField var b: TrajCoef, @JvmField var c: TrajCoef) {
+    constructor() : this(TrajCoef(), TrajCoef(), TrajCoef())
     var x: TrajCoef = a
         get() = a
         set(v) { a = v; field = v }
@@ -141,6 +143,7 @@ class Vec3T(@JvmField var a: TrajCoef, @JvmField var b: TrajCoef, @JvmField var 
 }
 
 class Vec4T(@JvmField var a: TrajCoef, @JvmField var b: TrajCoef, @JvmField var c: TrajCoef, @JvmField var d: TrajCoef) {
+    constructor() : this(TrajCoef(), TrajCoef(), TrajCoef(), TrajCoef())
     var x: TrajCoef = a
         get() = a
         set(v) { a = v; field = v }

@@ -117,7 +117,7 @@ class Clown(name: String) {
                     .wt { ampUp.update(); targetPos = ampUp.position
                         if (targetPos > DiffyWaitUpTurn) { targetAngle = DiffyAUp; gelenk?.position = GelenkCenter + curState * GelenkDif }
                         epsEq(ampUp.position, ampUp.finalPosition) }
-                    .aa { targetAngle = DiffyAUp; targetPos = DiffyUp }
+                    .aa {  targetAngle = DiffyAUp; targetPos = DiffyUp }
         } /// GoUp
 
         run {
@@ -286,7 +286,7 @@ class Clown(name: String) {
     fun goDown() {
         if (USE_DIFFY) {
             killextrathreads()
-            if (curState != -102) {
+            if (curState != -102 && curState != -100) {
                 threads.add(goDownTraj.runAsyncDiffy())
             } else {
                 open()

@@ -6,10 +6,12 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.EncoderAccelFuckery
 import org.firstinspires.ftc.teamcode.utils.RobotVars.EncoderPowerFuckery
+import org.firstinspires.ftc.teamcode.utils.RobotVars.___CURRENT_DIFFY_KMS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___CURRENT_SCHWERVE_ACCEL
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___CURRENT_SCHWERVE_SWPEED
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -40,7 +42,7 @@ class AbsEnc(private val name: String, private val off: Double, private val inve
         get() {
             val ccv = enc.voltage
             val v = if (inverted) -ccv else ccv
-            logs("${name}_cv", v)
+            logs("${name}_cv", ccv + ___CURRENT_DIFFY_KMS)
 
             val cv = v / 3.28
             return angNorm(cv * angPer01 + off)

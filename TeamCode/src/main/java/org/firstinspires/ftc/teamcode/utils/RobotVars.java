@@ -93,6 +93,7 @@ public class RobotVars {
 
     public static double DiffyLOff = 0;
     public static double DiffyROff = 0;
+    public static double DiffyKmsOff = 0.613;
 
     public static boolean KILLMYSELF = false;
     public static double DiffyWaitUpTurn = 0.88;
@@ -127,33 +128,24 @@ public class RobotVars {
     public static double ClownNDeschis = 0.20;
     public static double ClownWait1 = 0.1;
     public static double ClownWait2 = 0.1;
-    public static double ClownWait3 = 0.2;
     public static double ClownWait4 = 0.15;
-    public static double ClownWait5 = 0.15;
     public static double ClownWaitDown1 = 0.05;
     public static double ClownWaitDown2 = 0.08;
-    public static double ClownWaitDown3 = 0.36;
     public static double ClownWaitDown4 = 0.20;
     public static double ClownWaitDown5 = 0.30;
-    public static double ClownWaitDown6 = 0.10;
 
     public static int SensorsMinDist = 160;
-
-    public static double ClownPWait1 = 0.1;
-    public static double ClownPWait2 = 0.0;
-    public static double ClownPWait3 = 0.3;
-    public static double ClownPWaitDown1 = 0.19;
 
     public static double GelenkCenter = 0.48;
     public static double GelenkDif = 0.10;
 
     public static double IntakePower = -1.0;
-    public static double IntakeRevPower = 0.8;
-    public static Vec4 IntakeGet = new Vec4(0.38, 0.155, 0.4, 0.28); // Get 1 2 Up 1 2
+    public static double IntakeRevPower = 1.0;
+    public static Vec4 IntakeGet = new Vec4(0.37, 0.15, 0.37, 0.3); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
-    public static Vec4 IntakeGetCostac = new Vec4(0.41, 0.17, 0.40, 0.14); // Get 1 2 Up 1 2
-    public static Vec4 IntakeStack1 = new Vec4(0.41, 0.18, 0.43, 0.27); // AfterShave 1 2 Stack 1 2
-    public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.42, 0.25); // Prep 1 2 Stack 1 2
+    public static Vec4 IntakeGetCostac = new Vec4(0.40, 0.35, 0.40, 0.14); // Get 1 2 Up 1 2
+    public static Vec4 IntakeStack1 = new Vec4(0.41, 0.18, 0.37, 0.23); // AfterShave 1 2 Stack 1 2
+    public static Vec4 IntakeStack2 = new Vec4(0.45, 0.19, 0.368, 0.238); // Prep 1 2 Stack 1 2
     public static Vec4 IntakeStack3 = new Vec4(0.38, 0.195, 0.36, 0.26); // Prep 1 2 Stack 1 2
     public static int __IntakeSetStatus = 20;
 
@@ -168,8 +160,8 @@ public class RobotVars {
     public static double WheelsAlignMax = 1.00;
     public static double WheelsAlignStart = PI / 2 - PI / 4;
     public static double WheelsAlignEnd = PI / 2 - PI / 8;
+    public static Pose WheelsAdjPose = new Pose (0.0, 0.0, 0.0);
 
-    public static Pose WheelsAdjPose = new Pose (-0.15, 0.2, 0.0);
     public static String WheelsPerpName = "LBM";
     public static Pose WheelsPerpPos = new Pose(-13.3, 1.15, PI / 2);
     public static Integer WheelsPerpDir = 1;
@@ -179,6 +171,18 @@ public class RobotVars {
     public static String WheelsParLName = "RBM";
     public static Pose WheelsParLPos = new Pose(-8.15, 4.2, 0.0);
     public static Integer WheelsParLDir = -1;
+
+    /*
+    public static String WheelsPerpName = "LBM";
+    public static Pose WheelsPerpPos = new Pose(-13.3, 1.15, PI / 2);
+    public static Integer WheelsPerpDir = 1;
+    public static String WheelsParRName = "RFM";
+    public static Pose WheelsParRPos = new Pose(-8.25, -4.7, 0.0);
+    public static Integer WheelsParRDir = 1;
+    public static String WheelsParLName = "RBM";
+    public static Pose WheelsParLPos = new Pose(-8.25, 4.65, 0.0);
+    public static Integer WheelsParLDir = -1;
+     */
     public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0 / 1.02; // Radius * 2pi / Ticks/Rev / DracuStie
 
     public static String CameraName = "Anticamera";
@@ -196,6 +200,7 @@ public class RobotVars {
     public static boolean __UPDATE_DIFFY = false;
     public static boolean __UPDATE_INTAKE = false;
     public static double ___CURRENT_SCHWERVE_SWPEED = 0.0;
+    public static double ___CURRENT_DIFFY_KMS = 0.0;
     public static double ___CURRENT_SCHWERVE_ACCEL = 0.0;
     public static boolean ___KILL_DIFFY_THREADS = false;
     public static double __FUNNY_SWERVE_COEF = 1.1;

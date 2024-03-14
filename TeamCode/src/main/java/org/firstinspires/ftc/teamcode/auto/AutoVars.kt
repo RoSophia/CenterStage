@@ -227,6 +227,16 @@ object RedLongP {
 
 }
 
+class ShortVals(
+        @JvmField var aPreload: Vec3T, // Are a in fata sa se alinieze frumos alfabetic
+        @JvmField var aPreloadBackdrop: TrajCoef,
+        @JvmField var backdropPosX: Vec3,
+        @JvmField var backdropStack: Vec4T,
+        @JvmField var cStackBackdrop: Vec3T, // Are c in fata sa se alinieze frumos alfabetic
+        @JvmField var cStackOffset: Pose,
+        @JvmField var putPos: TrajCoef,
+        @JvmField var putOffset: Pose)
+
 @Config
 object BlueShortP {
     @JvmField
@@ -255,9 +265,6 @@ object BlueShortP {
 
     @JvmField
     var sbPutXCase = Vec3(-86.0, -68.0, -55.0)
-
-    @JvmField
-    var sbPutYOffsetCase = Vec3(0.0, 0.0, 0.0)
 
     @JvmField
     var sbTrajBack2Sstack = Vec4T(
@@ -433,6 +440,19 @@ object AutoVars {
 
     @JvmField
     var WaitPreload = 0.4
+
+    @JvmField
+    var INTAKEWAIT1 = 0.2
+    @JvmField
+    var INTAKEWAIT2 = 0.2
+    @JvmField
+    var INTAKEWAIT3 = 0.2
+    @JvmField
+    var INTAKEWAIT4 = 0.2
+    @JvmField
+    var INTAKEWAIT5 = 0.2
+    @JvmField
+    var TimeoutTakeAftl = 0.2
 
     val colours = arrayOf("#8EE3EF", "#AEF3E7", "#F6BD60", "#F7EDE2", "#37718E", "#F5CAC3", "#84A59D", "#F28482", "#19535F", "#0B7A75", "#D7C9AA", "#7B2D26", "#F0F3F5")
 }

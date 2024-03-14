@@ -53,11 +53,30 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
     constructor(ep: Pose, mf: Double, peru: Vec2d) : this(Pose(), ep, mf, peru)
     constructor(ep: Pose, mf: Double) : this(Pose(), ep, mf)
     constructor(ep: Pose) : this(Pose(), ep)
+    constructor() : this(Pose())
 
     fun setNoEndBegin() {
         peru = Vec2d(0.1, 0.2)
         initVel = 0.0
         timeout = 0.0
+    }
+
+    fun cb(): TrajCoef {
+        peru = Vec2d(0.1, 0.2)
+        timeout = 0.0
+        return this
+    }
+
+    fun cc(): TrajCoef {
+        peru = Vec2d(0.1, 0.2)
+        initVel = 1000000.0
+        timeout = 0.0
+        return this
+    }
+
+    fun ce(): TrajCoef {
+        initVel = 1000000.0
+        return this
     }
 
     fun setNoEndContinue() {
@@ -71,20 +90,21 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
     }
 
     fun duplicate() = TrajCoef(sp.duplicate(), ep.duplicate(), v1.duplicate(), v2.duplicate(), h.duplicate(), mf, peru.duplicate(), initVel, timeout)
+    fun d() = duplicate()
+    fun s(t: TrajectorySequence): TrajCoef { val tc = this.duplicate(); tc.sp = t.curPose; return tc }
+    val t: Trajectory
+        get() {
+            return Trajectory(this)
+        }
+    fun sx(x: Double): TrajCoef { ep.x = x; return this }
+    fun so(p: Pose): TrajCoef { ep += p; return this }
 }
 
 class Trajectory(val start: Pose, var initVel: Double, val end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double, var timeout: Double) {
     override fun toString() = "$start - $end ($v1e $v2e $h) - $maxFraction ${Vec2d(peruStart, peruEnd)}"
 
     constructor(tc: TrajCoef) : this(tc.sp.duplicate(), tc.initVel, tc.ep.duplicate(), tc.v1.duplicate(), tc.v2.duplicate(), tc.h.duplicate(), tc.mf, tc.peru.x, tc.peru.y, tc.timeout) /// TODO Add duplicate to all other
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d, maxFraction: Double, peruStart: Double, peruEnd: Double) : this(sp, initVel, ep, v1e, v2e, h, maxFraction, peruStart, peruEnd, MAX_TIME)
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d, maxFraction: Double) : this(sp, initVel, ep, v1e, v2e, h, maxFraction, PeruStart, PeruEnd)
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1e: Vec2d, v2e: Vec2d, h: Vec2d) : this(sp, initVel, ep, v1e, v2e, h, MAX_FRACTION)
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double, hx: Double, hy: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(hx, hy))
-    constructor(sp: Pose, initVel: Double, ep: Pose, v1x: Double, v1y: Double, v2x: Double, v2y: Double) : this(sp, initVel, ep, Vec2d(v1x, v1y), Vec2d(v2x, v2y), Vec2d(0.0, 1.0))
-    constructor(sp: Pose, initVel: Double, ep: Pose) : this(sp, initVel, ep, Vec2d(), Vec2d(), Vec2d(0.0, 1.0))
-    constructor(sp: Pose, ep: Pose) : this(sp, 0.0, ep)
-    constructor() : this(Pose(), Pose())
+    constructor() : this(TrajCoef())
 
     private val v1 = v1e.polar()
     private val v2 = v2e.polar()
@@ -95,40 +115,39 @@ class Trajectory(val start: Pose, var initVel: Double, val end: Pose, val v1e: V
 
     private fun getHeading(v: Double) = clamp((v - h.x) / (h.y - h.x), 0.0, 1.0)
 
-    fun logHeading(v: Double) {
-        log("CurHeading", String.format("%.2f %.2f", getHeading(v), v))
-    }
-
     var actions: Vector<Action> = Vector()
     var lastCompletedAction = 0
 
-    fun addActionS(distFromStart: Double, act: () -> Unit) {
+    fun addActionS(distFromStart: Double, act: () -> Unit): Trajectory {
         for (i in 0..Checkpoints) {
             if ((start - get(i)).dist() >= distFromStart) {
                 actions.add(Action(i, act))
                 actions.sortBy { it.checkNr }
-                return
+                return this
             }
         }
         actions.add(Action(Checkpoints, act))
         actions.sortBy { it.checkNr }
+        return this
     }
 
-    fun addActionT(timeFromStart: Double, act: () -> Unit) {
+    fun addActionT(timeFromStart: Double, act: () -> Unit): Trajectory {
         actions.add(Action(0) { TrajectorySequence().sl(timeFromStart).aa(act).runAsync() })
         actions.sortBy { it.checkNr }
+        return this
     }
 
-    fun addActionE(distFromEnd: Double, act: () -> Unit) {
+    fun addActionE(distFromEnd: Double, act: () -> Unit): Trajectory {
         for (i in Checkpoints downTo 0) {
             if ((end - get(i)).dist() >= distFromEnd) {
                 actions.add(Action(i, act))
                 actions.sortBy { it.checkNr }
-                return
+                return this
             }
         }
         actions.add(Action(0, act))
         actions.sortBy { it.checkNr }
+        return this
     }
 
     fun nextAction(): Action =

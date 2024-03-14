@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacuIn
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
@@ -86,6 +87,9 @@ class Intake {
                     lom.gamepad1.rumble(0.3, 0.3, 100)
                 }
             }
+        }
+        if (__LOG_STATUS) {
+            logs("IntakeCurrent", intake.current)
         }
         if (__UPDATE_INTAKE) {
 
