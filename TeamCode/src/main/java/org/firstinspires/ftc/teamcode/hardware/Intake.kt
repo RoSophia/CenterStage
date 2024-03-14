@@ -48,25 +48,14 @@ object Intakes {
 
 class Intake {
     val intake = Motor("Intake", encoder = false, rev = false, overdrive = true)
-    val ridIntake1 = MServo("RidIntake")
-    val ridIntake2 = MServo("RidIntakeFar")
+    private val ridIntake1 = MServo("RidIntake")
+    private val ridIntake2 = MServo("RidIntakeFar")
 
-    val running: Boolean
-        get() = !epsEq(intake.power, 0.0)
+    val running: Boolean get() = !epsEq(intake.power, 0.0)
 
-    private fun sint(kms: Vec4, p: Int, pwr: Double) {
-        ridIntake1.position = kms[p * 2 + 0]
-        ridIntake2.position = kms[p * 2 + 1]
-        intake.power = pwr
-    }
-
+    private fun sint(kms: Vec4, p: Int, pwr: Double) { ridIntake1.position = kms[p * 2 + 0]; ridIntake2.position = kms[p * 2 + 1]; intake.power = pwr }
     private fun sint(kms: Vec4, p: Int) = sint(kms, p, IntakePower)
-
-    private fun sint(p1: Double, p2: Double, pwr: Double) {
-        ridIntake1.position = p1
-        ridIntake2.position = p2
-        intake.power = pwr
-    }
+    private fun sint(p1: Double, p2: Double, pwr: Double) { ridIntake1.position = p1; ridIntake2.position = p2; intake.power = pwr }
 
     private var checkVibr = false
     private var vibeTime = ElapsedTime()
@@ -75,45 +64,23 @@ class Intake {
             val ro = clown.sensorReadout()
             log("GotReadout", "$ro at ${etime.seconds()}")
             if (ro == 3) {
-                if (vibeTime.seconds() > 0.2) {
-                    lom.gamepad2.rumble(1.0, 1.0, 500)
-                    lom.gamepad1.rumble(1.0, 1.0, 500)
-                    checkVibr = false
-                }
+                if (vibeTime.seconds() > 0.2) { lom.gamepad2.rumble(1.0, 1.0, 500); lom.gamepad1.rumble(1.0, 1.0, 500); checkVibr = false }
             } else {
                 vibeTime.reset()
-                if (ro > 0) {
-                    lom.gamepad2.rumble(0.3, 0.3, 100)
-                    lom.gamepad1.rumble(0.3, 0.3, 100)
-                }
+                if (ro > 0) { lom.gamepad2.rumble(0.3, 0.3, 100); lom.gamepad1.rumble(0.3, 0.3, 100) }
             }
         }
-        if (__LOG_STATUS) {
-            logs("IntakeCurrent", intake.current)
-        }
-        if (__UPDATE_INTAKE) {
-
-        }
+        if (__LOG_STATUS) { logs("IntakeCurrent", intake.current) }
     }
 
     var status = 0
         set(v) {
             if (USE_INTAKE) {
                 when (v) {
-                    SNothing -> {
-                        sint(IntakeGet, 1, 0.0)
-                        checkVibr = false
-                        __UPDATE_SENSORS = false
-                    }
-
+                    SNothing -> { sint(IntakeGet, 1, 0.0); checkVibr = false; __UPDATE_SENSORS = false }
                     SDown -> sint(IntakeGetUp, 0, 0.0)
                     SUp -> sint(IntakeGetUp, 1, 0.0)
-                    SIntake -> {
-                        sint(IntakeGet, 0, IntakePower)
-                        checkVibr = true
-                        __UPDATE_SENSORS = true
-                    }
-
+                    SIntake -> { sint(IntakeGet, 0, IntakePower); checkVibr = true; __UPDATE_SENSORS = true }
                     SStack1 -> sint(IntakeStack1, 1)
                     SPStack1 -> sint(IntakeStack1, 0, 0.0)
                     SStack2 -> sint(IntakeStack2, 1)
@@ -122,11 +89,7 @@ class Intake {
                     SPStack3 -> sint(IntakeStack3, 0)
                     SInvert -> sint(IntakeGetCostac, 1, IntakeRevPower)
                     SIdleIntake -> sint(IntakeGetUp, 0)
-                    SUpulLuiCostacu -> {
-                        sint(IntakeGetCostac, 0, 0.0)
-                        checkVibr = false
-                        __UPDATE_SENSORS = false
-                    }
+                    SUpulLuiCostacu -> { sint(IntakeGetCostac, 0, 0.0); checkVibr = false; __UPDATE_SENSORS = false }
                     SUpulLuiCostacuIn -> sint(IntakeGetCostac, 0, -0.5)
                     SKeep -> sint(IntakeGet, 0, -0.5)
                     SInvert2 -> sint(IntakeGetCostac, 0, IntakeRevPower)
@@ -136,7 +99,5 @@ class Intake {
             }
         }
 
-    init {
-        status = SNothing
-    }
+    init { status = SNothing }
 }

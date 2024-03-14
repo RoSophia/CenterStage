@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.utils
 
-import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.PIDFC
 import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import kotlin.math.cos
@@ -77,114 +76,51 @@ class Vec2d(@JvmField var x: Double, @JvmField var y: Double) {
 }
 
 class Vec3(@JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Double) {
-    constructor() : this(0.0, 0.0, 0.0)
-    var x: Double = a
-        get() = a
-        set(v) { a = v; field = v }
-    var y: Double = b
-        get() = b
-        set(v) { b = v; field = v }
-    var z: Double = c
-        get() = c
-        set(v) { c = v; field = v }
-
     operator fun get(i: Int) = when (i) {
         0 -> a
         1 -> b
         else -> c
     }
-
-    fun duplicate() = Vec3(a, b, c)
 }
 
 class Vec4(@JvmField var a: Double, @JvmField var b: Double, @JvmField var c: Double, @JvmField var d: Double) {
-    var x: Double = a
-        get() = a
-        set(v) { a = v; field = v }
-    var y: Double = b
-        get() = b
-        set(v) { b = v; field = v }
-    var z: Double = c
-        get() = c
-        set(v) { c = v; field = v }
-    var w: Double = d
-        get() = d
-        set(v) { d = v; field = v }
-
     operator fun get(i: Int) = when (i) {
         0 -> a
         1 -> b
         2 -> c
         else -> d
     }
+}
 
-    fun duplicate() = Vec4(a, b, c, d)
+class Vec2T(@JvmField var a: TrajCoef, @JvmField var b: TrajCoef) {
+    operator fun get(i: Int) = when (i) {
+        0 -> a
+        else -> b
+    }
 }
 
 class Vec3T(@JvmField var a: TrajCoef, @JvmField var b: TrajCoef, @JvmField var c: TrajCoef) {
-    constructor() : this(TrajCoef(), TrajCoef(), TrajCoef())
-    var x: TrajCoef = a
-        get() = a
-        set(v) { a = v; field = v }
-    var y: TrajCoef = b
-        get() = b
-        set(v) { b = v; field = v }
-    var z: TrajCoef = c
-        get() = c
-        set(v) { c = v; field = v }
-
     operator fun get(i: Int) = when (i) {
         0 -> a
         1 -> b
         else -> c
     }
-
-    fun duplicate() = Vec3T(a.duplicate(), b.duplicate(), c.duplicate())
 }
 
 class Vec4T(@JvmField var a: TrajCoef, @JvmField var b: TrajCoef, @JvmField var c: TrajCoef, @JvmField var d: TrajCoef) {
-    constructor() : this(TrajCoef(), TrajCoef(), TrajCoef(), TrajCoef())
-    var x: TrajCoef = a
-        get() = a
-        set(v) { a = v; field = v }
-    var y: TrajCoef = b
-        get() = b
-        set(v) { b = v; field = v }
-    var z: TrajCoef = c
-        get() = c
-        set(v) { c = v; field = v }
-    var w: TrajCoef = d
-        get() = d
-        set(v) { d = v; field = v }
-
     operator fun get(i: Int) = when (i) {
         0 -> a
         1 -> b
         2 -> c
         else -> d
     }
-
-    fun duplicate() = Vec3T(a.duplicate(), b.duplicate(), c.duplicate())
 }
 
 class Vec4P(@JvmField var a: PIDFC, @JvmField var b: PIDFC, @JvmField var c: PIDFC, @JvmField var d: PIDFC) {
-    var x: PIDFC = a
-        get() = a
-        set(v) { a = v; field = v }
-    var y: PIDFC = b
-        get() = b
-        set(v) { b = v; field = v }
-    var z: PIDFC = c
-        get() = c
-        set(v) { c = v; field = v }
-    var w: PIDFC = d
-        get() = d
-        set(v) { d = v; field = v }
-
     operator fun get(i: Int) = when (i) {
         0 -> a
         1 -> b
         2 -> c
         else -> d
     }
-}
+} /// These all have to exist only to make shit accessible in the dashboard :(

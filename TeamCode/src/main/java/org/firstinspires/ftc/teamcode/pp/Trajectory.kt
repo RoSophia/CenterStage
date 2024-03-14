@@ -25,10 +25,6 @@ class CubicBezierCurve(
     // x * (x * (x * (-a + 3 * b - 3 * c + d) + 3 * a - 6 * b + 3 * c) - 3 * a + 3 * b) + a
 
     fun deriv(t: Double) = t * (t * (-3 * c0 - 9 * c2 + 3 * c3) + 6 * c0 + 6 * c2) - 3 * c0 + c1 * (t * (9 * t - 12) + 3)
-
-    fun dderiv(t: Double) = -6 * (c0 * (t - 1) - c1 * (3 * t - 2) + c2 * (3 * t - 1) - c3 * t)
-
-    fun ddderiv(t: Double) = -6 * c0 + 18 * c1 - 18 * c2 + 6 * c3 + 0 * t
 }
 
 class Action(val checkNr: Int, val act: () -> Unit) {
@@ -55,12 +51,6 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
     constructor(ep: Pose) : this(Pose(), ep)
     constructor() : this(Pose())
 
-    fun setNoEndBegin() {
-        peru = Vec2d(0.1, 0.2)
-        initVel = 0.0
-        timeout = 0.0
-    }
-
     fun cb(): TrajCoef {
         peru = Vec2d(0.1, 0.2)
         timeout = 0.0
@@ -79,23 +69,10 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
         return this
     }
 
-    fun setNoEndContinue() {
-        peru = Vec2d(0.1, 0.2)
-        initVel = 1000000.0
-        timeout = 0.0
-    }
-
-    fun setNoEndEnd() {
-        initVel = 1000000.0
-    }
-
     fun duplicate() = TrajCoef(sp.duplicate(), ep.duplicate(), v1.duplicate(), v2.duplicate(), h.duplicate(), mf, peru.duplicate(), initVel, timeout)
-    fun d() = duplicate()
     fun s(t: TrajectorySequence): TrajCoef { val tc = this.duplicate(); tc.sp = t.curPose; return tc }
-    val t: Trajectory
-        get() {
-            return Trajectory(this)
-        }
+    val t: Trajectory get() = Trajectory(this)
+    fun st(t: Double): TrajCoef { timeout = t; return this }
     fun sx(x: Double): TrajCoef { ep.x = x; return this }
     fun so(p: Pose): TrajCoef { ep += p; return this }
 }

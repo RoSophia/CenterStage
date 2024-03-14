@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.auto.AUTest.v1
 import org.firstinspires.ftc.teamcode.auto.AUTest.v2
 import org.firstinspires.ftc.teamcode.auto.AutoFuncs.totBordu
 import org.firstinspires.ftc.teamcode.auto.AutoFuncs.updateAutoCustom
+import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
@@ -46,13 +47,13 @@ object AUTest {
 @Autonomous(name = "我愛修訂")
 class AuTest : LinearOpMode() {
     override fun runOpMode() {
-        totBordu(this, false, false)
+        totBordu(this, isRed = false, isShort = false)
 
         val updateTraj = {
             val cc = TrajectorySequence()
-            cc.addTrajectory(Trajectory(sp, 0.0, ep, v1, v2, h1))
+            cc.addTrajectory(Trajectory(sp, 0.0, ep, v1, v2, h1, 1.0, 30.0, 40.0, 2.0))
             cc.sleep(SLEPY)
-            cc.addTrajectory(Trajectory(ep, 0.0, sp, v2, v1, h1))
+            cc.addTrajectory(Trajectory(sp, 0.0, ep, v1, v2, h1, 1.0, 30.0, 40.0, 2.0))
             cc.sleep(SLEPY)
             cc
         }

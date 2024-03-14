@@ -23,65 +23,8 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.__AutoShort
 import java.lang.Thread.sleep
 
 object AutoFuncs {
-    @JvmStatic
-    var targetPreload = 0
 
-    @JvmStatic
-    private fun checkCamera(): Int {
-        if (USE_CAMERA) {
-            while (!lom.isStarted) {
-                targetPreload = AutoResult
-                RobotFuncs.log("TargetPreload", targetPreload)
-                sleep(5)
-            }
-        }
-        return targetPreload
-    }
-
-    @JvmStatic
-    fun totBordu(lom: LinearOpMode, isRed: Boolean, isShort: Boolean): Int {
-        TimmyToClose = true
-        AutoRed = isRed
-        __AutoShort = isShort
-        preinit()
-        initma(lom, true)
-        initAuto()
-        val i = checkCamera()
-        lom.waitForStart()
-        if (USE_CAMERA) {
-            cam.stop()
-        }
-        startma()
-        TimmyCurOff = 0.0
-        TimmyAddKILLLLLLLL = true
-        return i
-    }
-
-    @JvmStatic
-    fun automa() {
-        TimmyToClose = false
-        endma()
-    }
-
-    @JvmStatic
-    fun updateAutoCustom(e: TrajectorySequence, func: ()->TrajectorySequence): TrajectorySequence? {
-        if (JustDraw) {
-            val ce = func()
-            ce.draw()
-            update()
-            return ce
-        } else {
-            if (e.update()) {
-                return func()
-            }
-            pp.update()
-        }
-        update()
-        return null
-    }
-
-    @JvmStatic
-    fun updateAuto(e: TrajectorySequence, func: ()->TrajectorySequence): TrajectorySequence? {
+    private fun updateAuto(e: TrajectorySequence, func: ()->TrajectorySequence): TrajectorySequence? {
         if (JustDraw) {
             val ce = func()
             ce.draw()
@@ -91,6 +34,45 @@ object AutoFuncs {
             if (e.update()) {
                 lom.requestOpModeStop()
             }
+            pp.update()
+        }
+        update()
+        return null
+    }
+
+    fun setupAuto(lom: LinearOpMode, isRed: Boolean, isShort: Boolean, func: ()->TrajectorySequence) {
+        totBordu(lom, isRed, isShort)
+        var e = func()
+
+        while (!lom.isStopRequested) {
+            val ce = updateAuto(e, func)
+            if (ce != null) { e = ce }
+        }
+
+        TimmyToClose = false
+        endma()
+    }
+
+    fun totBordu(lom: LinearOpMode, isRed: Boolean, isShort: Boolean): Int {
+        TimmyToClose = true
+        AutoRed = isRed
+        __AutoShort = isShort
+        preinit()
+        initma(lom, true)
+        initAuto()
+        lom.waitForStart()
+        val res = AutoResult // Pun asta aici sa nu faca amuzant inchiderea camerei
+        if (USE_CAMERA) { cam.stop() }
+        startma()
+        TimmyCurOff = 0.0
+        TimmyAddKILLLLLLLL = true
+        return res
+    }
+
+    fun updateAutoCustom(e: TrajectorySequence, func: ()->TrajectorySequence): TrajectorySequence? {
+        if (JustDraw) { val ce = func(); ce.draw(); update(); return ce }
+        else {
+            if (e.update()) { return func() }
             pp.update()
         }
         update()
