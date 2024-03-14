@@ -235,7 +235,9 @@ class ShortVals(
         @JvmField var cStackBackdrop: Vec3T, // Are c in fata sa se alinieze frumos alfabetic
         @JvmField var cStackOffset: Pose,
         @JvmField var putPos: TrajCoef,
-        @JvmField var putOffset: Pose)
+        @JvmField var putOffset: Pose,
+        @JvmField var putZark: TrajCoef,
+        )
 
 @Config
 object BlueShortP {
