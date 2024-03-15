@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.SwerveWheelOffsets
 //@TeleOp(name = "設置變量")
 class SetVars : LinearOpMode() {
     override fun runOpMode() {
-        SwerveWheelOffsets.x = 0.0
-        SwerveWheelOffsets.y = 0.0
-        SwerveWheelOffsets.z = 0.0
-        SwerveWheelOffsets.w = 0.0
+        SwerveWheelOffsets.a = 0.0
+        SwerveWheelOffsets.b = 0.0
+        SwerveWheelOffsets.c = 0.0
+        SwerveWheelOffsets.d = 0.0
         shutUp(this)
         val OFFLF = -swerve.lf.s.e.angle
         val OFFLB = -swerve.lb.s.e.angle

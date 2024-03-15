@@ -12,23 +12,23 @@ import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 @Autonomous
 @Photon
 class RedAuto: LinearOpMode() {
-    override fun runOpMode() = setupAuto(this, isRed = true, isShort = false) { getCycleTrajLong(NumCycles, AutoResult, Longies.red) }
+    override fun runOpMode() = setupAuto(this, isRed = true, isShort = false) { getCycleTrajLong(NumCycles, AutoResult, Auto.longRed) }
 }
 
 @Autonomous
 @Photon
 class RedShortAuto: LinearOpMode() {
-    override fun runOpMode() = setupAuto(this, isRed = true, isShort = true) { getCycleTrajShort(NumCycles, AutoResult, Shorties.red) }
+    override fun runOpMode() = setupAuto(this, isRed = true, isShort = true) { getCycleTrajShort(NumCycles, AutoResult, Auto.shortRed) }
 }
 
 @Autonomous
 @Photon
 class BlueAuto: LinearOpMode() {
-    override fun runOpMode() = setupAuto(this, isRed = false, isShort = false) { getCycleTrajLong(NumCycles, AutoResult, Longies.blue) }
+    override fun runOpMode() = setupAuto(this, isRed = false, isShort = false) { getCycleTrajLong(NumCycles, AutoResult, Auto.longBlue) }
 }
 
 @Autonomous
 @Photon
 class BlueShortAuto: LinearOpMode() {
-    override fun runOpMode() = setupAuto(this, isRed = false, isShort = true) { getCycleTrajShort(NumCycles, AutoResult, Shorties.blue) }
+    override fun runOpMode() = setupAuto(this, isRed = false, isShort = true) { getCycleTrajShort(NumCycles, AutoResult, Auto.shortBlue) }
 }

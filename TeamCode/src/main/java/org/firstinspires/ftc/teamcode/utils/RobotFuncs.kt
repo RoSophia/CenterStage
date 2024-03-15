@@ -69,26 +69,22 @@ object RobotFuncs {
     @JvmStatic
     var tp: TelemetryPacket = TelemetryPacket()
 
-    val logmu = Mutex()
+    var logmu = Mutex(false)
 
     @JvmStatic
     fun send_log() {
-        runBlocking {
-            logmu.lock()
-            dashboard.sendTelemetryPacket(tp)
-            logmu.unlock()
-        }
+        while (!logmu.tryLock()) { Thread.sleep(1); }
+        dashboard.sendTelemetryPacket(tp)
         tp = TelemetryPacket()
+        logmu.unlock()
     }
 
     @JvmStatic
     fun log(s: String, v: String) {
         if (USE_TELE) {
-            runBlocking {
-                logmu.lock()
-                tp.put(s, v)
-                logmu.unlock()
-            }
+            while (!logmu.tryLock()) { Thread.sleep(1); }
+            tp.put(s, v)
+            logmu.unlock()
         }
     }
 
@@ -120,6 +116,9 @@ object RobotFuncs {
     @JvmStatic
     fun preinit() {
         dashboard = FtcDashboard.getInstance()
+        tp = TelemetryPacket()
+        logmu = Mutex(false)
+        etime.reset()
         KILLALL = false
     }
 
@@ -325,6 +324,8 @@ object RobotFuncs {
         KILLALL = true
         batteryVoltageSensor.close()
         if (TimmyToClose) {
+            log("SHUT TIMMY OFF!", TimmyToClose)
+            send_log()
             timmy.closeThread()
             timmy.close()
             TimmyToClose = false

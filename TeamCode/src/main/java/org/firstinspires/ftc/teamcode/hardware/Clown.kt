@@ -92,7 +92,7 @@ class Clown(name: String) {
     /// -100 = down
     /// -101 = up preload
     /// -102 = pixel secured
-    private var curState = -100
+    var curState = -100
 
     private var sexPixelTraj = TrajectorySequence()
     private var goUpTraj = TrajectorySequence()

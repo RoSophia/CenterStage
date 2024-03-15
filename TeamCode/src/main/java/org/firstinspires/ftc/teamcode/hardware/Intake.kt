@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SDown
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIdleIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
@@ -9,12 +8,11 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SKeep
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SNothing
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack1
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack2
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack4
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack5
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacuIn
@@ -33,8 +31,8 @@ object Intakes {
     const val SStack1 = 2
     const val SStack2 = 3
     const val SStack3 = 4
-    const val SPStack1 = 6
-    const val SPStack2 = 7
+    const val SStack4 = 6
+    const val SStack5 = 7
     const val SPStack3 = 8
     const val SIdleIntake = 9
     const val SInvert = 12
@@ -81,17 +79,16 @@ class Intake {
                     SDown -> sint(IntakeGetUp, 0, 0.0)
                     SUp -> sint(IntakeGetUp, 1, 0.0)
                     SIntake -> { sint(IntakeGet, 0, IntakePower); checkVibr = true; __UPDATE_SENSORS = true }
-                    SStack1 -> sint(IntakeStack1, 1)
-                    SPStack1 -> sint(IntakeStack1, 0, 0.0)
-                    SStack2 -> sint(IntakeStack2, 1)
-                    SPStack2 -> sint(IntakeStack2, 0)
-                    SStack3 -> sint(IntakeStack3, 1)
-                    SPStack3 -> sint(IntakeStack3, 0)
+                    SStack1 -> sint(IntakeStack12, 0)
+                    SStack2 -> sint(IntakeStack12, 1)
+                    SStack3 -> sint(IntakeStack34, 0)
+                    SStack4 -> sint(IntakeStack34, 1)
+                    SStack5 -> sint(IntakeStack5 , 0)
                     SInvert -> sint(IntakeGetCostac, 1, IntakeRevPower)
                     SIdleIntake -> sint(IntakeGetUp, 0)
                     SUpulLuiCostacu -> { sint(IntakeGetCostac, 0, 0.0); checkVibr = false; __UPDATE_SENSORS = false }
                     SUpulLuiCostacuIn -> sint(IntakeGetCostac, 0, -0.5)
-                    SKeep -> sint(IntakeGet, 0, -0.5)
+                    SKeep -> sint(IntakeGet, 0, -0.3)
                     SInvert2 -> sint(IntakeGetCostac, 0, IntakeRevPower)
                     else -> {}
                 }

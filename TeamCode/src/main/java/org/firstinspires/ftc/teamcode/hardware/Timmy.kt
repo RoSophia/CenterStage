@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
@@ -37,11 +39,9 @@ class Timmy(val name: String) {
                 val fixed = imu.angularOrientation
                 val y = fixed.firstAngle.toDouble() - TimmyCurOff
                 yaw = y
-                /*
                 val tp = TelemetryPacket()
                 tp.put("TYAW", yaw)
-                tp.put("TIMOF", TIMMYOFF)
-                FtcDashboard.getInstance().sendTelemetryPacket(tp)*/
+                FtcDashboard.getInstance().sendTelemetryPacket(tp)
                 localizerAccessed = false
                 //yawVel = imu.angularVelocity.xRotationRate.toDouble()
                 TimmyLoopTime = ep.seconds()

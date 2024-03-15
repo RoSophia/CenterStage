@@ -8,17 +8,24 @@ import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack1
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack2
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack3
 import org.firstinspires.ftc.teamcode.auto.AutoVars.colours
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SKeep
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SPStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack1
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack4
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack5
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotVars.ClownFDeschis
@@ -90,11 +97,13 @@ class TrajectorySequence {
 
     fun st(goto: Int): TrajectorySequence {
         steps.add(TSE(-goto))
+        //log("Added ${-goto} at", steps.size)
         return this
     }
 
     fun gt(cond: () -> Int): TrajectorySequence {
         steps.add(TSE(4, cond))
+        //log("Added goto at", steps.size)
         return this
     }
 
@@ -129,21 +138,28 @@ class TrajectorySequence {
     }
 
     private fun runInitActio(t: TSE) {
+        //log("Running initial action for", t)
         if (t.type == 4) {
+            return;
             val resc = t.conditional()
+            //log("Got conditional result", resc)
             for (i in 0 until steps.size) {
                 if (steps[i].type == -resc) {
                     ls = i
                     e = steps[ls]
+                    //log("Found step at ", "$i -> $e")
                     break
                 }
             }
+            ++ls
+            e = steps[ls]
         } else if (t.type > 0) {
             t.initActio()
         }
     }
 
     fun update(): Boolean {
+        //log("Running Update ", "$ls -> ${String.format("%.4f", etime.seconds())}")
         if (ls < steps.size) {
             if (e.type == 10) {
                 ls = 0
@@ -151,11 +167,18 @@ class TrajectorySequence {
                 runInitActio(e)
             }
 
-            while (e.checkDone()) {
+            //log("Currently running ", "$e -> ${String.format("%.4f", etime.seconds())} and ${e.checkDone()}")
+            while (e.checkDone() && !lom.isStopRequested) {
+                //log("Finished $ls ", "$e -> ${String.format("%.4f", etime.seconds())}")
                 ++ls
                 if (ls < steps.size) {
-                    e = steps[ls]
-                    runInitActio(e)
+                    try {
+                        e = steps[ls]
+                        runInitActio(e)
+                    } catch (e: Exception) {
+                        log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA KILL error", e.stackTraceToString())
+                        log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA KILL2 ERROR", "${ls}:${steps.size}")
+                    }
                 } else {
                     return true
                 }
@@ -167,13 +190,12 @@ class TrajectorySequence {
     }
 
     fun runAsync(): Thread {
-        reset()
-        val t = thread {
-            while (!this.update()) {
-                Thread.sleep(5)
-            }
+        for ((ei, e) in steps.withIndex()) {
+            //log("Step $ei ->", e)
         }
-        t.setUncaughtExceptionHandler { _, _ -> }
+        reset()
+        val t = thread { while (!this.update() && Thread.currentThread().isAlive) { Thread.sleep(5) }; /*log("KMSKMSKM DONE", "AAAAA")*/ }
+        t.setUncaughtExceptionHandler { th, er -> log("GOT ERR ${th.id}", er.stackTraceToString()) }
         t.start()
         return t
     }
@@ -181,37 +203,27 @@ class TrajectorySequence {
     fun runAsyncDiffy(): Thread {
         reset()
         val t = thread {
-            while (!___KILL_DIFFY_THREADS && !this.update()) { /// Is interrupted fuckery
+            while (!___KILL_DIFFY_THREADS && !this.update() && Thread.currentThread().isAlive) { /// Is interrupted fuckery
                 Thread.sleep(2)
             }
             if (___KILL_DIFFY_THREADS) {
                 log("KILLED ${Thread.currentThread().id}", ___KILL_DIFFY_THREADS)
             }
         }
-        t.setUncaughtExceptionHandler { th, er -> log("GOT ERR ${th.id}", er.stackTraceToString()) }
+        t.setUncaughtExceptionHandler { th, er -> log("GOT ERR ${th.id}", er.stackTraceToString())
+            log("GOT ERR2 ${th.id}", er.message ?: "")
+        }
         t.start()
         return t
     }
 
-    fun addTSE(t: TSE): TrajectorySequence {
+    private fun addTSE(t: TSE): TrajectorySequence {
         steps.add(t)
         return this
-    }
-
-    fun duplicate(): TrajectorySequence {
-        val ct = TrajectorySequence()
-        for (s in steps) {
-            ct.addTSE(s)
-        }
-        return ct
     }
 }
 
 object Cele10Traiectorii {
-    private var genTime = ElapsedTime()
-    private var genTime2 = ElapsedTime()
-    private var genTime3 = ElapsedTime()
-
     @JvmStatic
     fun getCycleTrajLong(ncycle: Int, randomCase: Int, v: LongVals): TrajectorySequence {
         val ts = TrajectorySequence()
@@ -224,14 +236,16 @@ object Cele10Traiectorii {
                 .aa { clown.goPreloadDown(); intake.status = SKeep; }
 
         ts.at(v.bPreloadStack[randomCase].s(ts).t
-                .addActionE(40.0) { intake.status = SStack1 })
+                .addActionE(40.0) { intake.status = SStack5 })
+                .sl(WaitStack1)
                 .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
                 .sl(WaitStack2)
+
 
         ts.at(v.bStackBackdrop[0].s(ts).cb().t)
         ts.at(v.bStackBackdrop[1].s(ts).sx(v.cBackdropPosX[randomCase]).ce().t
                 .addActionT(WaitStack3) { intake.status = SInvert }
-                .addActionE(50.0) { clown.goUp(if (randomCase == 0) -1 else 1) })
+                .addActionE(50.0) { clown.goUp(if (randomCase == if (AutoRed) 0 else 2) -1 else 1) })
                 .aa { clown.open() }
                 .sl(WaitPut)
 
@@ -241,7 +255,7 @@ object Cele10Traiectorii {
             ts
                     .at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
                             .addActionS(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
-                            .addActionE(100.0) { intake.status = SIntake })
+                            .addActionE(100.0) { intake.status = if (i == 0) SStack3 else SIntake })
                     .sl(WaitStack1)
                     .aa { clown.catchPixel() }
                     .sl(WaitStack2)
@@ -249,13 +263,13 @@ object Cele10Traiectorii {
             ts
                     .at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i).cb().t
                             .addActionT(WaitStack3) { intake.status = SInvert })
-                    .aa { clown.goUp(-2); slides.setTarget(RMID_POS) }
-
             ts
-                    .at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).cb().t)
+                    .at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).cb().t
+                            .addActionE(80.0) { clown.goUp(-1); slides.setTarget(RMID_POS) })
                     .aa { clown.open() }
                     .sl(WaitPut)
         }
+
         ts.at(v.zBackdropPark.s(ts).t
                 .addActionS(0.0) { clown.open() }
                 .addActionS(70.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
@@ -263,9 +277,12 @@ object Cele10Traiectorii {
         return ts
     }
 
+    fun gi(i: Int, p: Int) =  (i + 1) * 20 + p
+
     @JvmStatic
     fun getCycleTrajShort(ncycle: Int, randomCase: Int, v: ShortVals): TrajectorySequence {
         val ts = TrajectorySequence()
+                .st(4)
                 .aa { clown.targetPos = DiffyUpSafe }
                 .at(v.aStartPreload[randomCase].t
                         .addActionT(0.1) { clown.goPreloadUp() }
@@ -273,13 +290,14 @@ object Cele10Traiectorii {
                 .aa { clown.ghearaFar?.position = ClownFDeschis }
                 .aa { clown.targetPos = DiffyUpSafe }
                 .sl(0.1)
-
+                //.gt {4}
         ts
                 .at(v.aPreloadBackdrop.s(ts).sx(v.backdropPosX[randomCase]).t /// Set sp to last ep and set ep x
                         .addActionE(60.0) {
                             clown.targetPos = DiffyUp
                             clown.targetAngle = DiffyAUp
-                            clown.gelenk?.position = GelenkCenter + (if (randomCase == 0) -2 else 2) * GelenkDif
+                            clown.curState = 0
+                            clown.gelenk?.position = GelenkCenter + (if (randomCase == (if (AutoRed) 0 else 2)) -1 else 1) * GelenkDif
                         }) /// Go from put preload to backboard
                 .aa { clown.open() }
                 .sl(0.1)
@@ -290,28 +308,28 @@ object Cele10Traiectorii {
                     .addActionS(50.0) { intake.status = SIntake; clown.goDown(); slides.setTarget(RBOT_POS) })
             ts.at(v.backdropStack[1].s(ts).so(v.bStackOffset * i).cc().t) /// Set sp (with offset from last ep carried over) ; Add offset to ep; Set "Continue Continue"; Get traj
             ts.at(v.backdropStack[2].s(ts).so(v.bStackOffset * i).cc().t) /// Set sp (with offset from last ep carried over) ; Add offset to ep; Set "Continue Continue"; Get traj
+                    .aa { __UPDATE_SENSORS = true }
             ts.at(v.backdropStack[3].s(ts).so(v.bStackOffset * i).ce().t /// Set sp (with offset from last ep carried over) ; Add offset to ep; Set "Continue Continue"; Get traj
                     .addActionE(80.0) {
                         when (i) {
-                            0 -> intake.status = SStack1
-                            1 -> intake.status = SPStack3
+                            0 -> intake.status = SStack4
+                            1 -> intake.status = SStack2
                             else -> intake.status = SIntake
                         }
                     })
+                    .sl(WaitStack1)
 
             /*
-            ts.aa { genTime.reset(); __UPDATE_SENSORS = true }
-            ts.addCondDir(
-                    {
-                        if (clown.sensorReadout() != 3) {
-                            genTime2.reset()
-                        }
-                        (genTime2.seconds() > Min3Pixel) || (genTime.seconds() > TimeoutWaitFirstStack)
-                    },
-                    Trajectory(v.backdropStack.ep, 100000.0, inter4Pos.ep + Pose(-1000.0, 1000.0, 0.0), Vec2d(), Vec2d(), Vec2d(), Min3PixelSpeed)
-            )
-            ts.sl(0.2)
-            ts.aa { clown.catchPixel(); __UPDATE_SENSORS = false }*/
+            ts.st(gi(i, 1))
+            ts.gt { if (clown.sensorReadout() == 3) 10 else 2 }
+            ts.st(gi(i, 2))
+            ts.at(v.bbTryStackAgain.s(ts).so(v.bStackOffset * i).ce().t)
+            ts.gt { 1 }
+            ts.st(gi(i, 10))*/
+                    .aa { clown.catchPixel() }
+                    .sl(WaitStack2)
+
+
 
             /// Stack -> Inter2 -> Inter1 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)
             ts.at(v.cStackBackdrop[0].s(ts).so(v.dBackdropOffset * i).cb().t

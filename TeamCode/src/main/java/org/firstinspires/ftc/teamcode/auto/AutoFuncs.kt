@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.create_god
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initAuto
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyAddKILLLLLLLL
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_CAMERA
 import org.firstinspires.ftc.teamcode.utils.RobotVars.__AutoShort
 import java.lang.Thread.sleep
+import kotlin.math.PI
 
 object AutoFuncs {
 
@@ -50,6 +52,7 @@ object AutoFuncs {
         }
 
         TimmyToClose = false
+        TimmyCurOff = PI
         endma()
     }
 
