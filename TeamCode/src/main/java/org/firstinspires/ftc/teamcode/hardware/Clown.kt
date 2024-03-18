@@ -159,10 +159,10 @@ class Clown(name: String) {
                     .sl(ClownWaitDown1)
                     .aa { ampDown.setMotion(DiffyUp, DiffyPrepDown, 0.0); }
                     .wt { ampDown.update(); targetPos = ampDown.position
-                        if (targetPos < DiffyWaitDownTurn) { targetAngle = DiffyADown; gelenk?.position = GelenkCenter }
+                        if (targetPos < DiffyWaitDownTurn) { targetAngle = DiffyADown; gelenk?.position = GelenkCenter; curState = -100 }
                         epsEq(ampDown.position, ampDown.finalPosition) }
                     .sl(ClownWaitDown2)
-                    .aa { curState = -100; targetPos = DiffyPrepDown; gelenk?.position = GelenkCenter }
+                    .aa { targetPos = DiffyPrepDown; gelenk?.position = GelenkCenter }
         } /// Go Down
 
         run {

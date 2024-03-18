@@ -1,15 +1,9 @@
 package org.firstinspires.ftc.teamcode
 
-import androidx.core.graphics.alpha
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
-import com.outoftheboxrobotics.photoncore.PeriodicSupplier
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.Gamepad.LedEffect
 import org.firstinspires.ftc.teamcode.auto.AutoVars.INTAKEWAIT2
 import org.firstinspires.ftc.teamcode.hardware.Intakes
-import org.firstinspires.ftc.teamcode.pp.PP
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
@@ -18,20 +12,16 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.drawRobot
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.localizer
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.tp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 import org.firstinspires.ftc.teamcode.utils.Util
-import kotlin.math.cos
-import kotlin.math.sin
 
 object tilipo {
     fun runOpMode(lom: LinearOpMode, fn: Boolean) { /// TODO: dashboard.sendImage(NekoArc)
@@ -45,6 +35,7 @@ object tilipo {
 
         startma()
         //lom.gamepad2.ledQueue.add(st)
+        var curstackp = 6
 
         while (!lom.isStopRequested) {
             if (controller.C1A == controller.PRESSED) {
@@ -72,7 +63,18 @@ object tilipo {
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
                 /// TODO: REMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVEREMOVE
-                intake.status = Intakes.SStack4
+                intake.status = when (curstackp) {
+                    6 -> Intakes.SStack6
+                    5 -> Intakes.SStack5
+                    4 -> Intakes.SStack4
+                    3 -> Intakes.SStack3
+                    2 -> Intakes.SStack2
+                    else -> Intakes.SStack1
+                }
+                --curstackp
+                if (curstackp == 0) {
+                    curstackp = 6
+                }
             }
             if (controller.C1LB == controller.JUST_PRESSED) {
                 TrajectorySequence()
@@ -100,6 +102,7 @@ object tilipo {
                 clown.goPreloadDown()
             }
             if (controller.C1Y == controller.JUST_PRESSED) {
+                curstackp = 5
                 if (intake.running) {
                     intake.status = Intakes.SNothing
                 } else {

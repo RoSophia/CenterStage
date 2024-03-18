@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack4
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack5
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack6
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
@@ -95,6 +97,79 @@ object Cele10Traiectorii {
 
     @JvmStatic
     fun getCycleTrajShort(ncycle: Int, randomCase: Int, v: ShortVals): TrajectorySequence {
+        val ts = TrajectorySequence()
+                .st(4)
+                .aa { clown.targetPos = DiffyUpSafe }
+                .at(v.aStartPreload[randomCase].t
+                        .addActionT(0.1) { clown.goPreloadUp() }
+                        .addActionS(60.0) { intake.status = SUpulLuiCostacu }) /// Go from start to put preload
+                .aa { clown.ghearaFar?.position = ClownFDeschis }
+                .aa { clown.targetPos = DiffyUpSafe }
+                .sl(0.1)
+        ts
+                .at(v.aPreloadBackdrop.s(ts).sx(v.backdropPosX[randomCase]).t /// Set sp to last ep and set ep x
+                        .addActionE(60.0) {
+                            clown.targetPos = DiffyUp
+                            clown.targetAngle = DiffyAUp
+                            clown.curState = 0
+                            clown.gelenk?.position = GelenkCenter + (if (randomCase == (if (AutoRed) 0 else 2)) -2 else 2) * GelenkDif
+                        }) /// Go from put preload to backboard
+                .aa { clown.open() }
+                .sl(0.1)
+
+        for (i in 0 until ncycle) {
+            /// Put -> Inter1 (Diffy down) -> Inter2 -> Stack (Diffy down + gheara inchisa -> gheara deschisa + intake)
+            ts.at(v.backdropStack[0].s(ts).so(v.bStackOffset * i).cb().t /// Set sp; Add offset to ep; Set "Continue begin"; Get traj
+                    .addActionS(50.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
+                    .aa { intake.status = SIntake; }
+            ts.at(v.backdropStack[1].s(ts).so(v.bStackOffset * i).cc().t) /// Set sp (with offset from last ep carried over) ; Add offset to ep; Set "Continue Continue"; Get traj
+            ts.at(v.backdropStack[2].s(ts).so(v.bStackOffset * i
+                    + Pose(0.0, if (i == 0) (if (AutoRed) -KMS else KMS) else 0.0, 0.0))
+                    .ce().t
+                    .addActionE(80.0) { intake.status = SStack6 }
+            ) /// Set sp (with offset from last ep carried over) ; Add offset to ep; Set "Continue Continue"; Get traj
+                    .aa {
+                        when (i) {
+                            0 -> intake.status = SStack5
+                            1 -> intake.status = SStack3
+                            else -> intake.status = SIntake
+                        }
+                    }
+                    .sl(WaitStack1)
+                    .aa {
+                        when (i) {
+                            0 -> intake.status = SStack4
+                            1 -> intake.status = SStack2
+                            else -> intake.status = SIntake
+                        }
+                    }
+                    .sl(WaitStack2)
+
+            //ts.at(v.backdropStack[3].s(ts).so(v.bStackOffset * i).ce().st(STACKCORRTIME2).t) /// Set sp (with offset from last ep carried over) ; Add offset to ep; Set "Continue Continue"; Get traj
+                    //.sl(WaitStack1)
+
+            /// Stack -> Inter2 -> Inter1 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)
+            ts.at(v.cStackBackdrop[0].s(ts).so(v.dBackdropOffset * i).cb().t
+                    .addActionT(WaitStack3) { clown.catchPixel() }
+                    .addActionT(INTAKEWAIT3) { intake.status = SUp })
+                    .aa { intake.status = SIntake; clown.open() }
+            ts.at(v.cStackBackdrop[1].s(ts).so(v.dBackdropOffset * i).cc().t
+                    .addActionS(30.0) { clown.catchPixel() }
+                    .addActionE(GOUPDIST) { clown.goUp(-1); })
+            ts.at(v.cStackBackdrop[2].s(ts).so(v.dBackdropOffset * i).ce().t
+                    .addActionE(20.0) { slides.setTarget(RMID_POS) })
+                    .aa { clown.open() }
+                    .sl(WaitPut)
+        }
+        ts.at(v.putPark.s(ts).t
+                .addActionS(0.0) { clown.open() }
+                .addActionS(50.0) { clown.goDown(); slides.setTarget(RBOT_POS) }
+        )
+        return ts
+    }
+
+    @JvmStatic
+    fun getCycleTrajShortOld(ncycle: Int, randomCase: Int, v: ShortVals): TrajectorySequence {
         val ts = TrajectorySequence()
                 .st(4)
                 .aa { clown.targetPos = DiffyUpSafe }

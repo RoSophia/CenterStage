@@ -331,7 +331,7 @@ object Auto {
             ),
 
             //// SHORT RED
-            backdropPosX = Vec3(-82.0, -76.0, -58.0),
+            backdropPosX = Vec3(-82.0, -76.0, -60.0),
 
             //// SHORT RED
             backdropStack = Vec4T(
@@ -341,12 +341,12 @@ object Auto {
                             Vec2d(0.0, 0.2), 1.0
                     ),
                     TrajCoef(
-                            Pose(-13.0, -100.0, -1.57),
+                            Pose(-15.0, -100.0, -1.57),
                             Vec2d(5.0, 0.7), Vec2d(0.0, 0.0),
                             Vec2d(0.0, 0.1), 1.0
                     ),
                     TrajCoef(
-                            Pose(-57.0, -173.0, -1.6),
+                            Pose(-57.0, -171.0, -1.57),
                             Vec2d(20.0, -1.57), Vec2d(50.0, 1.6), 1.0,
                             Vec2d(40.0, 60.0)
                     ),
@@ -370,12 +370,12 @@ object Auto {
             //// SHORT RED
             cStackBackdrop = Vec3T(
                     TrajCoef(
-                            Pose(-14.0, -120.0, -2.0),
+                            Pose(-13.0, -120.0, -2.0),
                             Vec2d(15.0, 2.2), Vec2d(30.0, -1.6),
                             Vec2d(0.2, 0.4), 0.8
                     ),
                     TrajCoef(
-                            Pose(-13.0, 45.0, -1.57),
+                            Pose(-12.0, 45.0, -1.57),
                             Vec2d(0.0, 0.2), Vec2d(0.0, 0.0), 1.0,
                             Vec2d(0.0, 0.1)
                     ),

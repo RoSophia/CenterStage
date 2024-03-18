@@ -7,13 +7,10 @@ import org.apache.commons.math3.linear.LUDecomposition
 import org.apache.commons.math3.linear.MatrixUtils
 import org.firstinspires.ftc.teamcode.hardware.Encoder
 import org.firstinspires.ftc.teamcode.utils.Pose
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
-import kotlin.math.cos
-import kotlin.math.sin
 
 class ThreeWheelLocalizer : Localizer {
     private var lwpos = listOf(0.0, 0.0, 0.0)
@@ -69,18 +66,13 @@ class ThreeWheelLocalizer : Localizer {
                 rawPoseDelta.getEntry(2, 0))
     }
 
-    var updatedWith = 1
-    var updated = 1
+    val vet = ElapsedTime()
     override fun update() {
         if (USE_LOCALIZER) {
             val wheelPositions = listOf(
-                    encoders[0].pos * WheelsTicksToCm,
-                    encoders[1].pos * WheelsTicksToCm,
-                    encoders[2].pos * WheelsTicksToCm)
-            /*
-            logs("WheelPosParR", wheelPositions[0])
-            logs("WheelPosParL", wheelPositions[1])
-            logs("WheelPosPerp", wheelPositions[2])*/
+                    encoders[0].pos * WheelsParTicksToCm,
+                    encoders[1].pos * WheelsParTicksToCm,
+                    encoders[2].pos * WheelsParTicksToCm)
 
             val wheelDeltas = listOf(
                     wheelPositions[0] - lwpos[0],
@@ -91,30 +83,27 @@ class ThreeWheelLocalizer : Localizer {
             val robotPoseDelta = calculatePoseDelta(wheelDeltas)
             val cpose = relativeOdometryUpdate(_pose, robotPoseDelta)
             _pose = Pose(cpose.x, cpose.y, cpose.h)
-            _pose.h = angNorm(timmy.yaw)
-            /*
-            if (!timmy.localizerAccessed) {
-                timmy.localizerAccessed = true
-                ++updatedWith
-                if (USE_IMU_LOCALIZER) {
+            if (USE_COMBINED_LOCALIZER) {
+                if (!timmy.localizerAccessed) {
+                    timmy.localizerAccessed = true
+                    log("timmyVel", angDiff(angNorm(_pose.h), angNorm(timmy.yaw)) / vet.seconds())
+                    vet.reset()
                     _pose.h = angNorm(timmy.yaw)
-                } else {
-                    log("ph2", angNorm(timmy.yaw))
-                    log("ph", angNorm(_pose.h))
+                    log("timmyyaw", _pose.h)
                 }
-            }*/
-            ++updated
+            } else {
+                _pose.h = angNorm(timmy.yaw)
+            }
             log("CurPos", _pose)
 
-            if (__LOG_STATUS) {
+            if (__COIN) {
                 val wheelVelocities = listOf(
-                        encoders[0].vel * WheelsTicksToCm,
-                        encoders[1].vel * WheelsTicksToCm,
-                        encoders[2].vel * WheelsTicksToCm)
-                poseVel = calculatePoseDelta(wheelVelocities)
-                logs("WheelVelParR", wheelVelocities[0])
-                logs("WheelVelParL", wheelVelocities[1])
-                logs("WheelVelPerp", wheelVelocities[2])
+                        encoders[0].vel * WheelsParTicksToCm,
+                        encoders[1].vel * WheelsParTicksToCm,
+                        encoders[2].vel * WheelsParTicksToCm)
+                log("WheelVelParR", wheelVelocities[0])
+                log("WheelVelParL", wheelVelocities[1])
+                log("WheelVelPerp", wheelVelocities[2])
             }
 
             lwpos = wheelPositions

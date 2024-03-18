@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack2
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack4
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack5
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack6
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacuIn
@@ -33,7 +34,7 @@ object Intakes {
     const val SStack3 = 4
     const val SStack4 = 6
     const val SStack5 = 7
-    const val SPStack3 = 8
+    const val SStack6 = 8
     const val SIdleIntake = 9
     const val SInvert = 12
     const val SDown = 13
@@ -83,7 +84,8 @@ class Intake {
                     SStack2 -> sint(IntakeStack12, 1)
                     SStack3 -> sint(IntakeStack34, 0)
                     SStack4 -> sint(IntakeStack34, 1)
-                    SStack5 -> sint(IntakeStack5 , 0)
+                    SStack5 -> sint(IntakeStack56, 0)
+                    SStack6 -> sint(IntakeStack56, 1, 0.0)
                     SInvert -> sint(IntakeGetCostac, 1, IntakeRevPower)
                     SIdleIntake -> sint(IntakeGetUp, 0)
                     SUpulLuiCostacu -> { sint(IntakeGetCostac, 0, 0.0); checkVibr = false; __UPDATE_SENSORS = false }

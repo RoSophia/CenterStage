@@ -17,6 +17,7 @@ public class RobotVars {
     public static boolean USE_FIELD_CENTRIC = true;
     public static boolean USE_DIFFY = true;
     public static boolean USE_SENSORS = true;
+    public static boolean USE_COMBINED_LOCALIZER = true;
     public static boolean USE_IMU_LOCALIZER = true;
     public static boolean USE_RIDICARE = true;
     public static boolean USE_SWERVE = true;
@@ -134,7 +135,7 @@ public class RobotVars {
     public static double ClownWaitDown4 = 0.20;
     public static double ClownWaitDown5 = 0.30;
 
-    public static int SensorsMinDist = 120;
+    public static int SensorsMinDist = 160;
 
     public static double GelenkCenter = 0.483;
     public static double GelenkDif = 0.10;
@@ -145,8 +146,8 @@ public class RobotVars {
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetCostac = new Vec4(0.417, 0.35, 0.40, 0.16); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack12 = new Vec4(0.395, 0.16, 0.395, 0.18); // Get1 - 2
-    public static Vec4 IntakeStack34 = new Vec4(0.395, 0.204, 0.395, 0.215); // Get2 - 3
-    public static Vec4 IntakeStack5 = new Vec4(0.395, 0.23, 0.36, 0.26); // Get3 - -
+    public static Vec4 IntakeStack34 = new Vec4(0.395, 0.204, 0.395, 0.215); // Get3 - 4
+    public static Vec4 IntakeStack56 = new Vec4(0.395, 0.23, 0.395, 0.26); // Get5 - 6
     public static int __IntakeSetStatus = 20;
 
     public static boolean __LOG_STATUS = false;
@@ -185,7 +186,12 @@ public class RobotVars {
     public static Pose WheelsParRPos = new Pose(-8.25, -4.7, 0.0);
     public static Pose WheelsParLPos = new Pose(-8.25, 4.65, 0.0);
      */
-    public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0 / 1.02; // Radius * 2pi / Ticks/Rev / DracuStie
+
+    //public static Double WheelsParTicksToCm = 1.8 * 2 * PI / 8192.0 / 1.03;
+    //public static Double WheelsPerpTicksToCm = 1.8 * 2 * PI / 8192.0 / 1.03;
+
+    public static Double WheelsParTicksToCm = 1.0 / ((223863.0 / 1.006)/300.0);//1.8 * 2 * PI / 8192.0 / 1.02; // Radius * 2pi / Ticks/Rev / DracuStie
+    public static Double WheelsPerpTicksToCm = 1.0 / ((222970.0 / 1.007)/300.0);//1.8 * 2 * PI / 8192.0 / 1.02; // Radius * 2pi / Ticks/Rev / DracuStie
 
     public static String CameraName = "Anticamera";
     public static OpenCvCameraRotation CameraOrientation = OpenCvCameraRotation.UPSIDE_DOWN;
@@ -200,6 +206,7 @@ public class RobotVars {
     public static boolean __AutoShort = false;
     public static boolean __UPDATE_SENSORS = false;
     public static boolean __UPDATE_DIFFY = false;
+    public static boolean __COIN = false;
     public static double ___CURRENT_SCHWERVE_SWPEED = 0.0;
     public static double ___CURRENT_DIFFY_KMS = 0.0;
     public static double ___CURRENT_SCHWERVE_ACCEL = 0.0;

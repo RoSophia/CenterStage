@@ -27,13 +27,13 @@ import org.firstinspires.ftc.teamcode.hardware.Timmy
 import org.firstinspires.ftc.teamcode.hardware.ZaPaiplain
 import org.firstinspires.ftc.teamcode.pp.Localizer
 import org.firstinspires.ftc.teamcode.pp.PP
+import org.firstinspires.ftc.teamcode.pp.PeruWheelLocalizer
 import org.firstinspires.ftc.teamcode.pp.PurePursuit
 import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.openftc.easyopencv.OpenCvPipeline
-import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -134,7 +134,7 @@ object RobotFuncs {
         clown = Clown("Dif")
         swerve = Swerve()
         controller = Controller()
-        localizer = ThreeWheelLocalizer()
+        localizer = PeruWheelLocalizer()
         localizer.init(Pose())
         pp = PurePursuit(swerve, localizer)
     }
@@ -238,7 +238,7 @@ object RobotFuncs {
         }
         controller = Controller()
         slides = Slides()
-        localizer = ThreeWheelLocalizer()
+        localizer = PeruWheelLocalizer()
         localizer.init(Pose())
         __SwerveMove = USE_SWERVE
         swerve = Swerve()
@@ -304,6 +304,7 @@ object RobotFuncs {
         logs("TimmyTime", TimmyLoopTime)*/
 
         log("0", 0.0)
+        tp.put("Looptime", ep.seconds())
         tp.put("Framerate", 1 / ep.seconds())
         tp.put("Elapsedtime", etime.seconds())
         ep.reset()
@@ -327,6 +328,9 @@ object RobotFuncs {
             timmy.closeThread()
             timmy.close()
             TimmyToClose = false
+        }
+        if (!__IsAuto) {
+            TimmyCurOff = 0.0
         }
     }
 
