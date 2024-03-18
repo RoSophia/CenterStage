@@ -39,9 +39,9 @@ class Timmy(val name: String) {
                 val fixed = imu.angularOrientation
                 val y = fixed.firstAngle.toDouble() - TimmyCurOff
                 yaw = y
-                val tp = TelemetryPacket()
+                /*val tp = TelemetryPacket()
                 tp.put("TYAW", yaw)
-                FtcDashboard.getInstance().sendTelemetryPacket(tp)
+                FtcDashboard.getInstance().sendTelemetryPacket(tp)*/
                 localizerAccessed = false
                 //yawVel = imu.angularVelocity.xRotationRate.toDouble()
                 TimmyLoopTime = ep.seconds()

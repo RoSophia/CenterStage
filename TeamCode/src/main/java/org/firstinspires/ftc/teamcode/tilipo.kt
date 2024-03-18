@@ -8,7 +8,6 @@ import com.outoftheboxrobotics.photoncore.PeriodicSupplier
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.Gamepad.LedEffect
 import org.firstinspires.ftc.teamcode.auto.AutoVars.INTAKEWAIT2
-import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.Intakes
 import org.firstinspires.ftc.teamcode.pp.PP
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
@@ -29,12 +28,14 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.tp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 import org.firstinspires.ftc.teamcode.utils.Util
 import kotlin.math.cos
 import kotlin.math.sin
 
 object tilipo {
     fun runOpMode(lom: LinearOpMode, fn: Boolean) { /// TODO: dashboard.sendImage(NekoArc)
+        TimmyToClose = false
         preinit()
         __AutoShort = OpModeKMSShort
         initma(lom, OpModeKMS)
@@ -91,7 +92,6 @@ object tilipo {
             }
             if (controller.C1B == controller.JUST_PRESSED) {
                 clown.goDown()
-                lom.gamepad1.rumble(1.0, 0.0, 1000)
             }
             if (controller.C1RSB == controller.JUST_PRESSED) {
                 clown.goPreloadUp()
@@ -123,14 +123,13 @@ object tilipo {
                 }
             }
 
-            if (controller.C2RB == controller.JUST_PRESSED) {
+            if (controller.C2LB == controller.JUST_PRESSED) {
                 clown.ghearaFar?.position = ClownFDeschis
-                lom.gamepad2.rumble(1.0, 1.0, 100)
                 val st = LedEffect.Builder().addStep(1.0, 0.0, 1.0, 200).addStep(0.0, 1.0, 1.0, 200).setRepeating(true).build()
                 lom.gamepad2.runLedEffect(st)
             }
 
-            if (controller.C2LB == controller.JUST_PRESSED) {
+            if (controller.C2RB == controller.JUST_PRESSED) {
                 clown.ghearaNear?.position = ClownNDeschis
             }
 
@@ -146,11 +145,11 @@ object tilipo {
             if (controller.C2B == controller.JUST_PRESSED) {
                 clown.goDown()
             }
-            if (controller.C2RSB == controller.JUST_PRESSED) {
+            if (controller.C2RT == controller.JUST_PRESSED) {
                 clown.close()
             }
 
-            val g2coef = 1.0 - 0.6 * lom.gamepad2.right_trigger
+            val g2coef = 1.0 /*- 0.6 * lom.gamepad2.right_trigger*/
             if (!Util.epsEq(lom.gamepad2.right_stick_y.toDouble(), 0.0)) {
                 slides.power = -lom.gamepad2.right_stick_y.toDouble() * g2coef
             }

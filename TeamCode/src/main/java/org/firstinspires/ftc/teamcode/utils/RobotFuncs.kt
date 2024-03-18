@@ -14,14 +14,12 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.CamGirl
-import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 import org.firstinspires.ftc.teamcode.hardware.Controller
 import org.firstinspires.ftc.teamcode.hardware.Clown
 import org.firstinspires.ftc.teamcode.hardware.Intake
 import org.firstinspires.ftc.teamcode.hardware.Intakes
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.hardware.MServo
 import org.firstinspires.ftc.teamcode.hardware.Slides
 import org.firstinspires.ftc.teamcode.hardware.Swerve
@@ -41,6 +39,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
+import kotlin.random.Random
 
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -185,10 +184,11 @@ object RobotFuncs {
 
     @JvmStatic
     fun initma(lopm: LinearOpMode, isauto: Boolean) { /// Init all hardware info
-        if (TimmyAddKILLLLLLLL) {
-            TimmyCurOff += PI
-            TimmyAddKILLLLLLLL = false
+        if (USE_TESTING) {
+            USE_CAMERA = false
+            AutoResult = Random.nextInt(0, 3)
         }
+
         __IsAuto = isauto
         Diffy__UMDC = if (isauto) {
             Diffy__UMDCAuto
@@ -324,8 +324,6 @@ object RobotFuncs {
         KILLALL = true
         batteryVoltageSensor.close()
         if (TimmyToClose) {
-            log("SHUT TIMMY OFF!", TimmyToClose)
-            send_log()
             timmy.closeThread()
             timmy.close()
             TimmyToClose = false

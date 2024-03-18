@@ -119,10 +119,10 @@ object PP {
     var PeruMax: Double = 1.0
 
     @JvmField
-    var PidTrans = PIDFC(0.2, 0.0, 0.0, 0.0) // Trans rights
+    var PidTrans = PIDFC(0.12, 0.0, 0.0, 0.0) // Trans rights
 
     @JvmField
-    var PidLong = PIDFC(0.4, 0.0, 0.0, 0.6)
+    var PidLong = PIDFC(0.4, 0.0, 0.0, 0.9)
 
     @JvmField
     var PidFinalTrans = PIDFC(0.1, 0.0, 0.0, 0.4)
@@ -131,7 +131,7 @@ object PP {
     var PidFinalLong = PIDFC(0.1, 0.0, 0.0, 0.4)
 
     @JvmField
-    var PidAngle = PIDFC(0.3, 0.0, 0.0, 0.00)
+    var PidAngle = PIDFC(0.33, 0.0, 0.0, 0.00)
 
     @JvmField
     var PPStartEnd: Double = 15.0

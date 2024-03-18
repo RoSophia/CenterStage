@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import androidx.core.graphics.alpha
 import com.qualcomm.robotcore.hardware.ColorSensor
-import org.firstinspires.ftc.teamcode.auto.TrajectorySequence
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacuIn
@@ -12,8 +11,10 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.expansionHub
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import java.util.Vector
 import kotlin.Exception
@@ -131,7 +132,7 @@ class Clown(name: String) {
                     .sl(ClownWait2)
                     .aa {
                         curState = -102
-                        targetPos = DiffyPrepDown
+                        targetPos = DiffyHoldDown
                     }
         } /// Sex
 
@@ -200,13 +201,15 @@ class Clown(name: String) {
 
     fun goPreloadUp() {
         if (USE_DIFFY) {
-            goPreloadUpTraj.runAsyncDiffy()
+            threads.add(goPreloadUpTraj.runAsyncDiffy())
+            logs("Create traj ${threads.lastElement().id}", "PreloadUp")
         }
     }
 
     fun goPreloadDown() {
         if (USE_DIFFY) {
-            goPreloadDownTraj.runAsyncDiffy()
+            threads.add(goPreloadDownTraj.runAsyncDiffy())
+            logs("Create traj ${threads.lastElement().id}", "PreloadDown")
         }
     }
 
@@ -257,7 +260,8 @@ class Clown(name: String) {
     fun catchPixel() {
         if (USE_DIFFY) {
             killextrathreads()
-            sexPixelTraj.runAsyncDiffy()
+            threads.add(sexPixelTraj.runAsyncDiffy())
+            logs("Create traj ${threads.lastElement().id}", "SexPixel")
         }
     }
 
@@ -269,16 +273,21 @@ class Clown(name: String) {
             when (curState) {
                 -100 -> {
                     threads.add(goUpTraj.runAsyncDiffy())
+                    logs("Create traj ${threads.lastElement().id}", "GOUP")
                 }
 
                 -101, -102 -> {
                     threads.add(goUp2Traj.runAsyncDiffy())
+                    logs("Create traj ${threads.lastElement().id}", "GOUP2")
                 }
 
                 else -> {
                     curState = a
                     updateAngle()
                 }
+            }
+            if (threads.size == 2) {
+                log("CURHTREADSSS", threads.size)
             }
         }
     }
@@ -288,8 +297,16 @@ class Clown(name: String) {
             killextrathreads()
             if (curState != -102 && curState != -100) {
                 threads.add(goDownTraj.runAsyncDiffy())
+                logs("Create traj ${threads.lastElement().id}", "GODOWN")
             } else {
+                gelenk?.position = GelenkCenter
+                targetAngle = DiffyADown
+                targetPos = DiffyPrepDown
+                curState = -100
                 open()
+            }
+            if (threads.size == 2) {
+                log("CURHTREADSSSDOWN", threads.size)
             }
         }
     }

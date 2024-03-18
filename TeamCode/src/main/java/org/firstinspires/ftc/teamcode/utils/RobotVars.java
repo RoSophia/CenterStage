@@ -10,6 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Config
 public class RobotVars {
+    public static boolean USE_TESTING = true;
     public static boolean USE_TELE = true;
     public static boolean USE_CAMERA = true;
     public static boolean USE_LOCALIZER = true;
@@ -36,14 +37,14 @@ public class RobotVars {
     public static double RidicarePower = -0.5;
     public static String RidicareEncoderName = "LFM";
     public static int RidicareEncoderDir = -1;
-    public static int RidicareHaveIHangedMyself = 300;
-    public static int RidicareIHaventHangedMyslef = 400;
+    public static int RidicareHaveIHangedMyself = 200;
+    public static int RidicareIHaventHangedMyslef = 300;
     public static double RidicareHANGEDMYSELF = -0.65;
     public static double RidicareHANGINGMYSELF = -1.0;
 
     public static int RBOT_POS = -5;
-    public static int RMID_POS = 300;
-    public static int RTOP_POS = 1400;
+    public static int RMID_POS = 350;
+    public static int RTOP_POS = 1800;
 
     //public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -2.237612437685438, -0.6482802389555943, -3.533453402390716);
     /*
@@ -71,7 +72,7 @@ public class RobotVars {
     public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -0.6482802389555943, -3.533453402390716, -2.237612437685438);
     public static Vec4P SwervePids = new Vec4P(
             new PIDFC(0.55, 0.0, 0.0, 0.03),
-            new PIDFC(0.6, 0.0, 0.0, 0.03),
+            new PIDFC(0.55, 0.0, 0.0, 0.03),
             new PIDFC(0.65, 0.0, 0.0015, 0.015),
             new PIDFC(0.45, 0.0, 0.0, 0.00)
     );
@@ -93,7 +94,6 @@ public class RobotVars {
 
     public static double DiffyLOff = 0;
     public static double DiffyROff = 0;
-    public static double DiffyKmsOff = 0.613;
 
     public static boolean KILLMYSELF = false;
     public static double DiffyWaitUpTurn = 0.88;
@@ -105,10 +105,10 @@ public class RobotVars {
     public static double DiffyUp = 1.03; /// Pozitie cu pixel sus
     public static double DiffyDown = 0.5;
     public static double DiffyPrepDown = 0.637; /// Pozitie sta jos asteapta
+    public static double DiffyHoldDown = 0.627;
 
 
     public static double DiffyMidUp = 0.72;
-    public static double DiffyMid2Up = 0.85;
     public static double DiffyMidDown = 0.70;
     public static double DiffyEncROff = -1.5;
     public static double DiffyEncLOff = -2.4;
@@ -122,9 +122,9 @@ public class RobotVars {
     public static double Diffy__MAC = 6;
     public static double Diffy__MDC = 1.3;
 
-    public static double ClownFInchis = 0.692;
+    public static double ClownFInchis = 0.61;
     public static double ClownFDeschis = 0.12;
-    public static double ClownNInchis = 0.64;
+    public static double ClownNInchis = 0.58;
     public static double ClownNDeschis = 0.20;
     public static double ClownWait1 = 0.1;
     public static double ClownWait2 = 0.14;
@@ -134,19 +134,19 @@ public class RobotVars {
     public static double ClownWaitDown4 = 0.20;
     public static double ClownWaitDown5 = 0.30;
 
-    public static int SensorsMinDist = 160;
+    public static int SensorsMinDist = 120;
 
-    public static double GelenkCenter = 0.493;
+    public static double GelenkCenter = 0.483;
     public static double GelenkDif = 0.10;
 
     public static double IntakePower = -1.0;
     public static double IntakeRevPower = 1.0;
-    public static Vec4 IntakeGet = new Vec4(0.37, 0.15, 0.37, 0.3); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGet = new Vec4(0.395, 0.16, 0.395, 0.3); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
-    public static Vec4 IntakeGetCostac = new Vec4(0.40, 0.35, 0.40, 0.14); // Get 1 2 Up 1 2
-    public static Vec4 IntakeStack12 = new Vec4(0.37, 0.11, 0.37, 0.14); // Get1 - 2
-    public static Vec4 IntakeStack34 = new Vec4(0.37, 0.178, 0.37, 0.208); // Get2 - 3
-    public static Vec4 IntakeStack5 = new Vec4(0.37, 0.22, 0.36, 0.26); // Get3 - -
+    public static Vec4 IntakeGetCostac = new Vec4(0.417, 0.35, 0.40, 0.16); // Get 1 2 Up 1 2
+    public static Vec4 IntakeStack12 = new Vec4(0.395, 0.16, 0.395, 0.18); // Get1 - 2
+    public static Vec4 IntakeStack34 = new Vec4(0.395, 0.204, 0.395, 0.215); // Get2 - 3
+    public static Vec4 IntakeStack5 = new Vec4(0.395, 0.23, 0.36, 0.26); // Get3 - -
     public static int __IntakeSetStatus = 20;
 
     public static boolean __LOG_STATUS = false;
@@ -160,28 +160,30 @@ public class RobotVars {
     public static double WheelsAlignMax = 1.00;
     public static double WheelsAlignStart = PI / 2 - PI / 4;
     public static double WheelsAlignEnd = PI / 2 - PI / 8;
-    public static Pose WheelsAdjPose = new Pose (0.0, 0.0, 0.0);
+    public static Pose WheelsAdjPose = new Pose(-0.1, 0.3, 0.0);
 
     public static String WheelsPerpName = "LBM";
-    public static Pose WheelsPerpPos = new Pose(-13.3, 1.15, PI / 2);
+    public static Pose WheelsPerpPos = new Pose(-13.2, 1.3, PI / 2);
     public static Integer WheelsPerpDir = 1;
     public static String WheelsParRName = "RFM";
-    public static Pose WheelsParRPos = new Pose(-8.15, -5.5, 0.0);
+    public static Pose WheelsParRPos = new Pose(-8.2, -4.8, 0.0);
     public static Integer WheelsParRDir = 1;
     public static String WheelsParLName = "RBM";
-    public static Pose WheelsParLPos = new Pose(-8.15, 4.2, 0.0);
+    public static Pose WheelsParLPos = new Pose(-8.2, 4.9, 0.0);
     public static Integer WheelsParLDir = -1;
 
     /*
-    public static String WheelsPerpName = "LBM";
+    Alea vechi
     public static Pose WheelsPerpPos = new Pose(-13.3, 1.15, PI / 2);
-    public static Integer WheelsPerpDir = 1;
-    public static String WheelsParRName = "RFM";
+    public static Pose WheelsParRPos = new Pose(-8.15, -5.5, 0.0);
+    public static Pose WheelsParLPos = new Pose(-8.15, 4.2, 0.0);
+     */
+
+    /*
+    Masurat gresit 1
+    public static Pose WheelsPerpPos = new Pose(-13.3, 1.15, PI / 2);
     public static Pose WheelsParRPos = new Pose(-8.25, -4.7, 0.0);
-    public static Integer WheelsParRDir = 1;
-    public static String WheelsParLName = "RBM";
     public static Pose WheelsParLPos = new Pose(-8.25, 4.65, 0.0);
-    public static Integer WheelsParLDir = -1;
      */
     public static Double WheelsTicksToCm = 1.8 * 2 * PI / 8192.0 / 1.02; // Radius * 2pi / Ticks/Rev / DracuStie
 
@@ -198,7 +200,6 @@ public class RobotVars {
     public static boolean __AutoShort = false;
     public static boolean __UPDATE_SENSORS = false;
     public static boolean __UPDATE_DIFFY = false;
-    public static boolean __UPDATE_INTAKE = false;
     public static double ___CURRENT_SCHWERVE_SWPEED = 0.0;
     public static double ___CURRENT_DIFFY_KMS = 0.0;
     public static double ___CURRENT_SCHWERVE_ACCEL = 0.0;

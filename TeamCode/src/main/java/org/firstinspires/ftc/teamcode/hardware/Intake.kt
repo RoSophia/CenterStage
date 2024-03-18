@@ -62,7 +62,7 @@ class Intake {
             val ro = clown.sensorReadout()
             log("GotReadout", "$ro at ${etime.seconds()}")
             if (ro == 3) {
-                if (vibeTime.seconds() > 0.2) { lom.gamepad2.rumble(1.0, 1.0, 500); lom.gamepad1.rumble(1.0, 1.0, 500); checkVibr = false }
+                if (vibeTime.seconds() > 0.2) { lom.gamepad2.rumble(1.0, 1.0, 500); lom.gamepad1.rumble(1.0, 1.0, 800); checkVibr = false }
             } else {
                 vibeTime.reset()
                 if (ro > 0) { lom.gamepad2.rumble(0.3, 0.3, 100); lom.gamepad1.rumble(0.3, 0.3, 100) }

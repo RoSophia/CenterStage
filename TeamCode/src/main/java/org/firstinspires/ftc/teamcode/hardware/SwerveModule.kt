@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import kotlin.math.PI
 import kotlin.math.abs
-import kotlin.math.min
 
 class SwerveModule(val name: String, id: Int) {
     val s = CServo(name, SwerveWheelOffsets[id], SwervePids[id], id)
