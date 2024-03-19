@@ -24,6 +24,7 @@ public class RobotVars {
     public static boolean USE_INTAKE = true;
     public static boolean USE_SWERVE_MOTORS = true;
     public static boolean USE_AUTO_MOVE = true;
+    public static boolean USE_CAMERA_DETECTION = false;
 
     public static Timmy timmy;
     public static boolean TimmyAddKILLLLLLLL = false;
@@ -101,7 +102,7 @@ public class RobotVars {
     public static double DiffyWaitDownTurn = 0.93;
     public static double DiffyPreloadUp = 1.21;
     public static double DiffyUpSafe = 1.2;
-    public static double DiffyAUp = -0.155; /// Unghi cu pixel sus
+    public static double DiffyAUp = -0.13; /// Unghi cu pixel sus
     public static double DiffyADown = 0.12; /// Unghi fara pixel jos
     public static double DiffyUp = 1.03; /// Pozitie cu pixel sus
     public static double DiffyDown = 0.5;
@@ -123,9 +124,9 @@ public class RobotVars {
     public static double Diffy__MAC = 6;
     public static double Diffy__MDC = 1.3;
 
-    public static double ClownFInchis = 0.61;
+    public static double ClownFInchis = 0.69;
     public static double ClownFDeschis = 0.12;
-    public static double ClownNInchis = 0.58;
+    public static double ClownNInchis = 0.65;
     public static double ClownNDeschis = 0.20;
     public static double ClownWait1 = 0.1;
     public static double ClownWait2 = 0.14;
@@ -137,16 +138,16 @@ public class RobotVars {
 
     public static int SensorsMinDist = 160;
 
-    public static double GelenkCenter = 0.483;
+    public static double GelenkCenter = 0.495;
     public static double GelenkDif = 0.10;
 
     public static double IntakePower = -1.0;
     public static double IntakeRevPower = 1.0;
-    public static Vec4 IntakeGet = new Vec4(0.395, 0.16, 0.395, 0.3); // Get 1 2 Up 1 2
-    public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.47, 0.45); // Get 1 2 Up 1 2
-    public static Vec4 IntakeGetCostac = new Vec4(0.417, 0.35, 0.40, 0.16); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGet = new Vec4(0.38, 0.16, 0.395, 0.3); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.55, 0.45); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGetCostac = new Vec4(0.415, 0.35, 0.40, 0.16); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack12 = new Vec4(0.395, 0.16, 0.395, 0.18); // Get1 - 2
-    public static Vec4 IntakeStack34 = new Vec4(0.395, 0.204, 0.395, 0.215); // Get3 - 4
+    public static Vec4 IntakeStack34 = new Vec4(0.395, 0.195, 0.395, 0.215); // Get3 - 4
     public static Vec4 IntakeStack56 = new Vec4(0.395, 0.23, 0.395, 0.26); // Get5 - 6
     public static int __IntakeSetStatus = 20;
 
@@ -172,6 +173,10 @@ public class RobotVars {
     public static String WheelsParLName = "RBM";
     public static Pose WheelsParLPos = new Pose(-8.2, 4.9, 0.0);
     public static Integer WheelsParLDir = -1;
+    public static Double WheelsCamAng = -0.1;
+
+    public static Integer WheelsPoseRetentionTime = 500000000;
+    public static double KMSKMS = 1.0;
 
     /*
     Alea vechi
@@ -197,6 +202,8 @@ public class RobotVars {
     public static OpenCvCameraRotation CameraOrientation = OpenCvCameraRotation.UPSIDE_DOWN;
     public static int CameraGain = 60;
     public static int CameraExposure = 60;
+    public static int CameraX = 640;
+    public static int CameraY = 480;
 
     public static double EncoderPowerFuckery = 0.06;
     public static double EncoderAccelFuckery = 0.00;
@@ -212,6 +219,7 @@ public class RobotVars {
     public static double ___CURRENT_SCHWERVE_ACCEL = 0.0;
     public static boolean ___KILL_DIFFY_THREADS = false;
     public static double __FUNNY_SWERVE_COEF = 1.1;
+    public static boolean ___CLOSE = false;
 
     public static Pose InfPos = new Pose(10000000000.0, 1000000000000.0, 0.0);
 

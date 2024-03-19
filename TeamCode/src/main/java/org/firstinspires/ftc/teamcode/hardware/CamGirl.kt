@@ -19,7 +19,7 @@ class CamGirl(
         val orientation: OpenCvCameraRotation,
         val resX: Int,
         val resY: Int,
-        pipeline: OpenCvPipeline,
+        pipeline: OpenCvPipeline?,
         val streaming: Boolean,
         waitForOpen: Boolean,
         val gain: Int,
@@ -30,7 +30,7 @@ class CamGirl(
             orientation: OpenCvCameraRotation,
             resX: Int,
             resY: Int,
-            pipeline: OpenCvPipeline
+            pipeline: OpenCvPipeline?
     ) : this(name, orientation, resX, resY, pipeline, false, false)
 
     constructor(
@@ -38,7 +38,7 @@ class CamGirl(
             orientation: OpenCvCameraRotation,
             resX: Int,
             resY: Int,
-            pipeline: OpenCvPipeline,
+            pipeline: OpenCvPipeline?,
             streaming: Boolean,
             waitForOpen: Boolean,
     ) : this(name, orientation, resX, resY, pipeline, streaming, waitForOpen, CameraGain, CameraExposure)
@@ -52,13 +52,16 @@ class CamGirl(
         val cameraMonitorViewId: Int = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", lom.hardwareMap.appContext.packageName)
         val webcamName: WebcamName = hardwareMap.get(WebcamName::class.java, name)
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId)
-        camera.setPipeline(pipeline)
+        if (pipeline != null) {
+            camera.setPipeline(pipeline)
+        }
 
         dashboardStreaming = streaming
         val cameraListener = object : OpenCvCamera.AsyncCameraOpenListener {
             override fun onOpened() {
                 if (exposure != 0) {
                     camera.exposureControl.mode = ExposureControl.Mode.Manual
+                    sleep(50)
                     camera.exposureControl.setExposure(exposure.toLong(), TimeUnit.MILLISECONDS)
                 }
                 camera.gainControl.gain = gain

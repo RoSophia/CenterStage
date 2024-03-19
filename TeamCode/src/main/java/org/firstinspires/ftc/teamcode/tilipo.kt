@@ -78,9 +78,9 @@ object tilipo {
             }
             if (controller.C1LB == controller.JUST_PRESSED) {
                 TrajectorySequence()
-                        .aa{intake.status = Intakes.SStack2}
+                        .aa { intake.status = Intakes.SStack2 }
                         .sl(INTAKEWAIT2)
-                        .aa{intake.status = Intakes.SStack3}
+                        .aa { intake.status = Intakes.SStack3 }
                         .runAsync()
             }
             if (controller.C1X == controller.JUST_PRESSED) {
@@ -99,10 +99,10 @@ object tilipo {
                 clown.goPreloadUp()
             }
             if (controller.C1LSB == controller.JUST_PRESSED) {
-                clown.goPreloadDown()
+                clown.goUp(2)
             }
             if (controller.C1Y == controller.JUST_PRESSED) {
-                curstackp = 5
+                curstackp = 6
                 if (intake.running) {
                     intake.status = Intakes.SNothing
                 } else {

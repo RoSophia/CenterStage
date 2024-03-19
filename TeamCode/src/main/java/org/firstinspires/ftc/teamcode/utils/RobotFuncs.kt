@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.teamcode.auto.AutoFuncs.initQrCamera
 import org.firstinspires.ftc.teamcode.hardware.CamGirl
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 import org.firstinspires.ftc.teamcode.hardware.Controller
@@ -33,7 +34,11 @@ import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
+import org.firstinspires.ftc.vision.VisionPortal
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import org.openftc.easyopencv.OpenCvPipeline
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -59,8 +64,10 @@ object RobotFuncs {
     lateinit var avion: MServo
     lateinit var controlHub: LynxModule
     lateinit var expansionHub: LynxModule
-    lateinit var cam: CamGirl
+    var cam: CamGirl? = null
     lateinit var pipeline: OpenCvPipeline
+    var aprilTag: AprilTagProcessor? = null
+    lateinit var visionPortal: VisionPortal
     var KILLALL: Boolean = false
 
     val etime = ElapsedTime()
@@ -182,6 +189,11 @@ object RobotFuncs {
         swerve.move(speed * fcoef * __FUNNY_SWERVE_COEF, angle, correctAngForce * fcoef)
     }
 
+    fun fptp(v: AprilTagPoseFtc): Pose {
+        val v2 = (Vec2d(v.x, v.y) * 2.54).rotated(-v.yaw * PI / 180.0)
+        return Pose(v2.x, -v2.y, v.yaw * PI / 180.0)
+    }
+
     @JvmStatic
     fun initma(lopm: LinearOpMode, isauto: Boolean) { /// Init all hardware info
         if (USE_TESTING) {
@@ -216,8 +228,7 @@ object RobotFuncs {
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
         tp = TelemetryPacket()
-        TrajectorySequence().sl(0.5).aa { log("__InitVoltage", batteryVoltageSensor.voltage) }.runAsync()
-        send_log()
+        TrajectorySequence().sl(0.5).aa { log("__InitVoltage", batteryVoltageSensor.voltage); send_log() }.runAsync()
         if (TimmyToClose) {
             try {
                 timmy.close()
@@ -238,7 +249,7 @@ object RobotFuncs {
         }
         controller = Controller()
         slides = Slides()
-        localizer = PeruWheelLocalizer()
+        localizer = ThreeWheelLocalizer()
         localizer.init(Pose())
         __SwerveMove = USE_SWERVE
         swerve = Swerve()
@@ -283,6 +294,8 @@ object RobotFuncs {
         if (USE_CAMERA) {
             pipeline = ZaPaiplain()
             cam = CamGirl(CameraName, CameraOrientation, 640, 480, pipeline, streaming = true, waitForOpen = true)
+        } else {
+            initQrCamera()
         }
 
         //clown.position = GhearaSINCHIS
@@ -322,15 +335,15 @@ object RobotFuncs {
 
     @JvmStatic
     fun endma() { /// Shut down the robot
+        if (!__IsAuto) {
+            TimmyCurOff = 0.0
+        }
         KILLALL = true
         batteryVoltageSensor.close()
         if (TimmyToClose) {
             timmy.closeThread()
             timmy.close()
             TimmyToClose = false
-        }
-        if (!__IsAuto) {
-            TimmyCurOff = 0.0
         }
     }
 

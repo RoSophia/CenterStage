@@ -36,7 +36,9 @@ class Pose(@JvmField var x: Double, @JvmField var y: Double, @JvmField var h: Do
 
     operator fun times(pose: Pose) = Pose(x * pose.x, y * pose.y, h * pose.h)
     operator fun times(s: Double) = Pose(x * s, y * s, h * s)
+    operator fun div(s: Double) = Pose(x / s, y / s, h / s)
     operator fun times(s: Int) = times(s.toDouble())
+    fun divAssign(s: Double) { x /= s; y / s; h / s }
 
     override fun toString() = String.format("(%.3f, %.3f, %.3f)", x, y, h)
 }

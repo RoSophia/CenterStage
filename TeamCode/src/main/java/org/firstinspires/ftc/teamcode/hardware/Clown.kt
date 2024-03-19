@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
@@ -86,6 +87,7 @@ class Clown(name: String) {
         if (USE_DIFFY) {
             gelenk?.position = GelenkCenter + curState * GelenkDif
             targetAngle = DiffyAUp
+            targetPos = DiffyUp
         }
     }
 
@@ -114,11 +116,15 @@ class Clown(name: String) {
                     .sl(ClownWait1)
                     .aa { close(); intake.status = SUpulLuiCostacu }
                     .sl(ClownWait2)
-                    .aa { ampUp.setMotion(DiffyPrepDown, DiffyUp, 0.0); curState = nextA }
-                    .wt { ampUp.update(); targetPos = ampUp.position
-                        if (targetPos > DiffyWaitUpTurn) { targetAngle = DiffyAUp; gelenk?.position = GelenkCenter + curState * GelenkDif }
-                        epsEq(ampUp.position, ampUp.finalPosition) }
-                    .aa {  targetAngle = DiffyAUp; targetPos = DiffyUp }
+                    .aa { ampUp.setMotion(DiffyPrepDown, DiffyUp, 0.0); }
+                    .wt {
+                        ampUp.update(); targetPos = ampUp.position
+                        if (targetPos > DiffyWaitUpTurn) {
+                            targetAngle = DiffyAUp; gelenk?.position = GelenkCenter + curState * GelenkDif; curState = nextA
+                        }
+                        epsEq(ampUp.position, ampUp.finalPosition)
+                    }
+                    .aa { targetAngle = DiffyAUp; targetPos = DiffyUp }
         } /// GoUp
 
         run {
@@ -157,10 +163,14 @@ class Clown(name: String) {
         run {
             goDownTraj.aa { open() }
                     .sl(ClownWaitDown1)
-                    .aa { ampDown.setMotion(DiffyUp, DiffyPrepDown, 0.0); }
-                    .wt { ampDown.update(); targetPos = ampDown.position
-                        if (targetPos < DiffyWaitDownTurn) { targetAngle = DiffyADown; gelenk?.position = GelenkCenter; curState = -100 }
-                        epsEq(ampDown.position, ampDown.finalPosition) }
+                    .aa { slides.setTarget(RBOT_POS); ampDown.setMotion(DiffyUp, DiffyPrepDown, 0.0); }
+                    .wt {
+                        ampDown.update(); targetPos = ampDown.position
+                        if (targetPos < DiffyWaitDownTurn) {
+                            targetAngle = DiffyADown; gelenk?.position = GelenkCenter; curState = -100
+                        }
+                        epsEq(ampDown.position, ampDown.finalPosition)
+                    }
                     .sl(ClownWaitDown2)
                     .aa { targetPos = DiffyPrepDown; gelenk?.position = GelenkCenter }
         } /// Go Down
@@ -215,13 +225,15 @@ class Clown(name: String) {
 
     fun goLeft() {
         if (USE_DIFFY) {
-            killextrathreads()
-            if (curState == -100) {
-                goUp(-1)
-            } else {
-                if (curState > -2) {
-                    --curState
-                    updateAngle()
+            if (curState > -100) {
+                killextrathreads()
+                if (curState == -100) {
+                    goUp(-1)
+                } else {
+                    if (curState > -2) {
+                        --curState
+                        updateAngle()
+                    }
                 }
             }
         }
@@ -229,13 +241,15 @@ class Clown(name: String) {
 
     fun goRight() {
         if (USE_DIFFY) {
-            killextrathreads()
-            if (curState == -100) {
-                goUp(1)
-            } else {
-                if (curState < 2) {
-                    ++curState
-                    updateAngle()
+            if (curState > -100) {
+                killextrathreads()
+                if (curState == -100) {
+                    goUp(1)
+                } else {
+                    if (curState < 2) {
+                        ++curState
+                        updateAngle()
+                    }
                 }
             }
         }

@@ -428,7 +428,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             drawRobot()
 
             val tcoef = min(MAX_VEL, ctraj.initVel + MAX_ACC * runningTime.seconds()) * ctraj.maxFraction / MAX_VEL
-            var speed = clamp(tcoef * peruP * pcoef + PPStaticSpeed, 0.0, PPMaxSpeed)
+            var speed = clamp((1.0 - PPStaticSpeed) * tcoef * peruP * pcoef + PPStaticSpeed, 0.0, PPMaxSpeed)
             var angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), PPMaxAngPower), -PPMaxAngPower)
             if (speed.isNaN()) {
                 log("PurePursuitError", "NaN speed")
