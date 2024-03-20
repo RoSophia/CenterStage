@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto
 
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.auto.AutoVars.GOUPDIST
 import org.firstinspires.ftc.teamcode.auto.AutoVars.INTAKEWAIT3
 import org.firstinspires.ftc.teamcode.auto.AutoVars.KMS
@@ -38,6 +39,9 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.__UPDATE_SENSORS
 import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 
 object Cele10Traiectorii {
+    val genTime = ElapsedTime()
+    var genCounter = 0
+
     @JvmStatic
     fun getCycleTrajLong(ncycle: Int, randomCase: Int, v: LongVals): TrajectorySequence {
         val ts = TrajectorySequence()
@@ -52,19 +56,18 @@ object Cele10Traiectorii {
         ts.at(v.bPreloadStack[randomCase].s(ts).t)
                 .aa { intake.status = SStack5 }
                 .sl(WaitStack2)
-                .gt { if(clown.sensorReadout() == 3) 5 else 2 }
+                .gt { genCounter = 0; if (clown.sensorReadout() == 3) 5 else 2 }
 
         ts.st(2)
-                .at(v.bTryAgain.s(ts).st(0.2).t)
-        ts
-                .at(v.bTryAgain.s(ts).se(v.bPreloadStack[randomCase].ep).t)
-                .gt { if(clown.sensorReadout() == 3) 5 else 2 }
+                .at(v.bTryAgain.s(ts).so(v.bPreloadStack[randomCase].ep).st(0.2).t)
+        ts.at(v.bTryAgain.s(ts).se(v.bPreloadStack[randomCase].ep + Pose(0.0, -1.0, 0.0)).t)
+                .gt { ++genCounter; if (clown.sensorReadout() == 3 || genCounter == 2) 5 else 2 }
 
         ts.st(5)
                 .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
                 .at(v.bStackBackdrop[0].s(ts).cb().t
-                .addActionT(INTAKEWAIT3) { intake.status = SUp }
-                .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+                        .addActionT(INTAKEWAIT3) { intake.status = SUp }
+                        .addActionE(10.0) { intake.status = SUpulLuiCostacu })
         ts.at(v.bStackBackdrop[1].s(ts).sx(v.cBackdropPosX[randomCase]).ce().t
                 .addActionS(0.0) { clown.goUp(if (randomCase == 0) -2 else 2) })
                 .aa { clown.open() }
@@ -74,7 +77,7 @@ object Cele10Traiectorii {
             ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
                     .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
             ts.at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
-                    .addActionE(100.0) { intake.status = SStack6  })
+                    .addActionE(100.0) { intake.status = SStack6 })
                     .aa {
                         when (i) {
                             0 -> intake.status = SStack4
@@ -89,13 +92,22 @@ object Cele10Traiectorii {
                             1 -> intake.status = SStack1
                             else -> intake.status = SIntake
                         }
+                        __UPDATE_SENSORS = true
                     }
                     .sl(WaitStack2)
+                    .gt { genCounter = 0; if (clown.sensorReadout() == 3) gi(i, 3) else gi(i, 2) }
 
-            ts.at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
-                    .addActionT(WaitStack3) { clown.catchPixel() }
-                    .addActionT(INTAKEWAIT3) { intake.status = SUp }
-                    .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+            ts.st(gi(i, 2))
+                    .at(v.bTryAgain.s(ts).so(v.cBackdropStack[1].ep + v.stackOffset * i).st(0.2).t)
+            ts.at(v.bTryAgain.s(ts).se(v.cBackdropStack[1].ep + v.stackOffset * i + Pose(0.0, -1.0, 0.0)).t)
+                    .gt { ++genCounter; if (clown.sensorReadout() == 3 || genCounter == 2) gi(i, 3) else gi(i, 2) }
+
+            ts.st(gi(i, 3))
+                    .aa { __UPDATE_SENSORS = false }
+                    .at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
+                            .addActionT(WaitStack3) { clown.catchPixel() }
+                            .addActionT(INTAKEWAIT3) { intake.status = SUp }
+                            .addActionE(10.0) { intake.status = SUpulLuiCostacu })
             ts.at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
                     .addActionS(0.0) { clown.goUp(-2) }
                     .addActionE(20.0) { slides.setTarget(RMID_POS) })
@@ -138,7 +150,7 @@ object Cele10Traiectorii {
             ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
                     .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
             ts.at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
-                    .addActionE(100.0) { intake.status = SStack6  })
+                    .addActionE(100.0) { intake.status = SStack6 })
                     .aa {
                         when (i) {
                             0 -> intake.status = SStack4

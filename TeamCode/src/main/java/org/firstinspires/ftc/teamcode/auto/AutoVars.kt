@@ -82,18 +82,19 @@ object Auto {
                     )
             ),
 
+            //// LONG BLUE
             bTryAgain = TrajCoef(
-                    Pose(-130.0, 20.0, 1.59), 0.8
+                    Pose(0.0, 20.0, 0.0), 0.6
             ),
 
             //// LONG BLUE
             bStackBackdrop = Vec2T(
                     TrajCoef(
-                            Pose(-139.0, -130.0, 1.57), 0.8
+                            Pose(-136.0, -130.0, 1.57), 0.8
                     ),
 
                     TrajCoef(
-                            Pose(-74.0, -218.0, 1.57),
+                            Pose(-74.0, -220.0, 1.57),
                             Vec2d(40.0, -1.57), Vec2d(23.0, 1.57),
                             0.8, Vec2d(35.0, 60.0)
                     )),
@@ -102,7 +103,7 @@ object Auto {
             cBackdropOffset = Pose(0.0, 0.0, 0.0),
 
             //// LONG BLUE
-            cBackdropPosX = Vec3(-56.0, -65.0, -74.0),
+            cBackdropPosX = Vec3(-60.0, -65.0, -74.0),
 
             //// LONG BLUE
             cBackdropStack = Vec2T(
@@ -419,7 +420,7 @@ object AutoVars {
     var WaitStack1 = 0.5
 
     @JvmField
-    var WaitStack2 = 0.7
+    var WaitStack2 = 1.1
 
     @JvmField
     var WaitStack3 = 0.1

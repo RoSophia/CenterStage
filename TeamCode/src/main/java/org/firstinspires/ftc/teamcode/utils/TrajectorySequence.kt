@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.utils
 
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.auto.AutoVars
+import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___KILL_DIFFY_THREADS
@@ -93,6 +94,13 @@ class TrajectorySequence {
 
     fun sl(s: Double) = sleep(s)
 
+    fun failsafe(initCommand: () -> Unit, checkCommand: () -> Int, traj: TrajCoef): TrajectorySequence {
+        this
+                .aa(initCommand)
+                //.
+        return this
+    }
+
     private var ls = 0
     private var e = TSE(10, {}, { true })
 
@@ -101,6 +109,7 @@ class TrajectorySequence {
         e = TSE(10, {}, { true })
         return this
     }
+
 
     private fun runInitActio(t: TSE) {
         if (t.type == 4) {

@@ -117,7 +117,7 @@ object PP {
     var PeruMax: Double = 1.0
 
     @JvmField
-    var PidTrans = PIDFC(0.12, 0.0, 0.0, 0.0) // Trans rights
+    var PidTrans = PIDFC(0.22, 0.0, 0.0, 0.0) // Trans rights
 
     @JvmField
     var PidLong = PIDFC(0.4, 0.0, 0.0, 0.9)
