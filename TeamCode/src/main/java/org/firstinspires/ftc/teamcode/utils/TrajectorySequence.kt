@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.utils
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.auto.AutoVars
 import org.firstinspires.ftc.teamcode.pp.Trajectory
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___KILL_DIFFY_THREADS
 import java.util.Vector
 import kotlin.concurrent.thread
@@ -102,7 +103,6 @@ class TrajectorySequence {
     }
 
     private fun runInitActio(t: TSE) {
-        /*
         if (t.type == 4) {
             val resc = t.conditional()
             for (i in 0 until steps.size) {
@@ -112,14 +112,13 @@ class TrajectorySequence {
                     break
                 }
             }
-        } else
-            */
-        if (t.type > 0) {
+        } else if (t.type > 0) {
             t.initActio()
         }
     }
 
     fun update(): Boolean {
+        log("CurStep", ls)
         if (ls < steps.size) {
             if (e.type == 10) {
                 ls = 0

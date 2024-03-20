@@ -47,19 +47,26 @@ object Cele10Traiectorii {
                         .addActionT(0.1) { clown.goPreloadUp() })
                 .aa { clown.ghearaFar?.position = ClownFDeschis }
                 .sl(WaitPreload)
-                .aa { clown.goPreloadDown(); intake.status = SStack6; }
+                .aa { clown.goPreloadDown(); intake.status = SStack6; __UPDATE_SENSORS = true }
 
         ts.at(v.bPreloadStack[randomCase].s(ts).t)
                 .aa { intake.status = SStack5 }
-                .sl(WaitStack1)
-                .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
                 .sl(WaitStack2)
+                .gt { if(clown.sensorReadout() == 3) 5 else 2 }
 
-        ts.at(v.bStackBackdrop[0].s(ts).cb().t
-                .addActionT(WaitStack3) { clown.catchPixel() }
-                .addActionT(INTAKEWAIT3) { intake.status = SUp })
+        ts.st(2)
+                .at(v.bTryAgain.s(ts).st(0.2).t)
+        ts
+                .at(v.bTryAgain.s(ts).se(v.bPreloadStack[randomCase].ep).t)
+                .gt { if(clown.sensorReadout() == 3) 5 else 2 }
+
+        ts.st(5)
+                .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
+                .at(v.bStackBackdrop[0].s(ts).cb().t
+                .addActionT(INTAKEWAIT3) { intake.status = SUp }
+                .addActionE(10.0) { intake.status = SUpulLuiCostacu })
         ts.at(v.bStackBackdrop[1].s(ts).sx(v.cBackdropPosX[randomCase]).ce().t
-                .addActionS(0.0) { clown.goUp(if (randomCase == if (AutoRed) 2 else 0) -2 else 2) })
+                .addActionS(0.0) { clown.goUp(if (randomCase == 0) -2 else 2) })
                 .aa { clown.open() }
                 .sl(WaitPut)
 
@@ -88,10 +95,74 @@ object Cele10Traiectorii {
             ts.at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
                     .addActionT(WaitStack3) { clown.catchPixel() }
                     .addActionT(INTAKEWAIT3) { intake.status = SUp }
-                    .addActionE(40.0) { intake.status = SUpulLuiCostacu })
+                    .addActionE(10.0) { intake.status = SUpulLuiCostacu })
             ts.at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
                     .addActionS(0.0) { clown.goUp(-2) }
-                    .addActionE(30.0) { slides.setTarget(RMID_POS) })
+                    .addActionE(20.0) { slides.setTarget(RMID_POS) })
+                    .aa { clown.open() }
+                    .sl(WaitPut)
+        }
+
+        ts.at(v.zBackdropPark.s(ts).t
+                .addActionS(0.0) { clown.open() }
+                .addActionS(70.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
+                .aa { clown.gelenk?.position = GelenkCenter }
+        return ts
+    }
+
+    @JvmStatic
+    fun getCycleTrajLongOld(ncycle: Int, randomCase: Int, v: LongVals): TrajectorySequence {
+        val ts = TrajectorySequence()
+                .aa { intake.status = SKeep }
+                .aa { clown.targetPos = DiffyUpSafe }
+                .at(v.aStartPreload[randomCase].st(0.6).t /// Sets timeout to 0.6
+                        .addActionT(0.1) { clown.goPreloadUp() })
+                .aa { clown.ghearaFar?.position = ClownFDeschis }
+                .sl(WaitPreload)
+                .aa { clown.goPreloadDown(); intake.status = SStack6; }
+
+        ts.at(v.bPreloadStack[randomCase].s(ts).t)
+                .aa { intake.status = SStack5 }
+                .sl(WaitStack2)
+                .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
+
+        ts.at(v.bStackBackdrop[0].s(ts).cb().t
+                .addActionT(INTAKEWAIT3) { intake.status = SUp }
+                .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+        ts.at(v.bStackBackdrop[1].s(ts).sx(v.cBackdropPosX[randomCase]).ce().t
+                .addActionS(0.0) { clown.goUp(if (randomCase == 0) -2 else 2) })
+                .aa { clown.open() }
+                .sl(WaitPut)
+
+        for (i in 0 until ncycle - 1) {
+            ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
+                    .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
+            ts.at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
+                    .addActionE(100.0) { intake.status = SStack6  })
+                    .aa {
+                        when (i) {
+                            0 -> intake.status = SStack4
+                            1 -> intake.status = SStack2
+                            else -> intake.status = SIntake
+                        }
+                    }
+                    .sl(WaitStack1)
+                    .aa {
+                        when (i) {
+                            0 -> intake.status = SStack3
+                            1 -> intake.status = SStack1
+                            else -> intake.status = SIntake
+                        }
+                    }
+                    .sl(WaitStack2)
+
+            ts.at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
+                    .addActionT(WaitStack3) { clown.catchPixel() }
+                    .addActionT(INTAKEWAIT3) { intake.status = SUp }
+                    .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+            ts.at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
+                    .addActionS(0.0) { clown.goUp(-2) }
+                    .addActionE(20.0) { slides.setTarget(RMID_POS) })
                     .aa { clown.open() }
                     .sl(WaitPut)
         }
@@ -121,7 +192,7 @@ object Cele10Traiectorii {
                             clown.targetPos = DiffyUp
                             clown.targetAngle = DiffyAUp
                             clown.curState = 0
-                            clown.gelenk?.position = GelenkCenter + (if (randomCase == (if (AutoRed) 0 else 2)) -2 else 2) * GelenkDif
+                            clown.gelenk?.position = GelenkCenter + (if (randomCase == 2) -2 else 2) * GelenkDif
                         }) /// Go from put preload to backboard
                 .aa { clown.open() }
                 .sl(0.1)

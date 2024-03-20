@@ -106,7 +106,7 @@ public class RobotVars {
     public static double DiffyADown = 0.12; /// Unghi fara pixel jos
     public static double DiffyUp = 1.03; /// Pozitie cu pixel sus
     public static double DiffyDown = 0.5;
-    public static double DiffyPrepDown = 0.637; /// Pozitie sta jos asteapta
+    public static double DiffyPrepDown = 0.638; /// Pozitie sta jos asteapta
     public static double DiffyHoldDown = 0.627;
 
 
@@ -143,7 +143,7 @@ public class RobotVars {
 
     public static double IntakePower = -1.0;
     public static double IntakeRevPower = 1.0;
-    public static Vec4 IntakeGet = new Vec4(0.38, 0.16, 0.395, 0.3); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGet = new Vec4(0.38, 0.145, 0.395, 0.3); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.55, 0.45); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetCostac = new Vec4(0.415, 0.35, 0.40, 0.16); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack12 = new Vec4(0.395, 0.16, 0.395, 0.18); // Get1 - 2
@@ -177,6 +177,7 @@ public class RobotVars {
 
     public static Integer WheelsPoseRetentionTime = 500000000;
     public static double KMSKMS = 1.0;
+    public static double KMSKMSKMS = 1.0;
 
     /*
     Alea vechi

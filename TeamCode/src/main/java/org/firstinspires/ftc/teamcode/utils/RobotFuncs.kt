@@ -190,8 +190,8 @@ object RobotFuncs {
     }
 
     fun fptp(v: AprilTagPoseFtc): Pose {
-        val v2 = (Vec2d(v.x, v.y) * 2.54).rotated(-v.yaw * PI / 180.0)
-        return Pose(v2.x, -v2.y, v.yaw * PI / 180.0)
+        val v2 = (Vec2d(v.x, v.y) * 2.54).rotated(KMSKMSKMS * timmy.yaw)
+        return Pose(v2.x, -v2.y, 0.0)//v.yaw * PI / 180.0)
     }
 
     @JvmStatic
@@ -199,6 +199,7 @@ object RobotFuncs {
         if (USE_TESTING) {
             USE_CAMERA = false
             AutoResult = Random.nextInt(0, 3)
+            log("CurAutoResult", AutoResult)
         }
 
         __IsAuto = isauto
@@ -229,6 +230,7 @@ object RobotFuncs {
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
         tp = TelemetryPacket()
         TrajectorySequence().sl(0.5).aa { log("__InitVoltage", batteryVoltageSensor.voltage); send_log() }.runAsync()
+        log("CurTImmyOff", TimmyCurOff)
         if (TimmyToClose) {
             try {
                 timmy.close()

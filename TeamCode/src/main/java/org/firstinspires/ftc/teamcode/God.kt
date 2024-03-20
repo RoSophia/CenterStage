@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.teamcode.auto.AutoFuncs.initQrCamera
 import org.firstinspires.ftc.teamcode.hardware.Timmy
 import org.firstinspires.ftc.teamcode.pp.ThreeWheelLocalizer
+import org.firstinspires.ftc.teamcode.pp.TrajCoef
+import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
@@ -24,6 +26,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logst
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
@@ -47,6 +50,25 @@ class CreateGod : LinearOpMode() {
         preinit()
         initma(this, false)
 
+        val t = TrajectorySequence()
+                .st(2)
+                .aa { logst("KMKSM1") }
+                .sl(0.1)
+                .gt { if (gamepad1.a) 3 else 2 }
+                .st(3)
+                .at(Trajectory(TrajCoef(Pose(), Pose(100.0, 0.0, 0.0))))
+                .gt { 3 }
+
+        waitForStart()
+
+        t.reset()
+        while (!isStopRequested && !t.update()) {
+            pp.update()
+            update()
+        }
+
+
+        /*
         create_god()
 
         initQrCamera()
@@ -63,6 +85,8 @@ class CreateGod : LinearOpMode() {
             update()
             send_log()
         }
+         */
+
         endma()
     }
 
