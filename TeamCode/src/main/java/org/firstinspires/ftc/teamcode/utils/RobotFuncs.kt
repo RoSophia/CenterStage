@@ -229,25 +229,19 @@ object RobotFuncs {
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
         tp = TelemetryPacket()
-        TrajectorySequence().sl(0.5).aa { log("__InitVoltage", batteryVoltageSensor.voltage); send_log() }.runAsync()
+        TrajectorySequence().sl(0.5).aa { log("__InitVoltage", batteryVoltageSensor.voltage); log("CurAutoResult", AutoResult); send_log() }.runAsync()
         log("CurTImmyOff", TimmyCurOff)
-        if (TimmyToClose) {
-            try {
-                timmy.close()
-            } catch (e: Exception) {
-                //log("Timmy wasn't closed", "Idiot")
+        try {
+            if (!timmy.initialized) {
+                timmy.init()
             }
+            timmy.initThread()
+        } catch (e: Exception) {
+            //log("Wasn't opened", e.stackTraceToString())
+            send_log()
             timmy = Timmy("imu")
-            TimmyToClose = false
-        } else {
-            try {
-                if (!timmy.trunning) {
-                    timmy.initThread()
-                }
-            } catch (e: Exception) {
-                log("Timmy wasn't Opened", "Idiot")
-                timmy = Timmy("imu")
-            }
+            timmy.init()
+            timmy.initThread()
         }
         controller = Controller()
         slides = Slides()
@@ -268,15 +262,13 @@ object RobotFuncs {
                         .runAsyncDiffy()
             } else {
                 TrajectorySequence()
-                        //.aa { clown.targetPos = DiffyPrepDown; clown.targetAngle = DiffyADown }
-                        //.sl(0.3)
                         .aa { clown.ghearaFar?.position = ClownFInchis; clown.ghearaNear?.position = if (__AutoShort) ClownNInchis else ClownNDeschis; }
                         .sl(0.5)
                         .aa { clown.targetPos = DiffyMidUp; clown.targetAngle = DiffyAUp }
                         .runAsyncDiffy()
-
             }
         }
+
         pp = PurePursuit(swerve, localizer)
     }
 

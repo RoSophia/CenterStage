@@ -4,7 +4,6 @@ import androidx.core.graphics.alpha
 import com.qualcomm.robotcore.hardware.ColorSensor
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
-import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacuIn
 import org.firstinspires.ftc.teamcode.utils.PeriodicRunner
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.expansionHub
@@ -73,8 +72,12 @@ class Clown(name: String) {
         sensorFar?.argb()?.alpha ?: 0
     }, { v: Int -> sensorFarDist = v }, 0, 10.0, "Far")
 
-    fun sensorReadout() = (if (sensorNearDist > SensorsMinDist) 2 else 0) or
-            (if (sensorFarDist > SensorsMinDist) 1 else 0)
+
+    fun sensorReadout(): Int {
+        //log("SensorReadout", res)
+        return (if (sensorNearDist > SensorsMinDist) 2 else 0) or
+                (if (sensorFarDist > SensorsMinDist) 1 else 0)
+    }
 
     private fun updateTarget() {
         if (USE_DIFFY) {

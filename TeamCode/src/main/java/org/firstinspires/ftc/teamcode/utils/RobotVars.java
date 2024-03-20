@@ -45,7 +45,7 @@ public class RobotVars {
     public static double RidicareHANGINGMYSELF = -1.0;
 
     public static int RBOT_POS = -5;
-    public static int RMID_POS = 350;
+    public static int RMID_POS = 450;
     public static int RTOP_POS = 1800;
 
     //public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -2.237612437685438, -0.6482802389555943, -3.533453402390716);
@@ -103,12 +103,11 @@ public class RobotVars {
     public static double DiffyPreloadUp = 1.21;
     public static double DiffyUpSafe = 1.2;
     public static double DiffyAUp = -0.13; /// Unghi cu pixel sus
-    public static double DiffyADown = 0.12; /// Unghi fara pixel jos
+    public static double DiffyADown = 0.11; /// Unghi fara pixel jos
     public static double DiffyUp = 1.03; /// Pozitie cu pixel sus
     public static double DiffyDown = 0.5;
     public static double DiffyPrepDown = 0.638; /// Pozitie sta jos asteapta
     public static double DiffyHoldDown = 0.627;
-
 
     public static double DiffyMidUp = 0.72;
     public static double DiffyMidDown = 0.70;
@@ -125,7 +124,7 @@ public class RobotVars {
     public static double Diffy__MDC = 1.3;
 
     public static double ClownFInchis = 0.69;
-    public static double ClownFDeschis = 0.12;
+    public static double ClownFDeschis = 0.0;
     public static double ClownNInchis = 0.65;
     public static double ClownNDeschis = 0.20;
     public static double ClownWait1 = 0.1;
@@ -147,7 +146,7 @@ public class RobotVars {
     public static Vec4 IntakeGetUp = new Vec4(0.38, 0.2, 0.55, 0.45); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetCostac = new Vec4(0.415, 0.35, 0.40, 0.16); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack12 = new Vec4(0.395, 0.16, 0.395, 0.18); // Get1 - 2
-    public static Vec4 IntakeStack34 = new Vec4(0.395, 0.195, 0.395, 0.215); // Get3 - 4
+    public static Vec4 IntakeStack34 = new Vec4(0.395, 0.195, 0.395, 0.21); // Get3 - 4
     public static Vec4 IntakeStack56 = new Vec4(0.395, 0.23, 0.395, 0.26); // Get5 - 6
     public static int __IntakeSetStatus = 20;
 
@@ -221,6 +220,7 @@ public class RobotVars {
     public static boolean ___KILL_DIFFY_THREADS = false;
     public static double __FUNNY_SWERVE_COEF = 1.1;
     public static boolean ___CLOSE = false;
+    public static boolean ____FIRST_OPEN = true;
 
     public static Pose InfPos = new Pose(10000000000.0, 1000000000000.0, 0.0);
 

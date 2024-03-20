@@ -70,6 +70,7 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
     }
 
     fun duplicate() = TrajCoef(sp.duplicate(), ep.duplicate(), v1.duplicate(), v2.duplicate(), h.duplicate(), mf, peru.duplicate(), initVel, timeout)
+    val d: TrajCoef get() = duplicate()
     fun s(t: TrajectorySequence): TrajCoef { val tc = this.duplicate(); tc.sp = t.curPose; return tc }
     val t: Trajectory get() = Trajectory(this)
     fun st(t: Double): TrajCoef { timeout = t; return this }

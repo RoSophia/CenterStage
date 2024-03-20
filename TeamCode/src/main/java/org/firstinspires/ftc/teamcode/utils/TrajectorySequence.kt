@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.utils
 
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.auto.AutoVars
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___KILL_DIFFY_THREADS
 import java.util.Vector
 import kotlin.concurrent.thread
@@ -63,8 +65,19 @@ class TrajectorySequence {
 
     fun at(t: Trajectory) = addTrajectory(t)
 
+    fun atc(tf: () -> TrajCoef, checkDone: () -> Boolean): TrajectorySequence {
+        steps.add(
+                TSE(1,
+                        { RobotFuncs.pp.startFollowTraj(tf().t) },
+                        { !RobotFuncs.pp.busy || checkDone() },
+                        tf().t
+                ))
+        return this
+    }
+
     fun st(goto: Int): TrajectorySequence {
         steps.add(TSE(-goto))
+        log("Adding $goto", steps.size)
         return this
     }
 
@@ -84,6 +97,11 @@ class TrajectorySequence {
 
     fun wt(checkDone: () -> Boolean) = addAction({}, checkDone)
 
+    private val cep = ElapsedTime()
+    fun slc(s: Double, checkDone: () -> Boolean, minT: Double = 0.7) = this
+            .aa { cep.reset() }
+            .wt { (cep.seconds() > minT) && (cep.seconds() > s || checkDone()) }
+
     fun sleep(s: Double): TrajectorySequence {
         steps.add(
                 TSE(2, { stimer.reset() })
@@ -94,10 +112,37 @@ class TrajectorySequence {
 
     fun sl(s: Double) = sleep(s)
 
-    fun failsafe(initCommand: () -> Unit, checkCommand: () -> Int, traj: TrajCoef): TrajectorySequence {
+    private var curSteps = 0
+
+    /**
+     * @param initCommand: MATA
+     */
+    fun failsafeMove(afterCommand: () -> Unit, checkCommand: () -> Boolean, o1: Int, o2: Int, p1: Pose, p2: Pose): TrajectorySequence {
+        val lp = curPose
+        val p1p = if (AutoRed) -p1.duplicate() else p1.duplicate()
+        val p2p = if (AutoRed) -p2.duplicate() else p2.duplicate()
         this
-                .aa(initCommand)
-                //.
+                .gt { curSteps = 0; if (checkCommand()) o2 else o1 }
+                .st(o1)
+                .aa(afterCommand)
+                .atc({ TrajCoef(lp, lp + p1p, 1.0).st(0.2) }, checkCommand)
+                //.atc({ TrajCoef(lp + p1p, lp + if (curSteps == 0) p2p else p2p.negX(), 1.0) }, checkCommand)
+                .gt { ++curSteps; if (checkCommand() || curSteps == 2) o2 else o1 }
+                .st(o2)
+                .slc(0.3, checkCommand, 0.0)
+        curPose = lp
+        return this
+    }
+
+    private var curtsq: TrajectorySequence? = null
+    fun failsafeAction(tseq: () -> TrajectorySequence, checkCommand: () -> Boolean, o1: Int, o2: Int): TrajectorySequence {
+        this
+                .gt { if (checkCommand()) o2 else o1 }
+                .st(o1)
+                .aa { curtsq = tseq() }
+                .wt { !tseq().update() }
+                .st(o2)
+
         return this
     }
 
@@ -110,7 +155,6 @@ class TrajectorySequence {
         return this
     }
 
-
     private fun runInitActio(t: TSE) {
         if (t.type == 4) {
             val resc = t.conditional()
@@ -121,6 +165,9 @@ class TrajectorySequence {
                     break
                 }
             }
+            log("NOT FOUND AAAAAAAAAAAAAAAAAAAAAAAAAAAAa", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA  $resc")
+            send_log()
+            ++ls
         } else if (t.type > 0) {
             t.initActio()
         }
@@ -150,7 +197,13 @@ class TrajectorySequence {
         return false
     }
 
-    private class Async(val t: TrajectorySequence) : Runnable { override fun run() { t.reset(); while (!t.update()) { Thread.sleep(2) } } }
+    private class Async(val t: TrajectorySequence) : Runnable {
+        override fun run() {
+            t.reset(); while (!t.update()) {
+                Thread.sleep(2)
+            }
+        }
+    }
 
     fun runAsync(): Thread {
         reset()
@@ -160,7 +213,13 @@ class TrajectorySequence {
         return t
     }
 
-    private class AsyncDiffy(val t: TrajectorySequence) : Runnable { override fun run() { t.reset(); while (!___KILL_DIFFY_THREADS && !t.update()) { Thread.sleep(2) }  } }
+    private class AsyncDiffy(val t: TrajectorySequence) : Runnable {
+        override fun run() {
+            t.reset(); while (!___KILL_DIFFY_THREADS && !t.update()) {
+                Thread.sleep(2)
+            }
+        }
+    }
 
     fun runAsyncDiffy(): Thread {
         reset()

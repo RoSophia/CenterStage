@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.utils.NanoClock
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
+import org.firstinspires.ftc.teamcode.utils.RobotVars
+import org.firstinspires.ftc.teamcode.utils.RobotVars.____FIRST_OPEN
 import kotlin.math.roundToInt
 
 class Encoder(val name: String, private val direction: Int) {
@@ -15,7 +17,14 @@ class Encoder(val name: String, private val direction: Int) {
 
     init {
         clock.reset()
-        m.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        if (name == RobotVars.RidicareEncoderName) {
+            if (____FIRST_OPEN) {
+                m.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+                ____FIRST_OPEN = false
+            }
+        } else {
+            m.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        }
         m.mode = DcMotor.RunMode.RUN_USING_ENCODER
     }
 

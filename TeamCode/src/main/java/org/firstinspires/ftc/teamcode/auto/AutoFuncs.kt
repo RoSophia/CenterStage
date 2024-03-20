@@ -79,7 +79,8 @@ object AutoFuncs {
 
         TimmyToClose = true
         log("OldTimmyCurOff", TimmyCurOff)
-        TimmyCurOff = timmy.yaw
+        TimmyCurOff = 0.0
+        //TimmyCurOff = timmy.yaw
         log("NewTimmyCurOff", TimmyCurOff)
         send_log()
         endma()

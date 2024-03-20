@@ -8,13 +8,13 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyCurOff
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyLoopTime
+import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 
 class Timmy(val name: String) {
     private val imu: BNO055IMU = RobotFuncs.hardwareMap.get(BNO055IMU::class.java, name)
 
-    private val t: Thread
     var trunning: Boolean = false
-    private var initialized: Boolean = false
+    var initialized: Boolean = false
 
     var yaw: Double = 0.0
     var yawVel: Double = 0.0
@@ -22,26 +22,32 @@ class Timmy(val name: String) {
 
     val ep = ElapsedTime()
 
-    init {
-        val parameters = BNO055IMU.Parameters()
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
-        //parameters.mode = BNO055IMU.SensorMode.COMPASS
-        imu.initialize(parameters)
-        initialized = true
-        ep.reset()
-
-        t = Thread {
+    private class Timtim(val t: Timmy) : Runnable {
+        override fun run() {
             val ep = ElapsedTime()
             ep.reset()
-            while (trunning && !KILLALL) {
-                val fixed = imu.angularOrientation
+            while (t.trunning && !KILLALL) {
+                val fixed = t.imu.angularOrientation
                 val y = fixed.firstAngle.toDouble() - TimmyCurOff
-                yaw = y
-                localizerAccessed = false
+                t.yaw = y
+                t.localizerAccessed = false
                 TimmyLoopTime = ep.seconds()
                 ep.reset()
             }
         }
+    }
+
+    var t = Thread()
+    fun init() {
+        val parameters = BNO055IMU.Parameters()
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
+        imu.initialize(parameters)
+        initialized = true
+        ep.reset()
+
+        t = Thread(Timtim(this))
+        t.setUncaughtExceptionHandler { th, er -> RobotFuncs.log("GOT ERR TIMMY ${th.id}", er.stackTraceToString()) }
+        //t.start()
     }
 
     fun initThread() {

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.utils.Vec4T
 class LongVals(
         @JvmField var aStartPreload: Vec3T,
         @JvmField var bPreloadStack: Vec3T,
-        @JvmField var bTryAgain: TrajCoef,
+        @JvmField var bTryAgain: Pose,
         @JvmField var bStackBackdrop: Vec2T,
         @JvmField var cBackdropOffset: Pose,
         @JvmField var cBackdropPosX: Vec3,
@@ -41,19 +41,19 @@ object Auto {
                     TrajCoef(
                             Pose(-80.0, 5.0, 1.4),
                             Vec2d(), Vec2d(60.0, 1.5),
-                            Vec2d(0.3, 0.9), 0.8,
+                            Vec2d(0.3, 0.8), 0.8,
                             Vec2d(34.0, 50.0)
                     ),
                     TrajCoef(
                             Pose(-103.0, 40.0, 1.8),
                             Vec2d(60.0, 1.8), Vec2d(0.0, 0.0),
-                            Vec2d(0.0, 0.8), 0.8,
+                            Vec2d(0.3, 0.8), 0.8,
                             Vec2d(34.0, 50.0)
                     ),
                     TrajCoef(
                             Pose(-100.0, 54.0, 2.1),
                             Vec2d(40.0, 1.7), Vec2d(0.0, 0.0),
-                            Vec2d(0.0, 0.6), 0.8,
+                            Vec2d(0.3, 0.8), 0.8,
                             Vec2d(34.0, 50.0)
                     )
             ),
@@ -83,9 +83,7 @@ object Auto {
             ),
 
             //// LONG BLUE
-            bTryAgain = TrajCoef(
-                    Pose(0.0, 20.0, 0.0), 0.6
-            ),
+            bTryAgain = Pose(0.0, 20.0, 0.0),
 
             //// LONG BLUE
             bStackBackdrop = Vec2T(
@@ -157,27 +155,25 @@ object Auto {
             //// LONG RED
             bPreloadStack = Vec3T(
                     TrajCoef(
-                            Pose(-132.0, -53.0, -1.57),
-                            Vec2d(0.0, 2.0), Vec2d(30.0, 2.0),
+                            Pose(-132.0, -55.7, -1.57),
+                            Vec2d(0.0, 2.0), Vec2d(20.0, 2.0),
                             0.8
                     ),
 
                     TrajCoef(
-                            Pose(-132.0, -54.0, -1.57),
-                            Vec2d(), Vec2d(30.0, 2.0),
+                            Pose(-132.0, -55.7, -1.57),
+                            Vec2d(), Vec2d(20.0, 2.0),
                             Vec2d(0.2, 0.7),
                             0.8
                     ),
                     TrajCoef(
-                            Pose(-132.0, -54.0, -1.57),
-                            Vec2d(40.0, 1.6), Vec2d(40.0, 2.0),
-                            Vec2d(0.2, 0.7), 0.8
+                            Pose(-132.0, -55.7, -1.57),
+                            Vec2d(0.0, 1.6), Vec2d(30.0, 2.0),
+                            Vec2d(0.2, 0.7), 0.76
                     )
             ),
 
-            bTryAgain = TrajCoef(
-                    Pose(-132.0, -54.0, -1.57), 0.8
-            ),
+            bTryAgain = Pose(-132.0, -54.0, -1.57),
 
             //// LONG RED
             bStackBackdrop = Vec2T(
@@ -188,7 +184,7 @@ object Auto {
 
                     TrajCoef(
                             Pose(-74.0, 219.0, -1.57),
-                            Vec2d(40.0, 1.57), Vec2d(40.0, -1.56),
+                            Vec2d(60.0, 1.57), Vec2d(40.0, -1.56),
                             0.8, Vec2d(40.0, 60.0)
                     )),
 
@@ -196,18 +192,18 @@ object Auto {
             cBackdropOffset = Pose(0.0, 0.0, 0.0),
 
             //// LONG RED
-            cBackdropPosX = Vec3(-61.0, -67.0, -75.0),
+            cBackdropPosX = Vec3(-57.0, -70.0, -79.0),
 
             //// LONG RED
             cBackdropStack = Vec2T(
                     TrajCoef(
-                            Pose(), Pose(-133.0, 180.0, -1.57),
+                            Pose(), Pose(-134.0, 180.0, -1.57),
                             Vec2d(30.0, -1.57), Vec2d(),
                             0.8
                     ),
 
                     TrajCoef(
-                            Pose(), Pose(-132.0, -54.0, -1.57),
+                            Pose(), Pose(-132.0, -56.5, -1.57),
                             0.8, Vec2d(40.0, 80.0)
                     )),
 
@@ -320,7 +316,7 @@ object Auto {
             //// SHORT RED
             aStartPreload = Vec3T( /// Pos 0 = under thruss, 1 = mid, 2 e odar
                     TrajCoef(
-                            Pose(-75.0, 10.0, 1.57),
+                            Pose(-75.0, 12.0, 1.57),
                             Vec2d(10.0, 1.6), Vec2d(60.0, 1.5),
                             Vec2d(0.3, 0.6), 0.8
                     ),
@@ -347,18 +343,18 @@ object Auto {
             //// SHORT RED
             backdropStack = Vec4T(
                     TrajCoef(
-                            Pose(-12.0, 10.0, -1.5),
+                            Pose(-13.0, 10.0, -1.5),
                             Vec2d(30.0, -1.57), Vec2d(20.0, 1.64),
                             Vec2d(0.0, 0.2), 0.8
                     ),
                     TrajCoef(
-                            Pose(-14.5, -90.0, -1.57),
+                            Pose(-16.0, -90.0, -1.57),
                             Vec2d(5.0, 0.7), Vec2d(0.0, 0.0),
                             Vec2d(0.0, 0.1), 0.8
                     ),
                     TrajCoef(
-                            Pose(-70.0, -165.0, -1.57),
-                            Vec2d(40.0, -1.57), Vec2d(30.0, 1.6), 0.8,
+                            Pose(-72.0, -164.0, -1.57),
+                            Vec2d(40.0, -1.57), Vec2d(20.0, 1.4), 0.8,
                             Vec2d(24.0, 40.0)
                     ),
                     TrajCoef(
@@ -376,17 +372,17 @@ object Auto {
             ),
 
             //// SHORT RED
-            bStackOffset = Pose(0.0, 0.0, 0.0),
+            bStackOffset = Pose(-2.0, 0.0, 0.0),
 
             //// SHORT RED
             cStackBackdrop = Vec3T(
                     TrajCoef(
-                            Pose(-13.0, -120.0, -1.57),
+                            Pose(-16.0, -120.0, -1.57),
                             Vec2d(15.0, 2.2), Vec2d(30.0, -1.6),
                             Vec2d(0.2, 0.4), 0.8
                     ),
                     TrajCoef(
-                            Pose(-13.0, 45.0, -1.57),
+                            Pose(-17.0, 45.0, -1.57),
                             Vec2d(0.0, 0.2), Vec2d(0.0, 0.0), 0.8,
                             Vec2d(0.0, 0.1)
                     ),
@@ -420,7 +416,10 @@ object AutoVars {
     var WaitStack1 = 0.5
 
     @JvmField
-    var WaitStack2 = 1.1
+    var WaitStack2 = 1.0
+
+    @JvmField
+    var WaitStack2Min = 0.7
 
     @JvmField
     var WaitStack3 = 0.1
@@ -445,6 +444,12 @@ object AutoVars {
 
     @JvmField
     var KMS = 2.0
+
+    @JvmField
+    var failsafe1 = Pose(0.0, -20.0, 0.0)
+
+    @JvmField
+    var failsafe2 = Pose(7.0, 3.0, 0.0)
 
     val colours = arrayOf("#8EE3EF", "#AEF3E7", "#F6BD60", "#F7EDE2", "#37718E", "#F5CAC3", "#84A59D", "#F28482", "#19535F", "#0B7A75", "#D7C9AA", "#7B2D26", "#F0F3F5")
 }

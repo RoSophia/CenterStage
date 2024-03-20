@@ -10,7 +10,10 @@ import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPreload
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPut
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack1
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack2
+import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack2Min
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack3
+import org.firstinspires.ftc.teamcode.auto.AutoVars.failsafe1
+import org.firstinspires.ftc.teamcode.auto.AutoVars.failsafe2
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
@@ -55,21 +58,16 @@ object Cele10Traiectorii {
 
         ts.at(v.bPreloadStack[randomCase].s(ts).t)
                 .aa { intake.status = SStack5 }
-                .sl(WaitStack2)
-                .gt { genCounter = 0; if (clown.sensorReadout() == 3) 5 else 2 }
+                .slc(WaitStack2, { clown.sensorReadout() == 3 }, WaitStack2Min)
+                .failsafeMove({ intake.status = SStack4 }, { clown.sensorReadout() == 3 }, 2, 5, failsafe1, failsafe2)
 
-        ts.st(2)
-                .at(v.bTryAgain.s(ts).so(v.bPreloadStack[randomCase].ep).st(0.2).t)
-        ts.at(v.bTryAgain.s(ts).se(v.bPreloadStack[randomCase].ep + Pose(0.0, -1.0, 0.0)).t)
-                .gt { ++genCounter; if (clown.sensorReadout() == 3 || genCounter == 2) 5 else 2 }
-
-        ts.st(5)
-                .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
+        ts.aa { clown.catchPixel(); __UPDATE_SENSORS = false }
                 .at(v.bStackBackdrop[0].s(ts).cb().t
-                        .addActionT(INTAKEWAIT3) { intake.status = SUp }
+                        .addActionT(0.6) { intake.status = SInvert }
+                        //.addActionT(INTAKEWAIT3) { intake.status = SUp }
                         .addActionE(10.0) { intake.status = SUpulLuiCostacu })
         ts.at(v.bStackBackdrop[1].s(ts).sx(v.cBackdropPosX[randomCase]).ce().t
-                .addActionS(0.0) { clown.goUp(if (randomCase == 0) -2 else 2) })
+                .addActionS(0.0) { clown.goUp((if (randomCase == 0) -2 else 2) * if (AutoRed) -1 else 1) })
                 .aa { clown.open() }
                 .sl(WaitPut)
 
@@ -94,19 +92,13 @@ object Cele10Traiectorii {
                         }
                         __UPDATE_SENSORS = true
                     }
-                    .sl(WaitStack2)
-                    .gt { genCounter = 0; if (clown.sensorReadout() == 3) gi(i, 3) else gi(i, 2) }
-
-            ts.st(gi(i, 2))
-                    .at(v.bTryAgain.s(ts).so(v.cBackdropStack[1].ep + v.stackOffset * i).st(0.2).t)
-            ts.at(v.bTryAgain.s(ts).se(v.cBackdropStack[1].ep + v.stackOffset * i + Pose(0.0, -1.0, 0.0)).t)
-                    .gt { ++genCounter; if (clown.sensorReadout() == 3 || genCounter == 2) gi(i, 3) else gi(i, 2) }
-
-            ts.st(gi(i, 3))
-                    .aa { __UPDATE_SENSORS = false }
+                    .slc(WaitStack2, { clown.sensorReadout() == 3 }, WaitStack2Min)
+                    .failsafeMove(if (i == 0) ({ intake.status = SStack2 }) else ({ intake.status = SIntake }), { clown.sensorReadout() == 3 }, gi(i, 2), gi(i, 5), failsafe1, failsafe2)
+            ts.aa { __UPDATE_SENSORS = false }
+                    .aa { clown.catchPixel() }
                     .at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
-                            .addActionT(WaitStack3) { clown.catchPixel() }
-                            .addActionT(INTAKEWAIT3) { intake.status = SUp }
+                            .addActionT(0.6) { intake.status = SInvert }
+                            //.addActionT(INTAKEWAIT3) { intake.status = SUp }
                             .addActionE(10.0) { intake.status = SUpulLuiCostacu })
             ts.at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
                     .addActionS(0.0) { clown.goUp(-2) }
@@ -198,14 +190,13 @@ object Cele10Traiectorii {
                 .aa { clown.ghearaFar?.position = ClownFDeschis }
                 .aa { clown.targetPos = DiffyUpSafe }
                 .sl(0.1)
-        ts
-                .at(v.aPreloadBackdrop.s(ts).sx(v.backdropPosX[randomCase]).t /// Set sp to last ep and set ep x
-                        .addActionE(60.0) {
-                            clown.targetPos = DiffyUp
-                            clown.targetAngle = DiffyAUp
-                            clown.curState = 0
-                            clown.gelenk?.position = GelenkCenter + (if (randomCase == 2) -2 else 2) * GelenkDif
-                        }) /// Go from put preload to backboard
+        ts.at(v.aPreloadBackdrop.s(ts).sx(v.backdropPosX[randomCase]).t /// Set sp to last ep and set ep x
+                .addActionE(60.0) {
+                    clown.targetPos = DiffyUp
+                    clown.targetAngle = DiffyAUp
+                    clown.curState = 0
+                    clown.gelenk?.position = GelenkCenter + (if (randomCase == 2) -2 else 2) * GelenkDif
+                }) /// Go from put preload to backboard
                 .aa { clown.open() }
                 .sl(0.1)
 
@@ -235,14 +226,12 @@ object Cele10Traiectorii {
                             else -> intake.status = SIntake
                         }
                     }
-                    .sl(WaitStack2)
-
-            //ts.at(v.backdropStack[3].s(ts).so(v.bStackOffset * i).ce().st(STACKCORRTIME2).t) /// Set sp (with offset from last ep carried over) ; Add offset to ep; Set "Continue Continue"; Get traj
-            //.sl(WaitStack1)
+                    .slc(WaitStack2, { clown.sensorReadout() == 3 }, WaitStack2Min)
+                    .failsafeMove(if (i == 0) ({ intake.status = SStack3 }) else if (i == 1) ({ intake.status = SStack2 }) else ({ intake.status = SIntake }), { clown.sensorReadout() == 3 }, gi(i, 2), gi(i, 5), failsafe1, failsafe2)
+                    .aa { clown.catchPixel() }
 
             /// Stack -> Inter2 -> Inter1 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)
             ts.at(v.cStackBackdrop[0].s(ts).so(v.dBackdropOffset * i).cb().t
-                    .addActionT(WaitStack3) { clown.catchPixel() }
                     .addActionT(INTAKEWAIT3) { intake.status = SUp })
                     .aa { intake.status = SIntake; clown.open() }
             ts.at(v.cStackBackdrop[1].s(ts).so(v.dBackdropOffset * i).cc().t
@@ -251,7 +240,7 @@ object Cele10Traiectorii {
                     .addActionE(GOUPDIST + 20) { intake.status = SUpulLuiCostacu }
                     .addActionE(GOUPDIST) { clown.goUp(-1); })
             ts.at(v.cStackBackdrop[2].s(ts).so(v.dBackdropOffset * i).ce().t
-                    .addActionE(20.0) { slides.setTarget(RMID_POS) })
+                    .addActionE(30.0) { slides.setTarget(RMID_POS) })
                     .aa { clown.open() }
                     .sl(WaitPut)
         }
