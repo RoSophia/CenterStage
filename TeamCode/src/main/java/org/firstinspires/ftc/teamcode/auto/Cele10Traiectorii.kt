@@ -30,6 +30,8 @@ import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotVars.ClownFDeschis
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyAUp
@@ -43,11 +45,9 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.__UPDATE_SENSORS
 import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 
 object Cele10Traiectorii {
-    val genTime = ElapsedTime()
-    var genCounter = 0
 
     @JvmStatic
-    fun getCycleTrajLong(ncycle: Int, randomCase: Int, v: LongVals): TrajectorySequence {
+    fun getCycleTrajLongNew(ncycle: Int, randomCase: Int, v: LongVals): TrajectorySequence {
         val ts = TrajectorySequence()
                 .aa { intake.status = SKeep }
                 .aa { clown.targetPos = DiffyUpSafe }
@@ -71,7 +71,9 @@ object Cele10Traiectorii {
                 .aa { clown.open() }
                 .sl(WaitPut)
 
-        for (i in 0 until ncycle - 1) {
+        for (i in 0 until 2) {
+            ts.gt { if (etime.seconds() < 25.0) gi(i, 1) else 2 }
+            ts.st(gi(i, 1))
             ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
                     .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
             ts.at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
@@ -106,8 +108,8 @@ object Cele10Traiectorii {
                     .aa { clown.open() }
                     .sl(WaitPut)
         }
-
-        ts.at(v.zBackdropPark.s(ts).t
+        ts.st(2)
+        ts.at(v.zBackdropPark.ss(v.bStackBackdrop[1].ep).t
                 .addActionS(0.0) { clown.open() }
                 .addActionS(70.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
                 .aa { clown.gelenk?.position = GelenkCenter }
@@ -115,7 +117,7 @@ object Cele10Traiectorii {
     }
 
     @JvmStatic
-    fun getCycleTrajLongNew(ncycle: Int, randomCase: Int, v: LongVals): TrajectorySequence {
+    fun getCycleTrajLong(ncycle: Int, randomCase: Int, v: LongVals): TrajectorySequence {
         val ts = TrajectorySequence()
                 .aa { intake.status = SKeep }
                 .aa { clown.targetPos = DiffyUpSafe }
@@ -139,30 +141,33 @@ object Cele10Traiectorii {
                 .aa { clown.open() }
                 .sl(WaitPut)
 
-        for (i in 0 until ncycle - 1) {
-            ts.gt { if (etime.seconds() > 25.0) gi(i, 1) else 2 }
+        for (i in 0 until 3) {
+            ts.gt { if (etime.seconds() < 23.2) gi(i, 1) else 1000 }
             ts.st(gi(i, 1))
-            if (i > 2) {
-                ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
+            ts.aa { log("Going for $i at", etime.seconds())}
+            if (i > 1) {
+                ts.at(v.xBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
                         .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
-                ts.at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
+                ts.at(v.xBackdropStack[1].s(ts).so(v.stackOffset * i).cc().t
                         .addActionE(100.0) { intake.status = SStack6 })
-                        .aa {intake.status = SStack5 }
-                        .sl(WaitStack1)
-                        .aa {intake.status = SStack4; __UPDATE_SENSORS = true }
-                        .slc(WaitStack2, { clown.sensorReadout() == 3 }, WaitStack2Min)
-                        .failsafeMove({ intake.status = SStack3 }, { clown.sensorReadout() == 3 }, gi(i, 2), gi(i, 5), failsafe1, failsafe2)
-                ts.aa { __UPDATE_SENSORS = false }
+                ts.at(v.xBackdropStack[2].s(ts).so(v.stackOffset * i).ce().st(0.4).t)
+                        .aa { intake.status = SStack5 }
+                        .sl(WaitStack1 / 2.0)
+                        .aa { intake.status = SStack4; }
+                        .sl(WaitStack2Min)
                         .aa { clown.catchPixel() }
-                        .at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
-                                .addActionT(0.6) { intake.status = SInvert }
-                                .addActionE(10.0) { intake.status = SUpulLuiCostacu })
-                ts.at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
+                ts.at(v.xStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
+                        .addActionT(0.6) { intake.status = SInvert })
+                ts.at(v.xStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).cc().t
+                        .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+                ts.at(v.xStackBackdrop[2].s(ts).so(v.cBackdropOffset * i).ce().t
                         .addActionS(0.0) { clown.goUp(-2) }
                         .addActionE(20.0) { slides.setTarget(RMID_POS) })
                         .aa { clown.open() }
                         .sl(WaitPut)
-
+                        .aa {clown.goDown(); slides.setTarget(RBOT_POS); clown.gelenk?.position = GelenkCenter}
+                        .sl(100.0)
+                ts.st(1002)
             } else {
                 ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
                         .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
@@ -200,11 +205,16 @@ object Cele10Traiectorii {
             }
         }
 
-        ts.st(2)
-        ts.at(v.zBackdropPark.s(ts).t
+        ts.st(1000)
+        ts.aa { log("Parking at", etime.seconds())}
+        ts.aa { log("Parking at1", v.zBackdropPark.ss(v.bStackBackdrop[1].ep).sp)}
+        ts.aa { log("Parking at2", v.zBackdropPark.ep)}
+        ts.at(v.zBackdropPark.ss(v.bStackBackdrop[1].ep).t
+                .addActionT(0.0) { log("Currently parkingh", pp.ctraj)}
                 .addActionS(0.0) { clown.open() }
                 .addActionS(70.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
                 .aa { clown.gelenk?.position = GelenkCenter }
+        ts.st(1002)
         return ts
     }
 

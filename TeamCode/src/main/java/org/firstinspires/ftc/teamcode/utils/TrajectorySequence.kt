@@ -138,13 +138,13 @@ class TrajectorySequence {
                 .aa { lst = -10 }
                 .atc({
                     TrajCoef(lp, lp + p1p, 1.5).st(0.2).t
-                            .addActionT(0.1) { if (clown.sensorReadout() == 0) { lst = intake.status; intake.intake.power = IntakeRevPower } }
+                            //.addActionT(0.1) { if (clown.sensorReadout() == 0) { lst = intake.status; intake.intake.power = IntakeRevPower } }
                 }, checkCommand)
                 .aa { if (lst != 10) { intake.status = lst } }
                 .atc({ TrajCoef(lp + p1p, lp + if (curSteps == 0) p2p else p2p.negX(), 1.0).t }, checkCommand)
                 .gt { ++curSteps; if (checkCommand() || curSteps == 2 || etime.seconds() > 25.0) o2 else o1 }
                 .st(o2)
-                .slc(0.3, { etime.seconds() > 25.0 || checkCommand() }, 0.0)
+                .slc(0.4, { etime.seconds() > 25.0 || checkCommand() }, 0.0)
         curPose = lp
         return this
     }

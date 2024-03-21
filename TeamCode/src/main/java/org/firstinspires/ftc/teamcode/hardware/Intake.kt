@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SDown
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SFinalHang
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIdleIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIntake
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SInvert
@@ -43,6 +44,7 @@ object Intakes {
     const val SUpulLuiCostacuIn = 16
     const val SKeep = 17
     const val SInvert2 = 18
+    const val SFinalHang = 19
 }
 
 class Intake {
@@ -92,6 +94,7 @@ class Intake {
                     SUpulLuiCostacuIn -> sint(IntakeGetCostac, 0, -0.5)
                     SKeep -> sint(IntakeGet, 0, -0.3)
                     SInvert2 -> sint(IntakeGetCostac, 0, IntakeRevPower)
+                    SFinalHang -> sint(IntakeHANGHANG, 0, 0.0)
                     else -> {}
                 }
                 field = v

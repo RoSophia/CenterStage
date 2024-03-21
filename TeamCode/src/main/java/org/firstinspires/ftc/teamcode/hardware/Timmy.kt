@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.hardware.bosch.BNO055IMU
+import com.qualcomm.hardware.bosch.BNO055IMU.CalibrationData
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.KILLALL
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyCurOff
 import org.firstinspires.ftc.teamcode.utils.RobotVars.TimmyLoopTime
 import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
@@ -29,6 +31,7 @@ class Timmy(val name: String) {
             while (t.trunning && !KILLALL) {
                 val fixed = t.imu.angularOrientation
                 val y = fixed.firstAngle.toDouble() - TimmyCurOff
+                //log("I MEW PARAMS", t.imu.readCalibrationData().serialize())
                 t.yaw = y
                 t.localizerAccessed = false
                 TimmyLoopTime = ep.seconds()

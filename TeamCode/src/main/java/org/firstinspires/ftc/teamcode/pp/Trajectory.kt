@@ -77,7 +77,7 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
     fun sx(x: Double): TrajCoef { ep.x = x; return this }
     fun so(p: Pose): TrajCoef { ep += p; return this }
     fun se(p: Pose): TrajCoef { ep = p; return this }
-    fun ss(p: Pose): TrajCoef { sp += p; return this }
+    fun ss(p: Pose): TrajCoef { sp = p; return this }
 }
 
 class Trajectory(val start: Pose, var initVel: Double, val end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double, var timeout: Double) {

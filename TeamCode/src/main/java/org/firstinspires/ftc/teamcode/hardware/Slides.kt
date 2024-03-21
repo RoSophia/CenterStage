@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SFinalHang
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 
 class Slides {
     private val enc = Encoder(RidicareEncoderName, RidicareEncoderDir)
@@ -57,6 +61,7 @@ class Slides {
         if (USE_RIDICARE) {
             if (RIDICAREEEEEEEEEE) {
                 val ep = enc.pos
+                TrajectorySequence().sl(0.4).aa { intake.status = SFinalHang }.runAsync()
                 if (ep < RidicareHaveIHangedMyself) {
                     pwr = RidicareHANGEDMYSELF
                     richd = true

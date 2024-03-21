@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto
 
 import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.pp.TrajCoef
+import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.Vec2T
 import org.firstinspires.ftc.teamcode.utils.Vec2d
@@ -12,12 +13,13 @@ import org.firstinspires.ftc.teamcode.utils.Vec4T
 class LongVals(
         @JvmField var aStartPreload: Vec3T,
         @JvmField var bPreloadStack: Vec3T,
-        @JvmField var bTryAgain: Pose,
         @JvmField var bStackBackdrop: Vec2T,
         @JvmField var cBackdropOffset: Pose,
         @JvmField var cBackdropPosX: Vec3,
         @JvmField var cBackdropStack: Vec2T,
         @JvmField var stackOffset: Pose,
+        @JvmField var xBackdropStack: Vec3T,
+        @JvmField var xStackBackdrop: Vec3T,
         @JvmField var zBackdropPark: TrajCoef)
 
 class ShortVals(
@@ -68,14 +70,14 @@ object Auto {
                     ),
 
                     TrajCoef(
-                            Pose(-129.0, 53.0, 1.59),
+                            Pose(-129.0, 52.0, 1.59),
                             Vec2d(0.0, 3.1), Vec2d(30.0, -2.0),
                             Vec2d(0.2, 0.7),
                             0.8
                     ),
 
                     TrajCoef(
-                            Pose(-130.0, 53.0, 1.59),
+                            Pose(-130.0, 52.3, 1.59),
                             Vec2d(40.0, -1.6), Vec2d(30.0, -2.0),
                             Vec2d(0.2, 0.7),
                             0.8, Vec2d(10.0, 20.0)
@@ -83,16 +85,13 @@ object Auto {
             ),
 
             //// LONG BLUE
-            bTryAgain = Pose(0.0, 20.0, 0.0),
-
-            //// LONG BLUE
             bStackBackdrop = Vec2T(
                     TrajCoef(
-                            Pose(-136.0, -130.0, 1.57), 0.8
+                            Pose(-135.0, -130.0, 1.57), 0.8
                     ),
 
                     TrajCoef(
-                            Pose(-74.0, -220.0, 1.57),
+                            Pose(-75.0, -222.0, 1.57),
                             Vec2d(40.0, -1.57), Vec2d(23.0, 1.57),
                             0.8, Vec2d(35.0, 60.0)
                     )),
@@ -120,10 +119,46 @@ object Auto {
             stackOffset = Pose(0.0, 0.0, 0.0),
 
             //// LONG BLUE
+            xBackdropStack = Vec3T(
+                    TrajCoef(
+                            Pose(), Pose(-126.0, -160.0, 1.57),
+                            Vec2d(30.0, 1.57), Vec2d(60.0, -1.3),
+                            1.3
+                    ),
+
+                    TrajCoef(
+                            Pose(), Pose(-127.0, 10.0, 1.57),
+                            1.3, Vec2d(0.0, 0.0)
+                    ),
+
+                    TrajCoef(
+                            Pose(), Pose(-89.0, 51.0, 1.57),
+                            1.3, Vec2d(30.0, 50.0)
+                    ),
+            ),
+
+            //// LONG BLUE
+            xStackBackdrop = Vec3T(
+                    TrajCoef(
+                            Pose(-130.0, 10.0, 1.57), 1.3
+                    ),
+
+                    TrajCoef(
+                            Pose(-129.0, -130.0, 1.57), 1.3
+                    ),
+
+                    TrajCoef(
+                            Pose(-72.0, -221.0, 1.57),
+                            Vec2d(40.0, -1.57), Vec2d(23.0, 1.57),
+                            1.3, Vec2d(35.0, 60.0)
+                    ),
+            ),
+
+            //// LONG BLUE
             zBackdropPark = TrajCoef(
-                    Pose(-123.0, -237.0, 1.57),
+                    Pose(), Pose(-121.0, -234.0, 1.57),
                     Vec2d(60.0, 1.9), Vec2d(60.0, 1.9),
-                    0.7
+                    1.5
             ),
     )
 
@@ -173,8 +208,6 @@ object Auto {
                     )
             ),
 
-            bTryAgain = Pose(-132.0, -54.0, -1.57),
-
             //// LONG RED
             bStackBackdrop = Vec2T(
                     TrajCoef(
@@ -209,6 +242,42 @@ object Auto {
 
             //// LONG RED
             stackOffset = Pose(0.0, 0.0, 0.0),
+
+            //// LONG RED
+            xBackdropStack = Vec3T(
+                    TrajCoef(
+                            Pose(), Pose(-126.0, 160.0, -1.57),
+                            Vec2d(30.0, 1.57), Vec2d(60.0, -1.3),
+                            1.0
+                    ),
+
+                    TrajCoef(
+                            Pose(), Pose(-127.0, -10.0, -1.57),
+                            1.0, Vec2d(0.0, 0.0)
+                    ),
+
+                    TrajCoef(
+                            Pose(), Pose(-80.0, -52.7, -1.57),
+                            1.0, Vec2d(40.0, 80.0)
+                    ),
+            ),
+
+            //// LONG RED
+            xStackBackdrop = Vec3T(
+                    TrajCoef(
+                            Pose(-135.0, -10.0, -1.57), 1.0
+                    ),
+
+                    TrajCoef(
+                            Pose(-136.0, 130.0, -1.57), 1.0
+                    ),
+
+                    TrajCoef(
+                            Pose(-74.0, 220.0, -1.57),
+                            Vec2d(40.0, -1.57), Vec2d(23.0, 1.57),
+                            1.0, Vec2d(35.0, 60.0)
+                    ),
+            ),
 
             //// LONG RED
             zBackdropPark = TrajCoef(
@@ -407,7 +476,7 @@ object Auto {
 @Config
 object AutoVars {
     @JvmField
-    var NumCycles = 3
+    var NumCycles = 4
 
     @JvmField
     var WaitPut = 0.25
@@ -449,7 +518,7 @@ object AutoVars {
     var failsafe1 = Pose(0.0, -20.0, 0.0)
 
     @JvmField
-    var failsafe2 = Pose(7.0, 4.0, 0.0)
+    var failsafe2 = Pose(12.0, 4.0, 0.0)
 
     val colours = arrayOf("#8EE3EF", "#AEF3E7", "#F6BD60", "#F7EDE2", "#37718E", "#F5CAC3", "#84A59D", "#F28482", "#19535F", "#0B7A75", "#D7C9AA", "#7B2D26", "#F0F3F5")
 }
