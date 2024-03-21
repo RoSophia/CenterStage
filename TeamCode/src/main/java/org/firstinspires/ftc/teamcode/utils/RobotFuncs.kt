@@ -234,6 +234,11 @@ object RobotFuncs {
         try {
             if (!timmy.initialized) {
                 timmy.init()
+            } else {
+                if (TimmyToClose) {
+                    timmy.close()
+                    timmy.init()
+                }
             }
             timmy.initThread()
         } catch (e: Exception) {
@@ -245,6 +250,7 @@ object RobotFuncs {
         }
         controller = Controller()
         slides = Slides()
+        slides.setTarget(RBOT_POS)
         localizer = ThreeWheelLocalizer()
         localizer.init(Pose())
         __SwerveMove = USE_SWERVE
@@ -300,18 +306,14 @@ object RobotFuncs {
 
     @JvmStatic
     fun update() {
+        controlHub.clearBulkCache()
         swerve.update()
         slides.update()
         localizer.update()
         intake.update()
-        controlHub.clearBulkCache()
-        /*
-        log("Timmy", timmy.yaw)
-        logs("TimmyOF", TimmyCurOff)
-        logs("TimmyTime", TimmyLoopTime)*/
 
         log("0", 0.0)
-        tp.put("Looptime", ep.seconds())
+        //tp.put("Looptime", ep.seconds())
         tp.put("Framerate", 1 / ep.seconds())
         tp.put("Elapsedtime", etime.seconds())
         ep.reset()

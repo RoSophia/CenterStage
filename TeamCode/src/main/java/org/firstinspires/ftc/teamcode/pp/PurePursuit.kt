@@ -454,12 +454,13 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
                     error = true
                     log("Stalling!!!!!!!!!!!!!!!!!!!!!!!!!", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     swerve.move(0.0, 0.0, 0.0)
+                    update()
                     val kmstime = ElapsedTime()
                     slides.setTarget(RBOT_POS)
                     clown.open()
                     clown.targetPos = DiffyMidUp
                     clown.targetAngle = DiffyADown
-                    while (kmstime.seconds() < 2.0 && !lom.isStopRequested) {}
+                    while (kmstime.seconds() < 2.0 && !lom.isStopRequested) { update() }
                     lom.requestOpModeStop()
                     return
                 }

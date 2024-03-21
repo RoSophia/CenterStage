@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotVars.ClownFDeschis
@@ -64,8 +65,7 @@ object Cele10Traiectorii {
         ts.aa { clown.catchPixel(); __UPDATE_SENSORS = false }
                 .at(v.bStackBackdrop[0].s(ts).cb().t
                         .addActionT(0.6) { intake.status = SInvert }
-                        //.addActionT(INTAKEWAIT3) { intake.status = SUp }
-                        .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+                        .addActionE(25.0) { intake.status = SUpulLuiCostacu })
         ts.at(v.bStackBackdrop[1].s(ts).sx(v.cBackdropPosX[randomCase]).ce().t
                 .addActionS(0.0) { clown.goUp((if (randomCase == 0) -2 else 2) * if (AutoRed) -1 else 1) })
                 .aa { clown.open() }
@@ -115,7 +115,7 @@ object Cele10Traiectorii {
     }
 
     @JvmStatic
-    fun getCycleTrajLongOld(ncycle: Int, randomCase: Int, v: LongVals): TrajectorySequence {
+    fun getCycleTrajLongNew(ncycle: Int, randomCase: Int, v: LongVals): TrajectorySequence {
         val ts = TrajectorySequence()
                 .aa { intake.status = SKeep }
                 .aa { clown.targetPos = DiffyUpSafe }
@@ -123,54 +123,84 @@ object Cele10Traiectorii {
                         .addActionT(0.1) { clown.goPreloadUp() })
                 .aa { clown.ghearaFar?.position = ClownFDeschis }
                 .sl(WaitPreload)
-                .aa { clown.goPreloadDown(); intake.status = SStack6; }
+                .aa { clown.goPreloadDown(); intake.status = SStack6; __UPDATE_SENSORS = true }
 
         ts.at(v.bPreloadStack[randomCase].s(ts).t)
                 .aa { intake.status = SStack5 }
-                .sl(WaitStack2)
-                .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
+                .slc(WaitStack2, { clown.sensorReadout() == 3 }, WaitStack2Min)
+                .failsafeMove({ intake.status = SStack4 }, { clown.sensorReadout() == 3 }, 2, 5, failsafe1, failsafe2)
 
-        ts.at(v.bStackBackdrop[0].s(ts).cb().t
-                .addActionT(INTAKEWAIT3) { intake.status = SUp }
-                .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+        ts.aa { clown.catchPixel(); __UPDATE_SENSORS = false }
+                .at(v.bStackBackdrop[0].s(ts).cb().t
+                        .addActionT(0.6) { intake.status = SInvert }
+                        .addActionE(25.0) { intake.status = SUpulLuiCostacu })
         ts.at(v.bStackBackdrop[1].s(ts).sx(v.cBackdropPosX[randomCase]).ce().t
-                .addActionS(0.0) { clown.goUp(if (randomCase == 0) -2 else 2) })
+                .addActionS(0.0) { clown.goUp((if (randomCase == 0) -2 else 2) * if (AutoRed) -1 else 1) })
                 .aa { clown.open() }
                 .sl(WaitPut)
 
         for (i in 0 until ncycle - 1) {
-            ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
-                    .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
-            ts.at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
-                    .addActionE(100.0) { intake.status = SStack6 })
-                    .aa {
-                        when (i) {
-                            0 -> intake.status = SStack4
-                            1 -> intake.status = SStack2
-                            else -> intake.status = SIntake
-                        }
-                    }
-                    .sl(WaitStack1)
-                    .aa {
-                        when (i) {
-                            0 -> intake.status = SStack3
-                            1 -> intake.status = SStack1
-                            else -> intake.status = SIntake
-                        }
-                    }
-                    .sl(WaitStack2)
+            ts.gt { if (etime.seconds() > 25.0) gi(i, 1) else 2 }
+            ts.st(gi(i, 1))
+            if (i > 2) {
+                ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
+                        .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
+                ts.at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
+                        .addActionE(100.0) { intake.status = SStack6 })
+                        .aa {intake.status = SStack5 }
+                        .sl(WaitStack1)
+                        .aa {intake.status = SStack4; __UPDATE_SENSORS = true }
+                        .slc(WaitStack2, { clown.sensorReadout() == 3 }, WaitStack2Min)
+                        .failsafeMove({ intake.status = SStack3 }, { clown.sensorReadout() == 3 }, gi(i, 2), gi(i, 5), failsafe1, failsafe2)
+                ts.aa { __UPDATE_SENSORS = false }
+                        .aa { clown.catchPixel() }
+                        .at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
+                                .addActionT(0.6) { intake.status = SInvert }
+                                .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+                ts.at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
+                        .addActionS(0.0) { clown.goUp(-2) }
+                        .addActionE(20.0) { slides.setTarget(RMID_POS) })
+                        .aa { clown.open() }
+                        .sl(WaitPut)
 
-            ts.at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
-                    .addActionT(WaitStack3) { clown.catchPixel() }
-                    .addActionT(INTAKEWAIT3) { intake.status = SUp }
-                    .addActionE(10.0) { intake.status = SUpulLuiCostacu })
-            ts.at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
-                    .addActionS(0.0) { clown.goUp(-2) }
-                    .addActionE(20.0) { slides.setTarget(RMID_POS) })
-                    .aa { clown.open() }
-                    .sl(WaitPut)
+            } else {
+                ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
+                        .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
+                ts.at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
+                        .addActionE(100.0) { intake.status = SStack6 })
+                        .aa {
+                            when (i) {
+                                0 -> intake.status = SStack4
+                                1 -> intake.status = SStack2
+                                else -> intake.status = SIntake
+                            }
+                        }
+                        .sl(WaitStack1)
+                        .aa {
+                            when (i) {
+                                0 -> intake.status = SStack3
+                                1 -> intake.status = SStack1
+                                else -> intake.status = SIntake
+                            }
+                            __UPDATE_SENSORS = true
+                        }
+                        .slc(WaitStack2, { clown.sensorReadout() == 3 }, WaitStack2Min)
+                        .failsafeMove(if (i == 0) ({ intake.status = SStack2 }) else ({ intake.status = SIntake }), { clown.sensorReadout() == 3 }, gi(i, 2), gi(i, 5), failsafe1, failsafe2)
+                ts.aa { __UPDATE_SENSORS = false }
+                        .aa { clown.catchPixel() }
+                        .at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
+                                .addActionT(0.6) { intake.status = SInvert }
+                                //.addActionT(INTAKEWAIT3) { intake.status = SUp }
+                                .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+                ts.at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
+                        .addActionS(0.0) { clown.goUp(-2) }
+                        .addActionE(20.0) { slides.setTarget(RMID_POS) })
+                        .aa { clown.open() }
+                        .sl(WaitPut)
+            }
         }
 
+        ts.st(2)
         ts.at(v.zBackdropPark.s(ts).t
                 .addActionS(0.0) { clown.open() }
                 .addActionS(70.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
@@ -195,7 +225,7 @@ object Cele10Traiectorii {
                     clown.targetPos = DiffyUp
                     clown.targetAngle = DiffyAUp
                     clown.curState = 0
-                    clown.gelenk?.position = GelenkCenter + (if (randomCase == 2) -2 else 2) * GelenkDif
+                    clown.gelenk?.position = GelenkCenter + (if (randomCase == 2) -2 else 2) * (if (AutoRed) -1 else 1) * GelenkDif
                 }) /// Go from put preload to backboard
                 .aa { clown.open() }
                 .sl(0.1)
@@ -226,8 +256,9 @@ object Cele10Traiectorii {
                             else -> intake.status = SIntake
                         }
                     }
-                    .slc(WaitStack2, { clown.sensorReadout() == 3 }, WaitStack2Min)
-                    .failsafeMove(if (i == 0) ({ intake.status = SStack3 }) else if (i == 1) ({ intake.status = SStack2 }) else ({ intake.status = SIntake }), { clown.sensorReadout() == 3 }, gi(i, 2), gi(i, 5), failsafe1, failsafe2)
+                    .slc(WaitStack2, if (i == 2) ({ clown.sensorReadout() > 0 }) else ({ clown.sensorReadout() == 3 }), WaitStack2Min)
+                    .failsafeMove(if (i == 0) ({ intake.status = SStack3 }) else if (i == 1) ({ intake.status = SStack2 }) else ({ intake.status = SIntake }),
+                            if (i == 2) ({ clown.sensorReadout() > 0 }) else ({ clown.sensorReadout() == 3 }), gi(i, 2), gi(i, 5), failsafe1, failsafe2)
                     .aa { clown.catchPixel() }
 
             /// Stack -> Inter2 -> Inter1 -> Put (Gheara inchisa -> Diffy up + gheara deschisa)

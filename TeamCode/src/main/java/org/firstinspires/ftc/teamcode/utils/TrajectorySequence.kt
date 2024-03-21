@@ -5,8 +5,12 @@ import org.firstinspires.ftc.teamcode.auto.AutoVars
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import org.firstinspires.ftc.teamcode.pp.Trajectory
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
+import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakeRevPower
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___KILL_DIFFY_THREADS
 import java.util.Vector
 import kotlin.concurrent.thread
@@ -65,19 +69,20 @@ class TrajectorySequence {
 
     fun at(t: Trajectory) = addTrajectory(t)
 
-    fun atc(tf: () -> TrajCoef, checkDone: () -> Boolean): TrajectorySequence {
+    private fun atc(tf: () -> Trajectory, checkDone: () -> Boolean): TrajectorySequence {
+        val t = tf()
         steps.add(
                 TSE(1,
-                        { RobotFuncs.pp.startFollowTraj(tf().t) },
+                        { RobotFuncs.pp.startFollowTraj(t) },
                         { !RobotFuncs.pp.busy || checkDone() },
-                        tf().t
+                        t
                 ))
         return this
     }
 
     fun st(goto: Int): TrajectorySequence {
         steps.add(TSE(-goto))
-        log("Adding $goto", steps.size)
+        //log("Adding $goto", steps.size)
         return this
     }
 
@@ -114,22 +119,32 @@ class TrajectorySequence {
 
     private var curSteps = 0
 
+    private var lp = Pose()
+    private var p1p = Pose()
+    private var p2p = Pose()
+    private var lst = 0
+
     /**
      * @param initCommand: MATA
      */
     fun failsafeMove(afterCommand: () -> Unit, checkCommand: () -> Boolean, o1: Int, o2: Int, p1: Pose, p2: Pose): TrajectorySequence {
-        val lp = curPose
-        val p1p = if (AutoRed) -p1.duplicate() else p1.duplicate()
-        val p2p = if (AutoRed) -p2.duplicate() else p2.duplicate()
+        lp = curPose
+        p1p = if (AutoRed) -p1.duplicate().negX() else p1.duplicate()
+        p2p = if (AutoRed) -p2.duplicate().negX() else p2.duplicate()
         this
-                .gt { curSteps = 0; if (checkCommand()) o2 else o1 }
+                .gt { curSteps = 0; if (checkCommand() || etime.seconds() > 25.0) o2 else o1 }
                 .st(o1)
                 .aa(afterCommand)
-                .atc({ TrajCoef(lp, lp + p1p, 1.0).st(0.2) }, checkCommand)
-                //.atc({ TrajCoef(lp + p1p, lp + if (curSteps == 0) p2p else p2p.negX(), 1.0) }, checkCommand)
-                .gt { ++curSteps; if (checkCommand() || curSteps == 2) o2 else o1 }
+                .aa { lst = -10 }
+                .atc({
+                    TrajCoef(lp, lp + p1p, 1.5).st(0.2).t
+                            .addActionT(0.1) { if (clown.sensorReadout() == 0) { lst = intake.status; intake.intake.power = IntakeRevPower } }
+                }, checkCommand)
+                .aa { if (lst != 10) { intake.status = lst } }
+                .atc({ TrajCoef(lp + p1p, lp + if (curSteps == 0) p2p else p2p.negX(), 1.0).t }, checkCommand)
+                .gt { ++curSteps; if (checkCommand() || curSteps == 2 || etime.seconds() > 25.0) o2 else o1 }
                 .st(o2)
-                .slc(0.3, checkCommand, 0.0)
+                .slc(0.3, { etime.seconds() > 25.0 || checkCommand() }, 0.0)
         curPose = lp
         return this
     }
@@ -159,10 +174,11 @@ class TrajectorySequence {
         if (t.type == 4) {
             val resc = t.conditional()
             for (i in 0 until steps.size) {
+                //log("Searching for $resc got ${steps[i].type}", resc)
                 if (steps[i].type == -resc) {
                     ls = i
                     e = steps[ls]
-                    break
+                    return
                 }
             }
             log("NOT FOUND AAAAAAAAAAAAAAAAAAAAAAAAAAAAa", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA  $resc")
