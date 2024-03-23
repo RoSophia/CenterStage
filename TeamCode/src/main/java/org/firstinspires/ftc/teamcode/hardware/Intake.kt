@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack4
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack5
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack6
+import org.firstinspires.ftc.teamcode.hardware.Intakes.STESTGDOWN
+import org.firstinspires.ftc.teamcode.hardware.Intakes.STESTGOUP
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacuIn
@@ -45,6 +47,9 @@ object Intakes {
     const val SKeep = 17
     const val SInvert2 = 18
     const val SFinalHang = 19
+
+    const val STESTGOUP = 300
+    const val STESTGDOWN = 301
 }
 
 class Intake {
@@ -95,6 +100,8 @@ class Intake {
                     SKeep -> sint(IntakeGet, 0, -0.3)
                     SInvert2 -> sint(IntakeGetCostac, 0, IntakeRevPower)
                     SFinalHang -> sint(IntakeHANGHANG, 0, 0.0)
+                    STESTGOUP -> clown.goUp(0)
+                    STESTGDOWN -> clown.goDown()
                     else -> {}
                 }
                 field = v

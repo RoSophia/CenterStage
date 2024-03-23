@@ -48,10 +48,10 @@ object CameraControls {
     var LUP: Int = 100
 
     @JvmField
-    var LUT: Int = 290
+    var LUT: Int = 310
 
     @JvmField
-    var XOFF: Int = 320
+    var XOFF: Int = 310
 
     @JvmField
     var YOFF: Int = 300
@@ -72,7 +72,7 @@ object CameraControls {
     var CUR_DONE_CORRECTION: Int = 0
 
     @JvmField
-    var CameraMidPos: Double = 400.0
+    var CameraMidPos: Double = 360.0
 
     @JvmField
     var PaiplainMinSat = 100

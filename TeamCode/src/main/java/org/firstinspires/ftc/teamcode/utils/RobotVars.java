@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Config
 public class RobotVars {
-    public static boolean USE_TESTING = true;
+    public static boolean USE_TESTING = false;
     public static boolean USE_TELE = true;
     public static boolean USE_CAMERA = true;
     public static boolean USE_LOCALIZER = true;
@@ -103,7 +103,7 @@ public class RobotVars {
     public static double DiffyPreloadUp = 1.21;
     public static double DiffyUpSafe = 1.2;
     public static double DiffyAUp = -0.13; /// Unghi cu pixel sus
-    public static double DiffyADown = 0.11; /// Unghi fara pixel jos
+    public static double DiffyADown = 0.10; /// Unghi fara pixel jos
     public static double DiffyUp = 1.03; /// Pozitie cu pixel sus
     public static double DiffyDown = 0.5;
     public static double DiffyPrepDown = 0.638; /// Pozitie sta jos asteapta
@@ -126,7 +126,7 @@ public class RobotVars {
     public static double ClownFInchis = 0.69;
     public static double ClownFDeschis = 0.0;
     public static double ClownNInchis = 0.65;
-    public static double ClownNDeschis = 0.20;
+    public static double ClownNDeschis = 0.11;
     public static double ClownWait1 = 0.1;
     public static double ClownWait2 = 0.14;
     public static double ClownWait4 = 0.15;
@@ -144,11 +144,11 @@ public class RobotVars {
     public static double IntakeRevPower = 1.0;
     public static Vec4 IntakeGet = new Vec4(0.388, 0.145, 0.395, 0.3); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.388, 0.2, 0.55, 0.45); // Get 1 2 Up 1 2
-    public static Vec4 IntakeGetCostac = new Vec4(0.415, 0.35, 0.40, 0.16); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGetCostac = new Vec4(0.42, 0.35, 0.40, 0.16); // Get 1 2 Up 1 2
     public static Vec4 IntakeStack12 = new Vec4(0.395, 0.16, 0.395, 0.18); // Get1 - 2
     public static Vec4 IntakeStack34 = new Vec4(0.395, 0.195, 0.395, 0.21); // Get3 - 4
     public static Vec4 IntakeStack56 = new Vec4(0.395, 0.23, 0.395, 0.26); // Get5 - 6
-    public static Vec4 IntakeHANGHANG = new Vec4(0.5, 0.5, 0.395, 0.26); // Get5 - 6
+    public static Vec4 IntakeHANGHANG = new Vec4(0.5, 0.49, 0.395, 0.26); // Get5 - 6
     public static int __IntakeSetStatus = 20;
 
     public static boolean __LOG_STATUS = false;
@@ -178,6 +178,8 @@ public class RobotVars {
     public static Integer WheelsPoseRetentionTime = 500000000;
     public static double KMSKMS = 1.0;
     public static double KMSKMSKMS = 1.0;
+
+    public static boolean ShortPlus = false;
 
     /*
     Alea vechi

@@ -68,8 +68,8 @@ class CreateGod : LinearOpMode() {
         }
 
 
-        /*
         create_god()
+        /*
 
         initQrCamera()
 

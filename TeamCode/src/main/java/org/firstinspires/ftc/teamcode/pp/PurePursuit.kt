@@ -291,7 +291,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         transP.reset()
         angleP.reset()
         stallTime.reset()
-        log("ctraj", ctraj)
+        //log("ctraj", ctraj)
     }
 
     private fun gangle(o12: Vec2d): Double {

@@ -215,14 +215,14 @@ class Clown(name: String) {
     fun goPreloadUp() {
         if (USE_DIFFY) {
             threads.add(goPreloadUpTraj.runAsyncDiffy())
-            logs("Create traj ${threads.lastElement().id}", "PreloadUp")
+            //logs("Create traj ${threads.lastElement().id}", "PreloadUp")
         }
     }
 
     fun goPreloadDown() {
         if (USE_DIFFY) {
             threads.add(goPreloadDownTraj.runAsyncDiffy())
-            logs("Create traj ${threads.lastElement().id}", "PreloadDown")
+            //logs("Create traj ${threads.lastElement().id}", "PreloadDown")
         }
     }
 
@@ -276,9 +276,11 @@ class Clown(name: String) {
 
     fun catchPixel() {
         if (USE_DIFFY) {
-            killextrathreads()
-            threads.add(sexPixelTraj.runAsyncDiffy())
-            logs("Create traj ${threads.lastElement().id}", "SexPixel")
+            if (curState == -100 || curState == -102) {
+                killextrathreads()
+                threads.add(sexPixelTraj.runAsyncDiffy())
+                //logs("Create traj ${threads.lastElement().id}", "SexPixel")
+            }
         }
     }
 
@@ -290,12 +292,12 @@ class Clown(name: String) {
             when (curState) {
                 -100 -> {
                     threads.add(goUpTraj.runAsyncDiffy())
-                    logs("Create traj ${threads.lastElement().id}", "GOUP")
+                    //logs("Create traj ${threads.lastElement().id}", "GOUP")
                 }
 
                 -101, -102 -> {
                     threads.add(goUp2Traj.runAsyncDiffy())
-                    logs("Create traj ${threads.lastElement().id}", "GOUP2")
+                    //logs("Create traj ${threads.lastElement().id}", "GOUP2")
                 }
 
                 else -> {
@@ -314,7 +316,7 @@ class Clown(name: String) {
             killextrathreads()
             if (curState != -102 && curState != -100) {
                 threads.add(goDownTraj.runAsyncDiffy())
-                logs("Create traj ${threads.lastElement().id}", "GODOWN")
+                //logs("Create traj ${threads.lastElement().id}", "GODOWN")
             } else {
                 gelenk?.position = GelenkCenter
                 targetAngle = DiffyADown

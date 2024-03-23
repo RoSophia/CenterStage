@@ -59,7 +59,8 @@ object tilipo {
                     curstackp = 6
                 }
             }
-            if (controller.C1Y == controller.JUST_PRESSED) {
+
+            if (controller.C1Y == controller.JUST_PRESSED || controller.C2Y == controller.JUST_PRESSED) {
                 curstackp = 6
                 if (intake.running) {
                     intake.status = Intakes.SNothing
@@ -70,6 +71,14 @@ object tilipo {
 
             if (controller.C2B == controller.JUST_PRESSED || controller.C1B == controller.JUST_PRESSED) {
                 clown.goDown()
+            }
+
+            if (controller.C2X == controller.JUST_PRESSED) {
+                if (intake.status == Intakes.SFinalHang) {
+                    intake.status = Intakes.SNothing
+                } else {
+                    intake.status = Intakes.SFinalHang
+                }
             }
             /*
             if (controller.C1LB == controller.JUST_PRESSED) {
@@ -103,14 +112,6 @@ object tilipo {
                     slides.youShouldHangYourselfNOW()
                 } else {
                     slides.RIDICAREEEEEEEEEE = false
-                }
-            }
-
-            if (controller.C2Y == controller.JUST_PRESSED) {
-                if (intake.running) {
-                    intake.status = Intakes.SNothing
-                } else {
-                    intake.status = Intakes.SIntake
                 }
             }
 

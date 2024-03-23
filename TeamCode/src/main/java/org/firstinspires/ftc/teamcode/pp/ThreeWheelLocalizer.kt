@@ -108,8 +108,8 @@ class ThreeWheelLocalizer : Localizer {
                 _pose.h = angNorm(timmy.yaw)
             }
             log("CurPos", _pose)
-            log("CurPosX", _pose.x)
-            log("CurPosY", _pose.y)
+            //log("CurPosX", _pose.x)
+            //log("CurPosY", _pose.y)
 
             if (__COIN) {
                 val wheelVelocities = listOf(

@@ -70,12 +70,11 @@ class TrajectorySequence {
     fun at(t: Trajectory) = addTrajectory(t)
 
     private fun atc(tf: () -> Trajectory, checkDone: () -> Boolean): TrajectorySequence {
-        val t = tf()
         steps.add(
                 TSE(1,
-                        { RobotFuncs.pp.startFollowTraj(t) },
+                        { RobotFuncs.pp.startFollowTraj(tf()) },
                         { !RobotFuncs.pp.busy || checkDone() },
-                        t
+                        tf()
                 ))
         return this
     }
@@ -120,31 +119,32 @@ class TrajectorySequence {
     private var curSteps = 0
 
     private var lp = Pose()
-    private var p1p = Pose()
-    private var p2p = Pose()
     private var lst = 0
+
+    private fun gett(p1p: Pose, p2p: Pose): Trajectory {
+        //log("Gett got $curSteps give ", if (curSteps == 0) "+" else "-")
+        return (if (curSteps == 0) TrajCoef(lp + p1p, lp + p2p, 1.0)
+        else TrajCoef(lp + p1p, lp + p2p.negX(), 1.0)).t
+    }
 
     /**
      * @param initCommand: MATA
      */
     fun failsafeMove(afterCommand: () -> Unit, checkCommand: () -> Boolean, o1: Int, o2: Int, p1: Pose, p2: Pose): TrajectorySequence {
         lp = curPose
-        p1p = if (AutoRed) -p1.duplicate().negX() else p1.duplicate()
-        p2p = if (AutoRed) -p2.duplicate().negX() else p2.duplicate()
+        val p1p = if (AutoRed) -p1.negX() else p1.duplicate()
+        val p2p = if (AutoRed) -p2.negX() else p2.duplicate()
         this
                 .gt { curSteps = 0; if (checkCommand() || etime.seconds() > 25.0) o2 else o1 }
                 .st(o1)
-                .aa(afterCommand)
                 .aa { lst = -10 }
-                .atc({
-                    TrajCoef(lp, lp + p1p, 1.5).st(0.2).t
-                            //.addActionT(0.1) { if (clown.sensorReadout() == 0) { lst = intake.status; intake.intake.power = IntakeRevPower } }
-                }, checkCommand)
+                .atc({ TrajCoef(lp, lp + p1p, 1.5).st(0.2).t }, checkCommand)
+                .aa(afterCommand)
                 .aa { if (lst != 10) { intake.status = lst } }
-                .atc({ TrajCoef(lp + p1p, lp + if (curSteps == 0) p2p else p2p.negX(), 1.0).t }, checkCommand)
+                .atc({gett(p1p, p2p)}, checkCommand)
                 .gt { ++curSteps; if (checkCommand() || curSteps == 2 || etime.seconds() > 25.0) o2 else o1 }
                 .st(o2)
-                .slc(0.4, { etime.seconds() > 25.0 || checkCommand() }, 0.0)
+                .slc(0.4, { etime.seconds() > 25.0 || checkCommand() }, 0.2)
         curPose = lp
         return this
     }

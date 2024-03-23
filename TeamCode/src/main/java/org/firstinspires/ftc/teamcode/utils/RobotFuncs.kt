@@ -79,18 +79,35 @@ object RobotFuncs {
 
     @JvmStatic
     fun send_log() {
-        while (!logmu.tryLock()) { Thread.sleep(1); }
-        dashboard.sendTelemetryPacket(tp)
-        tp = TelemetryPacket()
-        logmu.unlock()
+        try {
+            while (!logmu.tryLock()) { Thread.sleep(1); }
+            dashboard.sendTelemetryPacket(tp)
+            tp = TelemetryPacket()
+            logmu.unlock()
+        } catch (e: Exception) {
+            try {
+                if (logmu.isLocked && logmu.holdsLock(Thread.currentThread())) {
+                    logmu.unlock()
+                }
+            } catch (_: Exception) {}
+        }
     }
 
     @JvmStatic
     fun log(s: String, v: String) {
         if (USE_TELE) {
-            while (!logmu.tryLock()) { Thread.sleep(1); }
-            tp.put(s, v)
-            logmu.unlock()
+            try {
+                while (!logmu.tryLock()) {
+                    Thread.sleep(1); }
+                tp.put(s, v)
+                logmu.unlock()
+            } catch (e: Exception) {
+                try {
+                    if (logmu.isLocked && logmu.holdsLock(Thread.currentThread())) {
+                        logmu.unlock()
+                    }
+                } catch (_: Exception) {}
+            }
         }
     }
 
@@ -314,8 +331,8 @@ object RobotFuncs {
 
         log("0", 0.0)
         //tp.put("Looptime", ep.seconds())
-        tp.put("Framerate", 1 / ep.seconds())
-        tp.put("Elapsedtime", etime.seconds())
+        log("Framerate", 1 / ep.seconds())
+        log("Elapsedtime", etime.seconds())
         ep.reset()
         send_log()
     }
@@ -345,12 +362,14 @@ object RobotFuncs {
 
     @JvmStatic
     fun create_god() {
-        try {
-            val bmap = BitmapFactory.decodeFile("/storage/self/primary/Hot.png")
-            FtcDashboard.getInstance().sendImage(bmap)
-        } catch (e: Exception) {
-            logst("God could not be created. This is your fault.")
-        }
+        TrajectorySequence().sl(0.4).aa {
+            try {
+                val bmap = BitmapFactory.decodeFile("/storage/self/primary/Hot.png")
+                FtcDashboard.getInstance().sendImage(bmap)
+            } catch (e: Exception) {
+                logst("God could not be created. This is your fault.")
+            }
+        }.runAsync()
     }
 }
 

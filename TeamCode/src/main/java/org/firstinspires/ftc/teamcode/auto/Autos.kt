@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.auto.AutoVars.NumCycles
 import org.firstinspires.ftc.teamcode.auto.Cele10Traiectorii.getCycleTrajLong
 import org.firstinspires.ftc.teamcode.auto.Cele10Traiectorii.getCycleTrajShort
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
+import org.firstinspires.ftc.teamcode.utils.RobotVars.ShortPlus
 
 @Autonomous
 @Photon
@@ -30,5 +31,17 @@ class BlueAuto: LinearOpMode() {
 @Autonomous
 @Photon
 class BlueShortAuto: LinearOpMode() {
-    override fun runOpMode() = setupAuto(this, isRed = false, isShort = true) { getCycleTrajShort(NumCycles, AutoResult, Auto.shortBlue) }
+    override fun runOpMode() {
+        ShortPlus = false
+        setupAuto(this, isRed = false, isShort = true) { getCycleTrajShort(NumCycles, AutoResult, Auto.shortBlue) }
+    }
+}
+
+@Autonomous
+@Photon
+class BlueShortAutoBig: LinearOpMode() {
+    override fun runOpMode() {
+        ShortPlus = true
+        setupAuto(this, isRed = false, isShort = true) { getCycleTrajShort(NumCycles, AutoResult, Auto.shortBlue) }
+    }
 }
