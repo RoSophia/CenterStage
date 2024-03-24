@@ -81,8 +81,8 @@ class Clown(name: String) {
 
     private fun updateTarget() {
         if (USE_DIFFY) {
-            RS.position = (targetPos / 2.0 + targetAngle) + DiffyROff
             LS.position = (targetPos / 2.0 - targetAngle) + DiffyLOff
+            RS.position = (targetPos / 2.0 + targetAngle) + DiffyROff
         }
     }
 

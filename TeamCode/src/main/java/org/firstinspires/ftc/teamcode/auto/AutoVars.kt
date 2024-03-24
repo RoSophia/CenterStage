@@ -295,6 +295,188 @@ object Auto {
                     TrajCoef(
                             Pose(-75.0, -12.0, -1.57),
                             Vec2d(), Vec2d(60.0, -1.5),
+                            Vec2d(0.2, 0.8), 1.0
+                    ),
+                    TrajCoef(
+                            Pose(-66.0, -10.0, -0.2),
+                            Vec2d(), Vec2d(2.0, -0.0),
+                            Vec2d(0.1, 0.5), 1.0,
+                            Vec2d(34.0, 60.0)
+                    ),
+                    TrajCoef(
+                            Pose(-40.0, -26.0, 0.0),
+                            Vec2d(0.2, 0.6), 1.0
+                    )
+            ),
+
+            //// SHORT BLUE
+            aPreloadBackdrop = TrajCoef(
+                    Pose(0.0, -108.0, 1.57), Vec2d(), Vec2d(),
+                    Vec2d(0.2, 0.8), 0.9, Vec2d(30.0, 60.0)
+            ),
+
+            //// SHORT BLUE
+            backdropPosX = Vec3(-92.0, -79.0, -58.0),
+
+            //// SHORT BLUE
+            backdropStack = Vec4T(
+                    TrajCoef(
+                            Pose(-16.0, -14.0, 1.5),
+                            Vec2d(30.0, 1.57), Vec2d(10.0, 1.64),
+                            Vec2d(0.0, 0.2), 0.9
+                    ),
+                    TrajCoef(
+                            Pose(-13.5, 90.0, 1.57),
+                            Vec2d(5.0, -0.7), Vec2d(0.0, 0.0),
+                            Vec2d(0.0, 0.1), 0.9
+                    ),
+                    TrajCoef(
+                            Pose(-72.0, 169.0, 1.59),
+                            Vec2d(40.0, 1.57), Vec2d(30.0, -1.6), 0.9,
+                            Vec2d(30.0, 62.0)
+                    ),
+                    TrajCoef(
+                            Pose(-104.0, 172.6, 1.59),
+                            Vec2d(50.0, 1.57), Vec2d(30.0, -0.1), 1.0,
+                            Vec2d(44.0, 60.0)
+                    ),
+            ),
+
+            //// SHORT BLUE
+            bStackOffset = Pose(1.4, 1.0, 0.0),
+
+            //// SHORT BLUE
+            cStackBackdrop = Vec3T(
+                    TrajCoef(
+                            Pose(-17.0, 120.0, 1.57),
+                            Vec2d(15.0, -2.2), Vec2d(30.0, 1.6),
+                            Vec2d(0.2, 0.4), 0.9
+                    ),
+                    TrajCoef(
+                            Pose(-17.0, -50.0, 1.57),
+                            Vec2d(0.0, -0.7), Vec2d(0.0, 0.0),
+                            Vec2d(0.0, 0.1), 0.9
+                    ),
+                    TrajCoef(
+                            Pose(-63.0, -106.0, 1.57),
+                            Vec2d(20.0, -1.5), Vec2d(40.0, 1.5),
+                            0.95, Vec2d(34.0, 54.0)
+                    )
+            ),
+
+            //// SHORT BLUE
+            dBackdropOffset = Pose(-0.0, -0.0, 0.0),
+
+            //// SHORT BLUE
+            xStack = TrajCoef(
+                Pose(-81.0, 168.0, 1.57),
+            ),
+
+
+            //// SHORT BLUE
+            putPark = TrajCoef(
+                    Pose(-16.0, -100.0, 1.57),
+                    Vec2d(60.0, 1.5), Vec2d(60.0, 2.7)
+            )
+    )
+
+    @JvmField
+    var shortRed = ShortVals(
+            //// SHORT RED
+            aStartPreload = Vec3T( /// Pos 0 = under thruss, 1 = mid, 2 e odar
+                    TrajCoef(
+                            Pose(-75.0, 12.0, 1.57),
+                            Vec2d(10.0, 1.6), Vec2d(60.0, 1.5),
+                            Vec2d(0.3, 0.6), 0.9
+                    ),
+                    TrajCoef(
+                            Pose(-66.0, 10.0, 0.2),
+                            Vec2d(), Vec2d(2.0, 0.0),
+                            Vec2d(0.2, 0.4), 0.9,
+                            Vec2d(34.0, 60.0)
+                    ),
+                    TrajCoef(
+                            Pose(-40.0, 30.0, 0.0), Vec2d(0.2, 0.4), 1.0
+                    )
+            ),
+
+            //// SHORT RED
+            aPreloadBackdrop = TrajCoef(
+                    Pose(0.0, 100.9, -1.57), Vec2d(), Vec2d(),
+                    Vec2d(0.2, 0.4), 0.9, Vec2d(33.0, 60.0)
+            ),
+
+            //// SHORT RED
+            backdropPosX = Vec3(-86.0, -70.0, -61.0),
+
+            //// SHORT RED
+            backdropStack = Vec4T(
+                    TrajCoef(
+                            Pose(-12.0, 10.0, -1.5),
+                            Vec2d(30.0, -1.57), Vec2d(20.0, 1.64),
+                            Vec2d(0.0, 0.2), 0.9
+                    ),
+                    TrajCoef(
+                            Pose(-12.0, -90.0, -1.57),
+                            Vec2d(5.0, 0.7), Vec2d(0.0, 0.0),
+                            Vec2d(0.0, 0.1), 0.9
+                    ),
+                    TrajCoef(
+                            Pose(-62.5, -169.0, -1.59),
+                            Vec2d(40.0, -1.57), Vec2d(20.0, 1.4), 0.8,
+                            Vec2d(30.0, 55.0)
+                    ),
+                    TrajCoef(
+                            Pose(-100.0, -172.0, -1.59),
+                            Vec2d(50.0, -1.57), Vec2d(30.0, 0.1), 0.9,
+                            Vec2d(40.0, 60.0)
+                    ),
+            ),
+
+            //// SHORT RED
+            bStackOffset = Pose(-2.0, -1.5, 0.0),
+
+            //// SHORT RED
+            cStackBackdrop = Vec3T(
+                    TrajCoef(
+                            Pose(-12.0, -125.0, -1.57),
+                            Vec2d(15.0, 2.2), Vec2d(30.0, -1.6),
+                            Vec2d(0.2, 0.4), 0.9
+                    ),
+                    TrajCoef(
+                            Pose(-13.0, 45.0, -1.57),
+                            Vec2d(0.0, 0.2), Vec2d(0.0, 0.0), 0.9,
+                            Vec2d(0.0, 0.1)
+                    ),
+                    TrajCoef(
+                            Pose(-67.5, 101.5, -1.57),
+                            Vec2d(20.0, 1.5), Vec2d(40.0, -1.58),
+                            1.0, Vec2d(38.0, 54.0)
+                    )
+            ),
+
+            //// SHORT RED
+            dBackdropOffset = Pose(-0.0, 0.0, 0.0),
+
+            //// SHORT RED
+            xStack = TrajCoef(
+                    Pose(-99.0, -168.0, -1.57),
+            ),
+
+            //// SHORT RED
+            putPark = TrajCoef(
+                    Pose(-19.0, 100.0, -1.57),
+                    Vec2d(80.0, -0.5), Vec2d(80.0, -2.7),
+                    0.5, Vec2d(0.1, 0.2)
+            )
+    )
+
+    var shortBlueOld = ShortVals(
+            //// SHORT BLUE
+            aStartPreload = Vec3T( /// Pos 0 = under thruss, 1 = mid, 2 e odar
+                    TrajCoef(
+                            Pose(-75.0, -12.0, -1.57),
+                            Vec2d(), Vec2d(60.0, -1.5),
                             Vec2d(0.2, 0.8), 0.8
                     ),
                     TrajCoef(
@@ -365,7 +547,7 @@ object Auto {
 
             //// SHORT BLUE
             xStack = TrajCoef(
-                Pose(-81.0, 168.0, 1.57),
+                    Pose(-81.0, 168.0, 1.57),
             ),
 
 
@@ -376,8 +558,7 @@ object Auto {
             )
     )
 
-    @JvmField
-    var shortRed = ShortVals(
+    var shortRedOld = ShortVals(
             //// SHORT RED
             aStartPreload = Vec3T( /// Pos 0 = under thruss, 1 = mid, 2 e odar
                     TrajCoef(
@@ -469,16 +650,16 @@ object AutoVars {
     var NumCycles = 3
 
     @JvmField
-    var WaitPut = 0.17
+    var WaitPut = 0.1
 
     @JvmField
-    var WaitStack1 = 0.5
+    var WaitStack1 = 0.4
 
     @JvmField
     var WaitStack2 = 0.76
 
     @JvmField
-    var WaitStack2Min = 0.5
+    var WaitStack2Min = 0.4
 
     @JvmField
     var WaitStack3 = 0.1
@@ -493,7 +674,10 @@ object AutoVars {
     var INTAKEWAIT3 = 0.3
 
     @JvmField
-    var GOUPDIST = 52.0
+    var GOUPDISTRED = 52.0
+
+    @JvmField
+    var GOUPDISTBLUE = 57.0
 
     @JvmField
     var STACKCORRTIME1 = 0.1

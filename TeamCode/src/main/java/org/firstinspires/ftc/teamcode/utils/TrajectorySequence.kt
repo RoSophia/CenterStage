@@ -117,35 +117,31 @@ class TrajectorySequence {
     fun sl(s: Double) = sleep(s)
 
     private var curSteps = 0
+    private val poses = Vector<Pose>()
 
-    private var lp = Pose()
-    private var lst = 0
-
-    private fun gett(p1p: Pose, p2p: Pose): Trajectory {
-        //log("Gett got $curSteps give ", if (curSteps == 0) "+" else "-")
-        return (if (curSteps == 0) TrajCoef(lp + p1p, lp + p2p, 1.0)
-        else TrajCoef(lp + p1p, lp + p2p.negX(), 1.0)).t
+    private fun gett(p1p: Pose, p2p: Pose, cp: Int): Trajectory {
+        return (if (curSteps == 0) TrajCoef(poses[cp] + p1p, poses[cp] + p2p, 1.0)
+        else TrajCoef(poses[cp] + p1p, poses[cp] + p2p.negX(), 1.0)).t
     }
 
     /**
      * @param initCommand: MATA
      */
     fun failsafeMove(afterCommand: () -> Unit, checkCommand: () -> Boolean, o1: Int, o2: Int, p1: Pose, p2: Pose): TrajectorySequence {
-        lp = curPose
+        poses.add(curPose)
+        val cp = poses.size - 1
         val p1p = if (AutoRed) -p1.negX() else p1.duplicate()
         val p2p = if (AutoRed) -p2.negX() else p2.duplicate()
         this
                 .gt { curSteps = 0; if (checkCommand() || etime.seconds() > 25.0) o2 else o1 }
                 .st(o1)
-                .aa { lst = -10 }
-                .atc({ TrajCoef(lp, lp + p1p, 1.5).st(0.2).t }, checkCommand)
+                .atc({ TrajCoef(poses[cp], poses[cp] + p1p, 1.5).st(0.2).t }, checkCommand)
                 .aa(afterCommand)
-                .aa { if (lst != 10) { intake.status = lst } }
-                .atc({gett(p1p, p2p)}, checkCommand)
+                .atc({gett(p1p, p2p, cp)}, checkCommand)
                 .gt { ++curSteps; if (checkCommand() || curSteps == 2 || etime.seconds() > 25.0) o2 else o1 }
                 .st(o2)
                 .slc(0.4, { etime.seconds() > 25.0 || checkCommand() }, 0.2)
-        curPose = lp
+        curPose = poses.lastElement()
         return this
     }
 

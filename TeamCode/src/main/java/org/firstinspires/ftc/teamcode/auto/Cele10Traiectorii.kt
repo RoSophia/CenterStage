@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode.auto
 
-import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.auto.AutoVars.GOUPDIST
+import org.firstinspires.ftc.teamcode.auto.AutoVars.GOUPDISTBLUE
+import org.firstinspires.ftc.teamcode.auto.AutoVars.GOUPDISTRED
 import org.firstinspires.ftc.teamcode.auto.AutoVars.INTAKEWAIT3
 import org.firstinspires.ftc.teamcode.auto.AutoVars.KMS
-import org.firstinspires.ftc.teamcode.auto.AutoVars.SLEEPY_TIME_UWU
-import org.firstinspires.ftc.teamcode.auto.AutoVars.STACKCORRTIME1
-import org.firstinspires.ftc.teamcode.auto.AutoVars.STACKCORRTIME2
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPreload
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPut
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack1
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack2
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack2Min
-import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack3
 import org.firstinspires.ftc.teamcode.auto.AutoVars.failsafe1
 import org.firstinspires.ftc.teamcode.auto.AutoVars.failsafe1s
 import org.firstinspires.ftc.teamcode.auto.AutoVars.failsafe2
@@ -132,7 +128,7 @@ object Cele10Traiectorii {
 
         ts.at(v.bPreloadStack[randomCase].s(ts).t)
                 .aa { intake.status = SStack5 }
-                .slc(WaitStack2 + SLEEPY_TIME_UWU, { clown.sensorReadout() == 3 }, WaitStack2Min + SLEEPY_TIME_UWU)
+                .slc(WaitStack2, { clown.sensorReadout() == 3 }, WaitStack2Min)
                 .failsafeMove({ intake.status = SStack4 }, { clown.sensorReadout() == 3 }, 2, 5, failsafe1, failsafe2)
 
         ts.aa { clown.catchPixel(); __UPDATE_SENSORS = false }
@@ -224,7 +220,7 @@ object Cele10Traiectorii {
 
     fun gi(i: Int, p: Int) = (i + 1) * 20 + p
 
-    fun overteemShort() = etime.seconds() > 25.0
+    fun overteemShort() = etime.seconds() > 24.4
 
     @JvmStatic
     fun getCycleTrajShort(ncycle: Int, randomCase: Int, v: ShortVals): TrajectorySequence {
@@ -245,7 +241,6 @@ object Cele10Traiectorii {
                 }) /// Go from put preload to backboard
                 .aa { clown.open() }
                 .sl(0.1)
-                .sl(SLEEPY_TIME_UWU)
 
         for (i in 0 until 3) {
             /// Put -> Inter1 (Diffy down) -> Inter2 -> Stack (Diffy down + gheara inchisa -> gheara deschisa + intake)
@@ -256,6 +251,7 @@ object Cele10Traiectorii {
                     .addActionS(50.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
             ts.at(v.backdropStack[1].s(ts).so(v.bStackOffset * i).cc().t) /// Set sp (with offset from last ep carried over) ; Add offset to ep; Set "Continue Continue"; Get traj
                     .aa { intake.status = SIntake; }
+            if (!ShortPlus || i < 2) {
             ts.at(v.backdropStack[2].s(ts).so(v.bStackOffset * i
                     + Pose(0.0, if (i == 0) (if (AutoRed) -KMS else KMS) else 0.0, 0.0))
                     .ce().t
@@ -270,7 +266,6 @@ object Cele10Traiectorii {
                     }
                     .slc(WaitStack1, {overteemShort()}, 0.0)
 
-            if (!ShortPlus || i < 2) {
                 ts.aa {
                     when (i) {
                         0 -> intake.status = SStack4
@@ -281,10 +276,13 @@ object Cele10Traiectorii {
                         .slc(WaitStack2, { clown.sensorReadout() == 3 || overteemShort() }, WaitStack2Min)
                         .failsafeMove(if (i == 0) ({ intake.status = SStack3 }) else ({ intake.status = SIntake }), { clown.sensorReadout() == 3 }, gi(i, 2), gi(i, 5), failsafe1s, failsafe2)
             } else {
-                ts.aa { intake.status = SStack6}
-                        .at(v.xStack.s(ts).so(v.bStackOffset * i).t)
-                        .aa { intake.status = SStack5 }
-                        .slc(WaitStack2, { clown.sensorReadout() == 3  || overteemShort() }, WaitStack2Min)
+                ts.at(v.backdropStack[3].s(ts).so(v.bStackOffset * i).ce().t
+                        .addActionE(150.0) { intake.status = SStack6 }
+                        .addActionE(100.0) { intake.status = SIntake }
+                        .addActionE(0.0) { intake.status = SStack6 })
+                        .aa { intake.status = SStack3 }
+                        .slc(WaitStack1, { overteemShort() || clown.sensorReadout() == 3 }, 0.0)
+                        .failsafeMove({ intake.status = SStack2 }, { clown.sensorReadout() == 3 || overteemShort() }, gi(i, 2), gi(i, 5), failsafe1s, failsafe2)
             }
                     .aa { clown.catchPixel() }
 
@@ -295,8 +293,8 @@ object Cele10Traiectorii {
             ts.at(v.cStackBackdrop[1].s(ts).so(v.dBackdropOffset * i).cc().t
                     .addActionS(20.0) { intake.status = SIntake }
                     .addActionS(30.0) { clown.catchPixel() }
-                    .addActionE(GOUPDIST + 20) { intake.status = SUpulLuiCostacu }
-                    .addActionE(GOUPDIST) { clown.goUp(-1); })
+                    .addActionE((if (AutoRed) GOUPDISTRED else GOUPDISTBLUE) + 20) { intake.status = SUpulLuiCostacu }
+                    .addActionE(if (AutoRed) GOUPDISTRED else GOUPDISTBLUE) { clown.goUp(-1); })
             ts.at(v.cStackBackdrop[2].s(ts).so(v.dBackdropOffset * i).ce().t
                     .addActionE(30.0) { slides.setTarget(RMID_POS) })
                     .aa { clown.open() }

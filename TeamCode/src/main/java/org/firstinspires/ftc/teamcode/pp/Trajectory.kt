@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.pp.PP.MAX_TIME
 import org.firstinspires.ftc.teamcode.pp.PP.PeruEnd
 import org.firstinspires.ftc.teamcode.pp.PP.PeruStart
 import org.firstinspires.ftc.teamcode.utils.Pose
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
