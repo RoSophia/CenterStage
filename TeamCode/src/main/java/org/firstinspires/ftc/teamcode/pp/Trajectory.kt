@@ -33,17 +33,18 @@ class Action(val checkNr: Int, val act: () -> Unit) {
 class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1: Vec2d, @JvmField var v2: Vec2d, @JvmField var h: Vec2d, @JvmField var mf: Double, @JvmField var peru: Vec2d, var initVel: Double, var timeout: Double) {
     constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d, h: Vec2d, mf: Double, peru: Vec2d) : this(sp, ep, v1, v2, h, mf, peru, 0.0, MAX_TIME)
     constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d, h: Vec2d, mf: Double) : this(sp, ep, v1, v2, h, mf, Vec2d(PeruStart, PeruEnd))
-    constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d, mf: Double) : this(sp, ep, v1, v2, Vec2d(0.0, 1.0), mf)
+    constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d, mf: Double) : this(sp, ep, v1, v2, Vec2d(0.1, 0.3), mf)
     constructor(sp: Pose, ep: Pose, v1: Vec2d, v2: Vec2d) : this(sp, ep, v1, v2, MAX_FRACTION)
-    constructor(sp: Pose, ep: Pose, mf: Double, peru: Vec2d) : this(sp, ep, Vec2d(), Vec2d(), Vec2d(0.0, 1.0), mf, peru)
+    constructor(sp: Pose, ep: Pose, mf: Double, peru: Vec2d) : this(sp, ep, Vec2d(), Vec2d(), Vec2d(0.1, 0.3), mf, peru)
     constructor(sp: Pose, ep: Pose, mf: Double) : this(sp, ep, Vec2d(), Vec2d(), mf)
     constructor(sp: Pose, ep: Pose) : this(sp, ep, Vec2d(), Vec2d())
 
     constructor(ep: Pose, v1: Vec2d, v2: Vec2d, h: Vec2d, mf: Double, peru: Vec2d) : this(Pose(), ep, v1, v2, h, mf, peru)
     constructor(ep: Pose, v1: Vec2d, v2: Vec2d, h: Vec2d, mf: Double) : this(ep, v1, v2, h, mf, Vec2d(PeruStart, PeruEnd))
-    constructor(ep: Pose, v1: Vec2d, v2: Vec2d, mf: Double, peru: Vec2d) : this(ep, v1, v2, Vec2d(0.0, 1.0), mf, peru)
+    constructor(ep: Pose, v1: Vec2d, v2: Vec2d, mf: Double, peru: Vec2d) : this(ep, v1, v2, Vec2d(0.1, 0.3), mf, peru)
     constructor(ep: Pose, v1: Vec2d, v2: Vec2d, mf: Double) : this(Pose(), ep, v1, v2, mf)
     constructor(ep: Pose, v1: Vec2d, v2: Vec2d) : this(Pose(), ep, v1, v2)
+    constructor(ep: Pose, h: Vec2d, mf: Double, peru: Vec2d) : this(Pose(), ep, Vec2d(), Vec2d(), h, mf, peru)
     constructor(ep: Pose, h: Vec2d, mf: Double) : this(Pose(), ep, Vec2d(), Vec2d(), h, mf, Vec2d(PeruStart, PeruEnd))
     constructor(ep: Pose, mf: Double, peru: Vec2d) : this(Pose(), ep, mf, peru)
     constructor(ep: Pose, mf: Double) : this(Pose(), ep, mf)
@@ -68,18 +69,20 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
         return this
     }
 
-    fun duplicate() = TrajCoef(sp.duplicate(), ep.duplicate(), v1.duplicate(), v2.duplicate(), h.duplicate(), mf, peru.duplicate(), initVel, timeout)
+    private fun duplicate() = TrajCoef(sp.duplicate(), ep.duplicate(), v1.duplicate(), v2.duplicate(), h.duplicate(), mf, peru.duplicate(), initVel, timeout)
     val d: TrajCoef get() = duplicate()
     fun s(t: TrajectorySequence): TrajCoef { val tc = this.duplicate(); tc.sp = t.curPose; return tc }
     val t: Trajectory get() = Trajectory(this)
+    fun sv1(v: Vec2d): TrajCoef { v1 = v; return this }
     fun st(t: Double): TrajCoef { timeout = t; return this }
     fun sx(x: Double): TrajCoef { ep.x = x; return this }
+    fun sex(x: Double): TrajCoef { sp = sp.duplicate(); sp.x = x; return this }
     fun so(p: Pose): TrajCoef { ep += p; return this }
     fun se(p: Pose): TrajCoef { ep = p; return this }
     fun ss(p: Pose): TrajCoef { sp = p; return this }
 }
 
-class Trajectory(val start: Pose, var initVel: Double, val end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double, var timeout: Double) {
+class Trajectory(val start: Pose, var initVel: Double, var end: Pose, val v1e: Vec2d, val v2e: Vec2d, val h: Vec2d, val maxFraction: Double, val peruStart: Double, val peruEnd: Double, var timeout: Double) {
     override fun toString() = "$start - $end ($v1e $v2e $h) - $maxFraction ${Vec2d(peruStart, peruEnd)}"
 
     constructor(tc: TrajCoef) : this(tc.sp.duplicate(), tc.initVel, tc.ep.duplicate(), tc.v1.duplicate(), tc.v2.duplicate(), tc.h.duplicate(), tc.mf, tc.peru.x, tc.peru.y, tc.timeout) /// TODO Add duplicate to all other

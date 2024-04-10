@@ -79,6 +79,17 @@ class Intake {
         if (__LOG_STATUS) { logs("IntakeCurrent", intake.current) }
     }
 
+    fun sets(i: Int) {
+        status = when (i) {
+            6 -> SStack6
+            5 -> SStack5
+            4 -> SStack4
+            3 -> SStack3
+            2 -> SStack2
+            else -> SIntake
+        }
+    }
+
     var status = 0
         set(v) {
             if (USE_INTAKE) {

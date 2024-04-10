@@ -79,6 +79,7 @@ class TrajectorySequence {
         return this
     }
 
+    var lastS = 20
     fun st(goto: Int): TrajectorySequence {
         steps.add(TSE(-goto))
         //log("Adding $goto", steps.size)
@@ -100,6 +101,8 @@ class TrajectorySequence {
     fun aa(a: () -> Unit, checkDone: () -> Boolean) = addAction(a, checkDone)
 
     fun wt(checkDone: () -> Boolean) = addAction({}, checkDone)
+
+    fun kms(a: (TrajectorySequence, Int) -> TrajectorySequence, i: Int) = a(this, i)
 
     private val cep = ElapsedTime()
     fun slc(s: Double, checkDone: () -> Boolean, minT: Double = 0.7) = this
@@ -135,9 +138,9 @@ class TrajectorySequence {
         this
                 .gt { curSteps = 0; if (checkCommand() || etime.seconds() > 25.0) o2 else o1 }
                 .st(o1)
-                .atc({ TrajCoef(poses[cp], poses[cp] + p1p, 1.5).st(0.2).t }, checkCommand)
-                .aa(afterCommand)
-                .atc({gett(p1p, p2p, cp)}, checkCommand)
+                .atc({ if (curSteps == 0) TrajCoef(poses[cp], poses[cp] + p1p, 1.5).st(0.2).t
+                     else TrajCoef(poses[cp], poses[cp]).st(0.0).t}, checkCommand)
+                .atc({ gett(p1p, p2p, cp).addActionS(0.0, afterCommand) }, checkCommand)
                 .gt { ++curSteps; if (checkCommand() || curSteps == 2 || etime.seconds() > 25.0) o2 else o1 }
                 .st(o2)
                 .slc(0.4, { etime.seconds() > 25.0 || checkCommand() }, 0.2)
@@ -186,7 +189,6 @@ class TrajectorySequence {
     }
 
     fun update(): Boolean {
-        log("CurStep", ls)
         if (ls < steps.size) {
             if (e.type == 10) {
                 ls = 0

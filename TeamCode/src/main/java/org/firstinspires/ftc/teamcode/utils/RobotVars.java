@@ -6,11 +6,12 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.hardware.PIDFC;
 import org.firstinspires.ftc.teamcode.hardware.Timmy;
+import org.firstinspires.ftc.teamcode.pp.MinciunaMeaDinAprilie;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Config
 public class RobotVars {
-    public static boolean USE_TESTING = false;
+    public static boolean USE_TESTING = true;
     public static boolean USE_TELE = true;
     public static boolean USE_CAMERA = true;
     public static boolean USE_LOCALIZER = true;
@@ -24,13 +25,16 @@ public class RobotVars {
     public static boolean USE_INTAKE = true;
     public static boolean USE_SWERVE_MOTORS = true;
     public static boolean USE_AUTO_MOVE = true;
-    public static boolean USE_CAMERA_DETECTION = false;
+    public static boolean USE_CAMERA_DETECTION = true;
 
     public static Timmy timmy;
     public static boolean TimmyAddKILLLLLLLL = false;
     public static boolean TimmyToClose = true;
     public static double TimmyLoopTime = 0.5;
     public static double TimmyCurOff = 0.0;
+
+    public static MinciunaMeaDinAprilie AprilApril = new MinciunaMeaDinAprilie( new Pose(-14.3, 2.5, 0.0) );
+    public static Double AprilMaxRetentionTime = 1e9;
 
     public static PIDFC RidicarePid = new PIDFC(0.0035, 0.0, 0.0, 0.0);
     public static double RidicareTime = 0.5;
@@ -74,7 +78,7 @@ public class RobotVars {
     public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -0.6482802389555943, -3.533453402390716, -2.237612437685438);
     public static Vec4P SwervePids = new Vec4P(
             new PIDFC(0.55, 0.0, 0.0, 0.03),
-            new PIDFC(0.55, 0.0, 0.0, 0.03),
+            new PIDFC(0.55, 0.0, 0.0, 0.015),
             new PIDFC(0.65, 0.0, 0.0015, 0.015),
             new PIDFC(0.45, 0.0, 0.0, 0.00)
     );
@@ -97,13 +101,13 @@ public class RobotVars {
     public static double DiffyLOff = 0;
     public static double DiffyROff = 0;
 
-    public static boolean KILLMYSELF = false;
+    public static boolean KILLMYSELF = true;
     public static double DiffyWaitUpTurn = 0.88;
     public static double DiffyWaitDownTurn = 0.93;
     public static double DiffyPreloadUp = 1.21;
     public static double DiffyUpSafe = 1.2;
     public static double DiffyAUp = -0.13; /// Unghi cu pixel sus
-    public static double DiffyADown = 0.10; /// Unghi fara pixel jos
+    public static double DiffyADown = 0.105; /// Unghi fara pixel jos
     public static double DiffyUp = 1.03; /// Pozitie cu pixel sus
     public static double DiffyDown = 0.5;
     public static double DiffyPrepDown = 0.638; /// Pozitie sta jos asteapta
@@ -123,9 +127,9 @@ public class RobotVars {
     public static double Diffy__MAC = 6;
     public static double Diffy__MDC = 1.3;
 
-    public static double ClownFInchis = 0.69;
+    public static double ClownFInchis = 0.46;
     public static double ClownFDeschis = 0.0;
-    public static double ClownNInchis = 0.65;
+    public static double ClownNInchis = 0.709;
     public static double ClownNDeschis = 0.11;
     public static double ClownWait1 = 0.1;
     public static double ClownWait2 = 0.14;
@@ -135,7 +139,8 @@ public class RobotVars {
     public static double ClownWaitDown4 = 0.20;
     public static double ClownWaitDown5 = 0.30;
 
-    public static int SensorsMinDist = 160;
+    public static int SensorsMinDistFar = 160;
+    public static int SensorsMinDistNear = 95;
 
     public static double GelenkCenter = 0.495;
     public static double GelenkDif = 0.10;
@@ -173,30 +178,9 @@ public class RobotVars {
     public static String WheelsParLName = "RBM";
     public static Pose WheelsParLPos = new Pose(-8.2, 4.9, 0.0);
     public static Integer WheelsParLDir = -1;
-    public static Double WheelsCamAng = -0.1;
 
-    public static Integer WheelsPoseRetentionTime = 500000000;
-    public static double KMSKMS = 1.0;
-    public static double KMSKMSKMS = 1.0;
-
-    public static boolean ShortPlus = false;
-
-    /*
-    Alea vechi
-    public static Pose WheelsPerpPos = new Pose(-13.3, 1.15, PI / 2);
-    public static Pose WheelsParRPos = new Pose(-8.15, -5.5, 0.0);
-    public static Pose WheelsParLPos = new Pose(-8.15, 4.2, 0.0);
-     */
-
-    /*
-    Masurat gresit 1
-    public static Pose WheelsPerpPos = new Pose(-13.3, 1.15, PI / 2);
-    public static Pose WheelsParRPos = new Pose(-8.25, -4.7, 0.0);
-    public static Pose WheelsParLPos = new Pose(-8.25, 4.65, 0.0);
-     */
-
-    //public static Double WheelsParTicksToCm = 1.8 * 2 * PI / 8192.0 / 1.03;
-    //public static Double WheelsPerpTicksToCm = 1.8 * 2 * PI / 8192.0 / 1.03;
+    public static double KMSIMU = -1.0;
+    public static double KMSKMSKMS = -0.5;
 
     public static Double WheelsParTicksToCm = 1.0 / ((223863.0 / 1.006)/300.0);//1.8 * 2 * PI / 8192.0 / 1.02; // Radius * 2pi / Ticks/Rev / DracuStie
     public static Double WheelsPerpTicksToCm = 1.0 / ((222970.0 / 1.007)/300.0);//1.8 * 2 * PI / 8192.0 / 1.02; // Radius * 2pi / Ticks/Rev / DracuStie
@@ -205,8 +189,17 @@ public class RobotVars {
     public static OpenCvCameraRotation CameraOrientation = OpenCvCameraRotation.UPSIDE_DOWN;
     public static int CameraGain = 60;
     public static int CameraExposure = 60;
-    public static int CameraX = 640;
-    public static int CameraY = 480;
+
+    public static String QrName = "Löten";
+    public static int QrExposure = 1;
+    public static int QrThreads = 5;
+    public static int QrGain = 40;
+    public static int QrX = 1280;
+    public static int QrY = 800;
+
+    //public static OpenCvCameraRotation QrOrientation = OpenCvCameraRotation.UPSIDE_DOWN;
+    //public static int QrWB = 2800;
+    public static float QrDecimation = 0f;
 
     public static double EncoderPowerFuckery = 0.06;
     public static double EncoderAccelFuckery = 0.00;
@@ -214,6 +207,7 @@ public class RobotVars {
     public static boolean OpModeKMSShort = false;
     public static boolean __IsAuto = false;
     public static boolean __AutoShort = false;
+    public static boolean __ShortCentre = false;
     public static boolean __UPDATE_SENSORS = false;
     public static boolean __UPDATE_DIFFY = false;
     public static boolean __COIN = false;
@@ -224,6 +218,7 @@ public class RobotVars {
     public static double __FUNNY_SWERVE_COEF = 1.1;
     public static boolean ___CLOSE = false;
     public static boolean ____FIRST_OPEN = true;
+    public static int __DETECTIONS = 0;
 
     public static Pose InfPos = new Pose(10000000000.0, 1000000000000.0, 0.0);
 

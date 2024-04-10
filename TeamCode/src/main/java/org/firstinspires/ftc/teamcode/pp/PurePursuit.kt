@@ -2,18 +2,16 @@ package org.firstinspires.ftc.teamcode.pp
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.auto.AutoVars.startPoses
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.PIDFC
 import org.firstinspires.ftc.teamcode.hardware.Swerve
 import org.firstinspires.ftc.teamcode.pp.PP.AR
-import org.firstinspires.ftc.teamcode.pp.PP.PidAngle
 import org.firstinspires.ftc.teamcode.pp.PP.Checkpoints
-import org.firstinspires.ftc.teamcode.pp.PP.PidFinalLong
-import org.firstinspires.ftc.teamcode.pp.PP.PidFinalTrans
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_DIST
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_HEAD
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_HEAD_VEL
 import org.firstinspires.ftc.teamcode.pp.PP.HAPPY_VEL
-import org.firstinspires.ftc.teamcode.pp.PP.PidLong
 import org.firstinspires.ftc.teamcode.pp.PP.LookaheadScale
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_ACC
 import org.firstinspires.ftc.teamcode.pp.PP.MAX_VEL
@@ -25,34 +23,45 @@ import org.firstinspires.ftc.teamcode.pp.PP.PPStallSpeed
 import org.firstinspires.ftc.teamcode.pp.PP.PPStallTime
 import org.firstinspires.ftc.teamcode.pp.PP.PPStartEnd
 import org.firstinspires.ftc.teamcode.pp.PP.PPStaticSpeed
-import org.firstinspires.ftc.teamcode.pp.PP.PeruMin
 import org.firstinspires.ftc.teamcode.pp.PP.PeruMax
-import org.firstinspires.ftc.teamcode.pp.PP.SCALE
-import org.firstinspires.ftc.teamcode.pp.PP.SPC
-import org.firstinspires.ftc.teamcode.pp.PP.TSC
+import org.firstinspires.ftc.teamcode.pp.PP.PeruMin
+import org.firstinspires.ftc.teamcode.pp.PP.PidAngle
+import org.firstinspires.ftc.teamcode.pp.PP.PidFinalLong
+import org.firstinspires.ftc.teamcode.pp.PP.PidFinalTrans
+import org.firstinspires.ftc.teamcode.pp.PP.PidLong
 import org.firstinspires.ftc.teamcode.pp.PP.PidTrans
+import org.firstinspires.ftc.teamcode.pp.PP.QRExpirationDate
+import org.firstinspires.ftc.teamcode.pp.PP.SCALE
 import org.firstinspires.ftc.teamcode.pp.PP.lkr
 import org.firstinspires.ftc.teamcode.utils.PID
 import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.drawRobot
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.moveSwerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
-import org.firstinspires.ftc.teamcode.utils.RobotVars.*
+import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyADown
+import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyMidUp
+import org.firstinspires.ftc.teamcode.utils.RobotVars.InfPos
+import org.firstinspires.ftc.teamcode.utils.RobotVars.RBOT_POS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_AUTO_MOVE
+import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_SWERVE
+import org.firstinspires.ftc.teamcode.utils.RobotVars.__AutoShort
+import org.firstinspires.ftc.teamcode.utils.RobotVars.__DETECTIONS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.__LOG_STATUS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.timmy
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.clamp
 import org.firstinspires.ftc.teamcode.utils.Util.epsEq
 import org.firstinspires.ftc.teamcode.utils.Vec2d
 import kotlin.math.abs
 import kotlin.math.atan
-import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.sin
 
 @Config
 object PP {
@@ -66,10 +75,10 @@ object PP {
     var lkr: Double = 2.0
 
     @JvmField
-    var SCALE: Double = 0.2
+    var SCALE: Double = 1 / 2.54
 
     @JvmField
-    var HAPPY_VEL: Double = 0.3
+    var HAPPY_VEL: Double = 20.0
 
     @JvmField
     var HAPPY_DIST: Double = 3.0
@@ -96,7 +105,7 @@ object PP {
     var AR: Double = 1.5
 
     @JvmField
-    var MAX_ACC = 40.0
+    var MAX_ACC = 80.0
 
     @JvmField
     var MAX_VEL = 20.0
@@ -105,31 +114,34 @@ object PP {
     var MAX_FRACTION = 1.0
 
     @JvmField
-    var PeruStart: Double = 10.0
+    var PeruStart: Double = 20.0
 
     @JvmField
     var PeruEnd: Double = 40.0
 
     @JvmField
-    var PeruMin: Double = 0.20
+    var PeruMin: Double = 0.31
 
     @JvmField
     var PeruMax: Double = 1.0
 
     @JvmField
-    var PidTrans = PIDFC(0.22, 0.0, 0.0, 0.0) // Trans rights
+    var PidTrans = PIDFC(0.3, 0.0, 0.0, 0.0) // Trans rights
 
     @JvmField
     var PidLong = PIDFC(0.4, 0.0, 0.0, 0.9)
 
     @JvmField
-    var PidFinalTrans = PIDFC(0.1, 0.0, 0.0, 0.4)
+    var PidFinalTrans = PIDFC(0.1, 0.0, 0.0, 0.0)
 
     @JvmField
-    var PidFinalLong = PIDFC(0.1, 0.0, 0.0, 0.4)
+    var PidFinalLong = PIDFC(0.1, 0.0, 0.0, 0.0)
 
     @JvmField
-    var PidAngle = PIDFC(0.33, 0.0, 0.0, 0.00)
+    var PidAngle = PIDFC(0.28, 0.0, 0.0, 0.0)
+
+    @JvmField
+    var LookaheadScale: Vec2d = Vec2d(50.0, 30.0)
 
     @JvmField
     var PPStartEnd: Double = 15.0
@@ -147,7 +159,7 @@ object PP {
     var PPStallSpeed: Double = 0.7
 
     @JvmField
-    var PPStallTime: Double = 5.0
+    var PPStallTime: Double = 3.0
 
     @JvmField
     var PPStallDist: Double = 15.0
@@ -156,7 +168,7 @@ object PP {
     var Checkpoints: Int = 2000
 
     @JvmField
-    var LookaheadScale: Vec2d = Vec2d(50.0, 30.0)
+    var QRExpirationDate: Double = 5.0
 }
 
 class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) {
@@ -165,6 +177,14 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
     var haveTraj = false // Only doing this since making ctraj null would be a lot of hassle
     var done = true
     var error = false
+
+    var nextQRH = 0.0
+    private var checkQREtime = ElapsedTime()
+    var checkQR = false
+        set(v) {
+            checkQREtime.reset()
+            field = v
+        }
 
     val busy: Boolean
         get() {
@@ -188,37 +208,27 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
     }
 
     private fun lookahead(cp: Pose): Pose {
-        var lb = lastIndex
-        var ub = Checkpoints
-        var res = lastIndex
-
-        while (lb < ub) {
-            val c = (ub + lb) / 2
-            if (intersects(cp, c)) {
-                res = c
-                lb = c + 1
-            } else {
-                ub = c - 1
-            }
-        }
-
-        if (res == Checkpoints - 1) {
-            res = Checkpoints
-        }
+        while (intersects(cp, lastIndex) && lastIndex < Checkpoints) { ++lastIndex }
 
         var ca = ctraj.nextAction()
-        while (ca.checkNr <= res) {
+        while (ca.checkNr <= lastIndex) {
             ca.act()
             ++ctraj.lastCompletedAction
             ca = ctraj.nextAction()
         }
 
-        lastIndex = res
-        return ctraj[res]
+        return ctraj[lastIndex]
     }
 
     fun drawTraj(t: Trajectory, tcol: String) = draw(t, InfPos, InfPos, 0.0, 0.0, 0.0, tcol)
     fun drawTraj(t: Trajectory) = draw(t, InfPos, InfPos, 0.0, 0.0, 0.0, "#D7C9AA")
+
+    fun fixp(p: Pose): Pose {
+        val sp = startPoses[(if (AutoRed) 1 else 0) + (if (__AutoShort) 2 else 0)]
+        val rp = p.rotated(sp.h) + sp
+        rp.h = p.h + sp.h
+        return rp
+    }
 
     fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double) = draw(t, p, lk, speed, angle, tspeed, "#D7C9AA")
     fun draw(t: Trajectory, p: Pose, lk: Pose, speed: Double, angle: Double, tspeed: Double, tcol: String) {
@@ -238,45 +248,36 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
                     canvas.setStrokeWidth(2)
                 }
             }
-            canvas.strokeLine(t[i].x * SCALE, t[i].y * SCALE, t[(i + Checkpoints / 50)].x * SCALE, t[(i + Checkpoints / 50)].y * SCALE)
+            canvas.strokeLine(fixp(t[i]).x * SCALE, fixp(t[i]).y * SCALE, fixp(t[(i + Checkpoints / 50)]).x * SCALE, fixp(t[(i + Checkpoints / 50)]).y * SCALE)
         }
 
         canvas.setStrokeWidth(1)
         canvas.setStroke("FF0000")
         for (act in t.actions) {
-            canvas.strokeCircle(t[act.checkNr].x * SCALE, t[act.checkNr].y * SCALE, AR)
+            canvas.strokeCircle(fixp(t[act.checkNr]).x * SCALE, fixp(t[act.checkNr]).y * SCALE, AR)
         }
         canvas.setStroke("#FF00C3A0")
-        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
 
-        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec())), "#FF0000A0", 1, SCALE)
-        canvas.setStroke("#FF20A350")
-        canvas.strokeCircle(t.end.x * SCALE, t.end.y * SCALE, PPStartEnd * SCALE)
-        canvas.setStroke("#F0B550A0")
-        canvas.strokeCircle(t.end.x * SCALE, t.end.y * SCALE, t.peruStart * SCALE)
-        canvas.setStroke("#F0B55050")
-        canvas.strokeCircle(t.end.x * SCALE, t.end.y * SCALE, t.peruEnd * SCALE)
-        canvas.setStroke("#3010FF30")
-        canvas.strokeLine(p.x * SCALE, p.y * SCALE,
-                (p.x * SCALE + speed * cos(angle + timmy.yaw) * SPC), (p.y * SCALE + speed * sin(angle + timmy.yaw) * SPC))
+        val sp = startPoses[(if (AutoRed) 1 else 0) + (if (__AutoShort) 2 else 0)]
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec()) + sp.h), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec()) + sp.h), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec()) + sp.h), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(-gangle(t.deriv(lastIndex).vec()) + sp.h), "#FF0000A0", 1, SCALE)
+
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec()) + sp.h), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec()) + sp.h), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(LookaheadScale.x, -LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec()) + sp.h), "#FF0000A0", 1, SCALE)
+        drawVector(lk.vec(), Vec2d(-LookaheadScale.x, -LookaheadScale.y).rotated(gangle(t.deriv(lastIndex).vec()) + sp.h), "#FF0000A0", 1, SCALE)
         canvas.setStrokeWidth(3)
         canvas.setStroke("#000000")
         canvas.fillCircle(lk.x * SCALE, lk.y * SCALE, lkr)
-        canvas.setStrokeWidth(1)
-        canvas.strokeLine(10.0, 10.0, 10.0 + tspeed * TSC * SCALE, 10.0)
     }
 
     var atLastt = false
     fun startFollowTraj(t: Trajectory) {
         ctraj = t
         ctraj.lastCompletedAction = 0
-        lastIndex = 0
+        lastIndex = 100
         done = false
         error = false
         haveTraj = true
@@ -291,7 +292,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
         transP.reset()
         angleP.reset()
         stallTime.reset()
-        //log("ctraj", ctraj)
+        log("ctraj", ctraj)
     }
 
     private fun gangle(o12: Vec2d): Double {
@@ -332,6 +333,20 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
     fun update() { /// TODO: Add bump detection
         if (busy) {
+            if (checkQR) {
+                if (__DETECTIONS < 1 && checkQREtime.seconds() < QRExpirationDate && etime.seconds() < 28.0) {
+                    swerve.move(0.0, swerve.angle, 0.0)
+                } else {
+                    ctraj.end = ctraj.end.duplicate()
+                    ctraj.end.h = nextQRH
+                    log("NEXTQRTH", nextQRH)
+                    log("CTRAJ", ctraj)
+                    checkQR = false
+                }
+                return
+            }
+
+
             cp = localizer.pose
             val lk = lookahead(cp)
 
@@ -352,14 +367,15 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
                 }
             } else if (atLastT.seconds() > ctraj.timeout) {
                 swerve.move(0.0, swerve.angle, 0.0)
-                if (ctraj.timeout > 0.001) {
+                if (ctraj.timeout > 0.001 && !epsEq(ctraj.timeout, 0.2)) {
                     log("PurePursuitError", "Could not reach the required position in ${ctraj.timeout} (error = ${cp - lk}; Perp = ${(cp - lk).vec().rotated(-gangle(ctraj.deriv(lastIndex).vec()))})")
                 }
                 error = true
                 return
             }
 
-            if (abs(timmy.yawVel) < HAPPY_HEAD_VEL && abs(angDiff(ctraj.end.h, cp.h)) < HAPPY_HEAD && (ctraj.end - cp).dist() < HAPPY_DIST && localizer.poseVel.dist() < HAPPY_VEL) {
+            if (abs(timmy.yawVel) < HAPPY_HEAD_VEL && abs(angDiff(ctraj.end.h, cp.h)) < HAPPY_HEAD
+                    && (ctraj.end - cp).dist() < HAPPY_DIST && localizer.poseVel.dist() < HAPPY_VEL) {
                 swerve.move(0.0, swerve.angle, 0.0)
                 done = true
                 return
@@ -468,14 +484,14 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             } else if (USE_SWERVE) {
                 moveSwerve()
             }
-            draw(ctraj, cp, lk, speed, angle, angPower)
+            draw(ctraj, fixp(cp), fixp(lk), speed, angle, angPower)
             ep.reset()
-            logs("S_lk", lk)
-            logs("S_Dist", lk - cp)
+            log("S_lk", lk)
+            log("S_Dist", lk - cp)
             log("S_Pos", cp)
             log("S_FinalDist", ctraj.end - cp)
-            logs("S_ctraje", ctraj.end)
-            logs("lastIndex", lastIndex)
+            log("S_ctraje", ctraj.end)
+            log("lastIndex", lastIndex)
             logs("SWERVE_Tcoef", tcoef)
             logs("SWERVE_pspeed", angPower)
             logs("SWERVE_perCoef", pcoef)

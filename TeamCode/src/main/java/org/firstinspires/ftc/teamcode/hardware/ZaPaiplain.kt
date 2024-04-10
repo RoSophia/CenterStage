@@ -100,12 +100,6 @@ object CameraControls {
 
     @JvmField
     var AutoResult = 1
-
-    @JvmField
-    var QrExposure = 6
-
-    @JvmField
-    var QrGain = 100
 }
 
 class ZaPaiplain : OpenCvPipeline() {

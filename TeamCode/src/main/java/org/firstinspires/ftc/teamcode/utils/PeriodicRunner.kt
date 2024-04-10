@@ -14,7 +14,7 @@ class PeriodicRunner<T>(shouldRead: () -> Boolean, func: () -> T, writer: (T) ->
             while (!lom.isStopRequested) {
                 if (lom.opModeIsActive() && shouldRead()) {
                     val r = func()
-                    //log("G$name", "${r.toString()} at ${etime.seconds()}")
+                    log("G$name", "${r.toString()} at ${etime.seconds()}")
                     writer(r)
                 } else {
                     writer(defaultValue)

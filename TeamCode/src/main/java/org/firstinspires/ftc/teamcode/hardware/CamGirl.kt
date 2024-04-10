@@ -3,13 +3,19 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.acmerobotics.dashboard.FtcDashboard
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
+import org.firstinspires.ftc.teamcode.auto.AutoFuncs
+import org.firstinspires.ftc.teamcode.auto.AutoFuncs.initQrCamera
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.create_god
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logst
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotVars.CameraExposure
 import org.firstinspires.ftc.teamcode.utils.RobotVars.CameraGain
+import org.firstinspires.ftc.teamcode.utils.RobotVars.QrName
+import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_CAMERA_DETECTION
+import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 import org.openftc.easyopencv.*
 import java.lang.Thread.sleep
 import java.util.concurrent.TimeUnit
@@ -67,9 +73,10 @@ class CamGirl(
                 camera.gainControl.gain = gain
                 /// TODO I LOVEWHAITBALES
 
-                camera.startStreaming(resX, resY, orientation)
+                camera.startStreaming(resX, resY, orientation,
+                        if (name == QrName) OpenCvWebcam.StreamFormat.MJPEG else OpenCvWebcam.StreamFormat.YUY2)
                 if (streaming) {
-                    FtcDashboard.getInstance().startCameraStream(camera, 30.0)
+                    FtcDashboard.getInstance().startCameraStream(camera, 120.0)
                 }
                 opened = true
             }
@@ -92,11 +99,19 @@ class CamGirl(
 
     fun stop() {
         if (opened) {
-            camera.closeCameraDeviceAsync { }
+            camera.closeCameraDeviceAsync {
+                opened = false
+                if (USE_CAMERA_DETECTION && !lom.isStopRequested) {
+                    sleep(150)
+                    initQrCamera()
+                }
+            }
+            /*
             if (dashboardStreaming) {
                 FtcDashboard.getInstance().stopCameraStream()
-                create_god()
+                TrajectorySequence().sl(0.5).aa { create_god() } .runAsync()
             }
+             */
         }
     }
 }

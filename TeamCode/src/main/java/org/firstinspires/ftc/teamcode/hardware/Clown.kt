@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import androidx.core.graphics.alpha
 import com.qualcomm.robotcore.hardware.ColorSensor
-import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.utils.PeriodicRunner
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
@@ -10,7 +9,6 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.expansionHub
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
@@ -25,12 +23,12 @@ class Clown(name: String) {
     private var USE_GELENK = true
 
     private val threads = Vector<Thread>()
-    private val RS = MServo(name + "RS", false, if (USE_DIFFY) if (__IsAuto) DiffyMidUp / 2.0 + DiffyAUp else DiffyPrepDown / 2.0 + DiffyADown else null)
-    private val LS = MServo(name + "LS", true, if (USE_DIFFY) if (__IsAuto) DiffyMidUp / 2.0 - DiffyAUp else DiffyPrepDown / 2.0 - DiffyADown else null)
+    private val RS = MServo(name + "RS", false, null)
+    private val LS = MServo(name + "LS", true, null)
     private val RSE = AbsEnc(name + "RSE", DiffyEncROff)
     private val LSE = AbsEnc(name + "LSE", DiffyEncLOff, true)
-    val ghearaNear = if (USE_GHEARA_NEAR) MServo("GhearaNear", true, if (USE_DIFFY) if (__IsAuto && AutoRed) ClownNDeschis else ClownNDeschis else null) else null
-    val ghearaFar = if (USE_GHEARA_FAR) MServo("GhearaFar", false, if (USE_DIFFY) if (__IsAuto && AutoRed) ClownNDeschis else ClownFDeschis else null) else null
+    val ghearaNear = if (USE_GHEARA_NEAR) MServo("GhearaNear", true, if (USE_DIFFY) if (__IsAuto && __AutoShort) ClownNInchis else ClownNDeschis else null) else null
+    val ghearaFar = if (USE_GHEARA_FAR) MServo("GhearaFar", false, if (USE_DIFFY) if (__IsAuto) ClownFInchis else ClownFDeschis else null) else null
     val gelenk = if (USE_GELENK) MServo("Gelenk", false, if (USE_DIFFY) GelenkCenter else null) else null
 
     private val sensorNear = if (USE_SENSORS) hardwareMap.get(ColorSensor::class.java, "SensorNear") else null
@@ -75,8 +73,8 @@ class Clown(name: String) {
 
     fun sensorReadout(): Int {
         //log("SensorReadout", res)
-        return (if (sensorNearDist > SensorsMinDist) 2 else 0) or
-                (if (sensorFarDist > SensorsMinDist) 1 else 0)
+        return (if (sensorNearDist > SensorsMinDistNear) 2 else 0) or
+                (if (sensorFarDist > SensorsMinDistFar) 1 else 0)
     }
 
     private fun updateTarget() {
@@ -102,6 +100,7 @@ class Clown(name: String) {
 
     private var sexPixelTraj = TrajectorySequence()
     private var goUpTraj = TrajectorySequence()
+    private var goUppTraj = TrajectorySequence()
     private var goUp2Traj = TrajectorySequence()
     private var goPreloadUpTraj = TrajectorySequence()
     private var goDownTraj = TrajectorySequence()
@@ -129,6 +128,12 @@ class Clown(name: String) {
                     }
                     .aa { targetAngle = DiffyAUp; targetPos = DiffyUp }
         } /// GoUp
+
+        run {
+            goUppTraj.aa { ampUp.setMotion(DiffyPrepDown, DiffyUp, 0.0); }
+                    .wt { ampUp.update(); targetPos = ampUp.position; epsEq(ampUp.position, ampUp.finalPosition) }
+                    .aa { targetPos = DiffyUp; curState = 0 }
+        } /// GoUpp
 
         run {
             sexPixelTraj.aa {
@@ -179,7 +184,10 @@ class Clown(name: String) {
         } /// Go Down
 
         run {
-            goPreloadUpTraj.aa { targetPos = DiffyPreloadUp }
+            goPreloadUpTraj
+                    .aa { targetPos = DiffyPreloadUp - 0.2 }
+                    .sl(0.3)
+                    .aa { targetPos = DiffyPreloadUp }
         } /// GoPreloadUp
 
         run {
@@ -281,6 +289,13 @@ class Clown(name: String) {
                 threads.add(sexPixelTraj.runAsyncDiffy())
                 //logs("Create traj ${threads.lastElement().id}", "SexPixel")
             }
+        }
+    }
+
+    fun goUpp() {
+        if (USE_DIFFY) {
+            killextrathreads()
+            threads.add(goUppTraj.runAsyncDiffy())
         }
     }
 

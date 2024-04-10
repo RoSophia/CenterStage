@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logs
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logst
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
 import org.firstinspires.ftc.teamcode.utils.Util.angDiff
 import org.firstinspires.ftc.teamcode.utils.Util.angNorm
@@ -92,7 +93,7 @@ class Swerve {
             /// TODO: Yeah this fucks up my stop command in auto for some reason
             //return
         }
-        log("Swerve_Movement", String.format("%.3f@%.3f : %.3f", speed, angle, turnPower))
+        logst("Swerve_Movement ${String.format("%.3f@%.3f : %.3f", speed, angle, turnPower)}")
         val actAng = angle + turnPower * SwerveAngP
         if (abs(speed) < 0.0002 && abs(turnPower) < 0.0002) {
             ws = if (AntiRetardationTimer.seconds() < SwerveAntiRetardationTime || AntiRetardationFrames < 2) {

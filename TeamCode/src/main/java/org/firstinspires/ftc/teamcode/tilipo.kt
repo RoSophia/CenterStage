@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.Gamepad.LedEffect
-import org.firstinspires.ftc.teamcode.auto.AutoVars.INTAKEWAIT2
 import org.firstinspires.ftc.teamcode.hardware.Intakes
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.avion
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
@@ -20,7 +19,6 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.swerve
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
 import org.firstinspires.ftc.teamcode.utils.RobotVars.*
-import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 import org.firstinspires.ftc.teamcode.utils.Util
 
 object tilipo {
@@ -131,8 +129,13 @@ object tilipo {
             if (controller.C2DR == controller.JUST_PRESSED) {
                 clown.goRight()
             }
-            if (controller.C2A == controller.JUST_PRESSED) {
+            if (controller.C2A == controller.JUST_PRESSED || controller.C1DD == controller.JUST_PRESSED) {
+                curstackp = 6
                 clown.goUp(0)
+            }
+            if (controller.C1DU == controller.JUST_PRESSED) {
+                curstackp = 6
+                clown.goUpp()
             }
             if (controller.C2RT == controller.JUST_PRESSED) {
                 clown.close()

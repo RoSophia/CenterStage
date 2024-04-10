@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.utils.Util.angNorm
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
+import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.PI
 import kotlin.math.abs
@@ -67,7 +68,7 @@ object RobotFuncs {
     var cam: CamGirl? = null
     lateinit var pipeline: OpenCvPipeline
     var aprilTag: AprilTagProcessor? = null
-    lateinit var visionPortal: VisionPortal
+    var visionPortal: VisionPortal? = null
     var KILLALL: Boolean = false
 
     val etime = ElapsedTime()
@@ -80,10 +81,10 @@ object RobotFuncs {
     @JvmStatic
     fun send_log() {
         try {
-            while (!logmu.tryLock()) { Thread.sleep(1); }
-            dashboard.sendTelemetryPacket(tp)
-            tp = TelemetryPacket()
-            logmu.unlock()
+            synchronized(logmu) {
+                dashboard.sendTelemetryPacket(tp)
+                tp = TelemetryPacket()
+            }
         } catch (e: Exception) {
             try {
                 if (logmu.isLocked && logmu.holdsLock(Thread.currentThread())) {
@@ -97,10 +98,9 @@ object RobotFuncs {
     fun log(s: String, v: String) {
         if (USE_TELE) {
             try {
-                while (!logmu.tryLock()) {
-                    Thread.sleep(1); }
-                tp.put(s, v)
-                logmu.unlock()
+                synchronized(logmu) {
+                    tp.put(s, v)
+                }
             } catch (e: Exception) {
                 try {
                     if (logmu.isLocked && logmu.holdsLock(Thread.currentThread())) {
@@ -118,23 +118,22 @@ object RobotFuncs {
     fun log(s: String, v: Any) = log(s, v.toString())
 
     @JvmStatic
-    fun logs(s: String, v: Double) = if (__LOG_STATUS) log(s, String.format("%.4f", v)) else {
-    }
+    fun logs(s: String, v: Double) = if (__LOG_STATUS) log(s, String.format("%.4f", v)) else { }
 
     @JvmStatic
-    fun logs(s: String, v: Any) = if (__LOG_STATUS) log(s, v.toString()) else {
-    }
+    fun logs(s: String, v: Any) = if (__LOG_STATUS) log(s, v.toString()) else { }
 
     @JvmStatic
     fun logst(s: String) {
         if (USE_TELE) {
-            runBlocking {
-                logmu.lock()
+            synchronized(logmu) {
                 tp.addLine(s)
-                logmu.unlock()
             }
         }
     }
+
+    @JvmStatic
+    fun logsst(s: String) = if (__LOG_STATUS) { logst(s) } else {}
 
     @JvmStatic
     fun preinit() {
@@ -194,21 +193,21 @@ object RobotFuncs {
     fun moveSwerve(fn: Boolean = false) {
         controller.update()
         if (controller.C1PS == controller.JUST_PRESSED) {
-            TimmyCurOff += timmy.yaw
+            timmy.resetYaw(0.0)
             at.reset()
             log("ResetHeading", TimmyCurOff)
         }
         val speed = hypot(lom.gamepad1.left_stick_x, lom.gamepad1.left_stick_y).toDouble()
         val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2 - if (USE_FIELD_CENTRIC) timmy.yaw else 0.0)
-        //val angle = angNorm(-atan2(lom.gamepad1.left_stick_y, lom.gamepad1.left_stick_x) + Math.PI / 2)
         val correctAngForce = get_angf(fn)
         val fcoef = -(1.0 - lom.gamepad1.right_trigger * 0.6) // No clue why this has to be negative
         swerve.move(speed * fcoef * __FUNNY_SWERVE_COEF, angle, correctAngForce * fcoef)
     }
 
-    fun fptp(v: AprilTagPoseFtc): Pose {
-        val v2 = (Vec2d(v.x, v.y) * 2.54).rotated(KMSKMSKMS * timmy.yaw)
-        return Pose(v2.x, -v2.y, 0.0)//v.yaw * PI / 180.0)
+    fun orp(v: AprilTagPoseFtc, h: Double): Pose {
+        /// TODO:     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA KLSKMS
+        val v2 = (Vec2d(v.y, -v.z) * 2.54).rotated(KMSIMU * h + KMSKMSKMS * PI)
+        return Pose(v2.y, v2.x, 0.0)
     }
 
     @JvmStatic
@@ -217,6 +216,7 @@ object RobotFuncs {
             USE_CAMERA = false
             AutoResult = Random.nextInt(0, 3)
             log("CurAutoResult", AutoResult)
+            send_log()
         }
 
         __IsAuto = isauto
@@ -246,8 +246,6 @@ object RobotFuncs {
         telemetry = lom.telemetry
         batteryVoltageSensor = hardwareMap.getAll(PhotonLynxVoltageSensor::class.java).iterator().next()
         tp = TelemetryPacket()
-        TrajectorySequence().sl(0.5).aa { log("__InitVoltage", batteryVoltageSensor.voltage); log("CurAutoResult", AutoResult); send_log() }.runAsync()
-        log("CurTImmyOff", TimmyCurOff)
         try {
             if (!timmy.initialized) {
                 timmy.init()
@@ -280,14 +278,15 @@ object RobotFuncs {
             if (!__IsAuto) {
                 TrajectorySequence()
                         .aa { clown.targetPos = DiffyMidUp; clown.targetAngle = DiffyADown }
-                        .sl(0.4)
+                        .sl(0.8)
                         .aa { clown.targetPos = DiffyPrepDown; clown.targetAngle = DiffyADown }
                         .runAsyncDiffy()
             } else {
                 TrajectorySequence()
                         .aa { clown.ghearaFar?.position = ClownFInchis; clown.ghearaNear?.position = if (__AutoShort) ClownNInchis else ClownNDeschis; }
-                        .sl(0.5)
-                        .aa { clown.targetPos = DiffyMidUp; clown.targetAngle = DiffyAUp }
+                        .aa { clown.targetAngle = DiffyAUp; clown.targetPos = DiffyMidUp + 0.1; }
+                        .sl(0.4)
+                        .aa { clown.targetPos = DiffyMidUp; }
                         .runAsyncDiffy()
             }
         }
@@ -300,10 +299,11 @@ object RobotFuncs {
         val canvas = tp.fieldOverlay()
         canvas.setStrokeWidth(1)
         canvas.setStroke("#FF00C3")
-        canvas.strokeCircle(localizer.pose.x * PP.SCALE, localizer.pose.y * PP.SCALE, PP.robotRadius)
+        val lp = pp.fixp(localizer.pose)
+        canvas.strokeCircle(lp.x * PP.SCALE, lp.y * PP.SCALE, PP.robotRadius)
         canvas.setStroke("#00FFC3")
-        canvas.strokeLine(localizer.pose.x * PP.SCALE, localizer.pose.y * PP.SCALE,
-                (localizer.pose.x * PP.SCALE + PP.robotRadius * cos(localizer.pose.h)), (localizer.pose.y * PP.SCALE + PP.robotRadius * sin(localizer.pose.h)))
+        canvas.strokeLine(lp.x * PP.SCALE, lp.y * PP.SCALE,
+                (lp.x * PP.SCALE + PP.robotRadius * cos(lp.h)), (lp.y * PP.SCALE + PP.robotRadius * sin(lp.h)))
     }
 
     @JvmStatic
@@ -351,6 +351,8 @@ object RobotFuncs {
         if (!__IsAuto) {
             TimmyCurOff = 0.0
         }
+        cam?.camera?.closeCameraDeviceAsync { }
+        visionPortal?.close()
         KILLALL = true
         batteryVoltageSensor.close()
         if (TimmyToClose) {
