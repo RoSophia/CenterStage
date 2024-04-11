@@ -333,9 +333,13 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
 
     fun update() { /// TODO: Add bump detection
         if (busy) {
+            cp = localizer.pose
+            val lk = lookahead(cp)
+
             if (checkQR) {
                 if (__DETECTIONS < 1 && checkQREtime.seconds() < QRExpirationDate && etime.seconds() < 28.0) {
-                    swerve.move(0.0, swerve.angle, 0.0)
+                    val angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), PPMaxAngPower), -PPMaxAngPower)
+                    swerve.move(0.0, swerve.angle, angPower)
                 } else {
                     ctraj.end = ctraj.end.duplicate()
                     ctraj.end.h = nextQRH
@@ -345,10 +349,6 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
                 }
                 return
             }
-
-
-            cp = localizer.pose
-            val lk = lookahead(cp)
 
             if (lastIndex == Checkpoints && atLastt) {
                 atLastt = true

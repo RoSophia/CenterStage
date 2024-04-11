@@ -127,7 +127,7 @@ public class RobotVars {
     public static double Diffy__MAC = 6;
     public static double Diffy__MDC = 1.3;
 
-    public static double ClownFInchis = 0.46;
+    public static double ClownFInchis = 0.30;
     public static double ClownFDeschis = 0.0;
     public static double ClownNInchis = 0.709;
     public static double ClownNDeschis = 0.11;

@@ -71,6 +71,10 @@ object tilipo {
                 clown.goDown()
             }
 
+            if (controller.C2B == controller.JUST_PRESSED && intake.status == Intakes.SFinalHang) {
+                intake.status = Intakes.SNothing
+            }
+
             if (controller.C2X == controller.JUST_PRESSED) {
                 if (intake.status == Intakes.SFinalHang) {
                     intake.status = Intakes.SNothing

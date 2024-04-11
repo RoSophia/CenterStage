@@ -121,7 +121,7 @@ object Auto {
             cBackdropStack = Vec2T(
                     TrajCoef(Pose(-138.0, 186.0, -1.57), Vec2d(40.0, -1.6), Vec2d(), 0.9),
                     TrajCoef(Pose(-132.0, -46.0, -1.57), Vec2d(), Vec2d(20.0, -2.7), 0.9, Vec2d(60.0, 60.0))),
-            stackOffset = Pose(0.0, 0.0, 0.0),
+            stackOffset = Pose(-1.0, 0.0, 0.0),
             xBackdropStack = Vec3T(
                     TrajCoef(Pose(-130.0, 166.0, -1.57), Vec2d(30.0, -1.57), Vec2d(60.0, 1.3), 0.9),
                     TrajCoef(Pose(-129.0, -46.0, -1.57), 0.9, Vec2d(0.0, 0.0)),
@@ -132,18 +132,18 @@ object Auto {
                     TrajCoef(Pose(-74.0, 225.0, -1.57), Vec2d(40.0, 1.57), Vec2d(23.0, -1.57), 0.9, Vec2d(50.0, 60.0))),
             zBackdropPark = TrajCoef(Pose(-140.0, 237.0, -1.57), Vec2d(30.0, -1.9), Vec2d(30.0, -1.9), 0.7),
             zzAPreload = Vec3T(
-                    TrajCoef(Pose(-70.0, 4.0, -1.57), phead, pvel, Vec2d(40.0, 40.0)),
+                    TrajCoef(Pose(-80.0, 4.0, -1.57), phead, pvel, Vec2d(40.0, 40.0)),
                     TrajCoef(Pose(-75.0, -6.0, -0.8), phead, pvel, Vec2d(40.0, 40.0)),
-                    TrajCoef(Pose(-55.0, -16.0, 0.1), phead, pvel, Vec2d(40.0, 40.0))),
+                    TrajCoef(Pose(-59.0, -16.0, 0.1), phead, pvel, Vec2d(40.0, 40.0))),
             zzBStack = TrajCoef(Pose(-72.0, -45.0, -1.57), Vec2d(0.1, 0.3), 0.9, Vec2d(40.0, 40.0)),
             zzCStackBackdrop = Vec3T(
-                    TrajCoef(Pose(-13.0, 54.0, -1.57), Vec2d(20.0, 1.57), Vec2d(60.0, -1.62), 0.9),
-                    TrajCoef(Pose(-12.0, 154.0, -1.2), Vec2d(0.5, -0.55), 0.9),
-                    TrajCoef(Pose(-72.0, 229.0, -1.2),  Vec2d(20.0, 1.57), Vec2d(),0.9, Vec2d(45.0, 45.0))),
+                    TrajCoef(Pose(-12.0, 20.0, -1.57), Vec2d(20.0, 1.57), Vec2d(60.0, -1.62), 0.9),
+                    TrajCoef(Pose(-10.0, 154.0, -1.0), Vec2d(0.5, 0.55), 0.9),
+                    TrajCoef(Pose(-72.0, 227.0, -1.0),  Vec2d(20.0, 1.57), Vec2d(30.0, -1.57),0.9, Vec2d(70.0, 70.0))),
             zzDBackdropStack = Vec3T(
-                    TrajCoef(Pose(-11.0, 104.0, -1.57), Vec2d(30.0, -1.4), Vec2d(70.0, 1.6), Vec2d(0.0, 0.0), 0.9),
-                    TrajCoef(Pose(-8.0, 24.0, -1.57), Vec2d(), 0.9),
-                    TrajCoef(Pose(-73.0, -45.0, -1.57), Vec2d(20.0, -1.6), Vec2d(), 0.9, Vec2d(65.0, 65.0)))
+                    TrajCoef(Pose(-18.0, 104.0, -1.57), Vec2d(30.0, -1.4), Vec2d(70.0, 1.6), Vec2d(0.0, 0.0), 0.9),
+                    TrajCoef(Pose(-21.0, 24.0, -1.57), Vec2d(), 0.9),
+                    TrajCoef(Pose(-71.0, -50.0, -1.57), Vec2d(20.0, -1.6), Vec2d(), 0.9, Vec2d(70.0, 70.0)))
     )
 
     @JvmField
