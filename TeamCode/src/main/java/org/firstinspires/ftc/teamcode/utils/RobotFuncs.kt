@@ -193,6 +193,9 @@ object RobotFuncs {
     fun moveSwerve(fn: Boolean = false) {
         controller.update()
         if (controller.C1PS == controller.JUST_PRESSED) {
+            //val tp = TelemetryPacket()
+            //tp.put("TIMMY KMS", 0.0)
+            //FtcDashboard.getInstance().sendTelemetryPacket(tp)
             timmy.resetYaw(0.0)
             at.reset()
             log("ResetHeading", TimmyCurOff)
@@ -249,8 +252,12 @@ object RobotFuncs {
         try {
             if (!timmy.initialized) {
                 timmy.init()
+                //log("INIT TIMMY", "timmy")
+                send_log()
             } else {
                 if (TimmyToClose) {
+                    //log("RESET TIMMY", "timmy")
+                    send_log()
                     timmy.close()
                     timmy.init()
                 }
@@ -283,7 +290,7 @@ object RobotFuncs {
                         .runAsyncDiffy()
             } else {
                 TrajectorySequence()
-                        .aa { clown.ghearaFar?.position = ClownFInchis; clown.ghearaNear?.position = if (__AutoShort) ClownNInchis else ClownNDeschis; }
+                        .aa { clown.ghearaFar?.position = ClownFVeryInchis; clown.ghearaNear?.position = if (__AutoShort) ClownNVeryInchis else ClownNDeschis; }
                         .aa { clown.targetAngle = DiffyAUp; clown.targetPos = DiffyMidUp + 0.1; }
                         .sl(0.4)
                         .aa { clown.targetPos = DiffyMidUp; }
@@ -292,6 +299,7 @@ object RobotFuncs {
         }
 
         pp = PurePursuit(swerve, localizer)
+        send_log()
     }
 
     @JvmStatic
@@ -353,9 +361,10 @@ object RobotFuncs {
         }
         cam?.camera?.closeCameraDeviceAsync { }
         visionPortal?.close()
-        KILLALL = true
         batteryVoltageSensor.close()
+        KILLALL = true
         if (TimmyToClose) {
+            log("ClosingTimmy", "true")
             timmy.closeThread()
             timmy.close()
             TimmyToClose = false

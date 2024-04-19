@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs
@@ -22,10 +24,8 @@ class Timmy(val name: String) {
     var localizerAccessed = false
 
     fun resetYaw(d: Double) {
-        logs("ActualYaw", _yaw)
-        logs("OldYaw", yaw)
+        //val tp = TelemetryPacket() tp.put("ActualYaw", _yaw) tp.put("OldYaw", yaw) tp.put("NewYaw", yaw) FtcDashboard.getInstance().sendTelemetryPacket(tp)
         TimmyCurOff = -_yaw + d
-        logs("NewYaw", yaw)
     }
 
     val ep = ElapsedTime()
@@ -34,13 +34,15 @@ class Timmy(val name: String) {
         override fun run() {
             val ep = ElapsedTime()
             ep.reset()
-            while (t.trunning && !KILLALL) {
+            while (t.trunning) {
                 val fixed = t.imu.angularOrientation
                 val y = fixed.firstAngle.toDouble()
                 t._yaw = y
                 t.localizerAccessed = false
+                //val tp = TelemetryPacket() tp.put("TIMMY YAW", y) tp.put("TIMMY OFFS", TimmyCurOff) FtcDashboard.getInstance().sendTelemetryPacket(tp)
                 ep.reset()
             }
+            //val tp = TelemetryPacket() tp.put("TIMMY CLOSING", "NOW") FtcDashboard.getInstance().sendTelemetryPacket(tp)
         }
     }
 
@@ -67,7 +69,7 @@ class Timmy(val name: String) {
     fun closeThread() {
         if (trunning) {
             trunning = false
-            t.join()
+            //t.join()
         }
     }
 

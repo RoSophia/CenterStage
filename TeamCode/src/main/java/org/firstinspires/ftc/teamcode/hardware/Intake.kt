@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SAUTONOMUS
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SDown
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SFinalHang
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SIdleIntake
@@ -15,8 +16,10 @@ import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack3
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack4
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack5
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SStack6
+import org.firstinspires.ftc.teamcode.hardware.Intakes.STESTCATCH
 import org.firstinspires.ftc.teamcode.hardware.Intakes.STESTGDOWN
 import org.firstinspires.ftc.teamcode.hardware.Intakes.STESTGOUP
+import org.firstinspires.ftc.teamcode.hardware.Intakes.STESTGOUPP
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUp
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacu
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SUpulLuiCostacuIn
@@ -50,6 +53,10 @@ object Intakes {
 
     const val STESTGOUP = 300
     const val STESTGDOWN = 301
+    const val STESTGOUPP = 302
+    const val STESTCATCH = 303
+
+    const val SAUTONOMUS = 500
 }
 
 class Intake {
@@ -90,6 +97,12 @@ class Intake {
         }
     }
 
+    private fun sch(kms: Vec4, p: Int) {
+        sint(kms, p, IntakePower)
+        checkVibr = true
+        __UPDATE_SENSORS = true
+    }
+
     var status = 0
         set(v) {
             if (USE_INTAKE) {
@@ -97,12 +110,12 @@ class Intake {
                     SNothing -> { sint(IntakeGet, 1, 0.0); checkVibr = false; __UPDATE_SENSORS = false }
                     SDown -> sint(IntakeGetUp, 0, 0.0)
                     SUp -> sint(IntakeGetUp, 1, 0.0)
-                    SIntake -> { sint(IntakeGet, 0, IntakePower); checkVibr = true; __UPDATE_SENSORS = true }
-                    SStack1 -> sint(IntakeStack12, 0)
-                    SStack2 -> sint(IntakeStack12, 1)
-                    SStack3 -> sint(IntakeStack34, 0)
-                    SStack4 -> sint(IntakeStack34, 1)
-                    SStack5 -> sint(IntakeStack56, 0)
+                    SIntake -> sch(IntakeGet, 0)
+                    SStack1 -> sch(IntakeStack12, 0)
+                    SStack2 -> sch(IntakeStack12, 1)
+                    SStack3 -> sch(IntakeStack34, 0)
+                    SStack4 -> sch(IntakeStack34, 1)
+                    SStack5 -> sch(IntakeStack56, 0)
                     SStack6 -> sint(IntakeStack56, 1, 0.0)
                     SInvert -> sint(IntakeGetCostac, 1, IntakeRevPower)
                     SIdleIntake -> sint(IntakeGetUp, 0)
@@ -113,6 +126,9 @@ class Intake {
                     SFinalHang -> sint(IntakeHANGHANG, 0, 0.0)
                     STESTGOUP -> clown.goUp(0)
                     STESTGDOWN -> clown.goDown()
+                    STESTGOUPP -> clown.goUpp()
+                    STESTCATCH -> clown.catchPixel()
+                    SAUTONOMUS -> sint(IntakeHANGHANG, 1, 0.0)
                     else -> {}
                 }
                 field = v

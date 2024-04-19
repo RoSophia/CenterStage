@@ -143,6 +143,26 @@ class Vec4PP(@JvmField var a: Pose, @JvmField var b: Pose, @JvmField var c: Pose
     }
 } /// These all have to exist only to make shit accessible in the dashboard :(
 
+class Vec4i(@JvmField var a: Int, @JvmField var b: Int, @JvmField var c: Int, @JvmField var d: Int) {
+    operator fun get(i: Int) = when (i) {
+        0 -> a
+        1 -> b
+        2 -> c
+        else -> d
+    }
+}
+
+class DDoubleV4i(@JvmField var left: Vec4i, @JvmField var right: Vec4i)
+
+class Vec4vi(@JvmField var a: DDoubleV4i, @JvmField var b: DDoubleV4i, @JvmField var c: DDoubleV4i, @JvmField var d: DDoubleV4i) {
+    operator fun get(i: Int) = when (i) {
+        0 -> a
+        1 -> b
+        2 -> c
+        else -> d
+    }
+}
+
 class Vec4Gen<T>(@JvmField var a: T, @JvmField var b: T, @JvmField var c: T, @JvmField var d: T) {
     operator fun get(i: Int) = when (i) {
         0 -> a
@@ -151,6 +171,7 @@ class Vec4Gen<T>(@JvmField var a: T, @JvmField var b: T, @JvmField var c: T, @Jv
         else -> d
     }
 }
+
 
 class Vec6Gen<T>(@JvmField var a: T, @JvmField var b: T, @JvmField var c: T, @JvmField var d: T, @JvmField var e: T, @JvmField var f: T) {
     operator fun get(i: Int) = when (i) {

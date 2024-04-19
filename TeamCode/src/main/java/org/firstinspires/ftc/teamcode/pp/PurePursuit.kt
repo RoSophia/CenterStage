@@ -48,6 +48,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyADown
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyMidUp
 import org.firstinspires.ftc.teamcode.utils.RobotVars.InfPos
 import org.firstinspires.ftc.teamcode.utils.RobotVars.RBOT_POS
+import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_APRIL_DETECTION
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_AUTO_MOVE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.USE_SWERVE
 import org.firstinspires.ftc.teamcode.utils.RobotVars.__AutoShort
@@ -120,7 +121,7 @@ object PP {
     var PeruEnd: Double = 40.0
 
     @JvmField
-    var PeruMin: Double = 0.31
+    var PeruMin: Double = 0.30
 
     @JvmField
     var PeruMax: Double = 1.0
@@ -336,7 +337,7 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
             cp = localizer.pose
             val lk = lookahead(cp)
 
-            if (checkQR) {
+            if (checkQR && USE_APRIL_DETECTION) {
                 if (__DETECTIONS < 1 && checkQREtime.seconds() < QRExpirationDate && etime.seconds() < 28.0) {
                     val angPower = max(min(angleP.update(angDiff(cp.h, lk.h)), PPMaxAngPower), -PPMaxAngPower)
                     swerve.move(0.0, swerve.angle, angPower)
@@ -348,6 +349,9 @@ class PurePursuit(private val swerve: Swerve, private val localizer: Localizer) 
                     checkQR = false
                 }
                 return
+            } else if (checkQR) {
+                ctraj.end.h = nextQRH
+                checkQR = false
             }
 
             if (lastIndex == Checkpoints && atLastt) {

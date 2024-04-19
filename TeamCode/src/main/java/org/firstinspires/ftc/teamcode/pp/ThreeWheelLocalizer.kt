@@ -34,7 +34,7 @@ class ThreeWheelLocalizer : Localizer {
     private var _pose = Pose()
     override var pose: Pose = _pose
         get() = _pose
-        set(v) { timmy.resetYaw(v.h); field = v; _pose = v; }
+        set(v) { field = v; _pose = v; }
 
     private val forwardSolver: DecompositionSolver
     private var wheelPositions = listOf(WheelsParRPos + WheelsAdjPose, WheelsParLPos + WheelsAdjPose, WheelsPerpPos + WheelsAdjPose)

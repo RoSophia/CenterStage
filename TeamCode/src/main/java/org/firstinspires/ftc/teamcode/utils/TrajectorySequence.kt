@@ -138,9 +138,9 @@ class TrajectorySequence {
         this
                 .gt { curSteps = 0; if (checkCommand() || etime.seconds() > 25.0) o2 else o1 }
                 .st(o1)
-                .atc({ if (curSteps == 0) TrajCoef(poses[cp], poses[cp] + p1p, 1.5).st(0.2).t
+                .atc({ if (curSteps == 0) TrajCoef(poses[cp], poses[cp] + p1p, 1.5).st(0.2).t.addActionS(0.0, afterCommand)
                      else TrajCoef(poses[cp], poses[cp]).st(0.0).t}, checkCommand)
-                .atc({ gett(p1p, p2p, cp).addActionS(0.0, afterCommand) }, checkCommand)
+                .atc({ gett(p1p, p2p, cp) }, checkCommand)
                 .gt { ++curSteps; if (checkCommand() || curSteps == 2 || etime.seconds() > 25.0) o2 else o1 }
                 .st(o2)
                 .slc(0.4, { etime.seconds() > 25.0 || checkCommand() }, 0.2)

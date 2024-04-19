@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
+import org.firstinspires.ftc.teamcode.hardware.Intakes.SAUTONOMUS
 import org.firstinspires.ftc.teamcode.pp.PP.JustDraw
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.aprilTag
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.cam
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initAuto
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logst
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
@@ -84,6 +86,7 @@ object AutoFuncs {
         preinit()
         initma(lom, true)
         initAuto()
+        intake.status = SAUTONOMUS
         lom.waitForStart()
         val res = AutoResult // Pun asta aici sa nu faca amuzant inchiderea camerei
         if (USE_CAMERA) {

@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Config
 public class RobotVars {
-    public static boolean USE_TESTING = true;
+    public static boolean USE_TESTING = false;
     public static boolean USE_TELE = true;
     public static boolean USE_CAMERA = true;
     public static boolean USE_LOCALIZER = true;
@@ -25,7 +25,8 @@ public class RobotVars {
     public static boolean USE_INTAKE = true;
     public static boolean USE_SWERVE_MOTORS = true;
     public static boolean USE_AUTO_MOVE = true;
-    public static boolean USE_CAMERA_DETECTION = true;
+    public static boolean USE_CAMERA_DETECTION = false;
+    public static boolean USE_APRIL_DETECTION = false;
 
     public static Timmy timmy;
     public static boolean TimmyAddKILLLLLLLL = false;
@@ -51,6 +52,7 @@ public class RobotVars {
     public static int RBOT_POS = -5;
     public static int RMID_POS = 450;
     public static int RTOP_POS = 1800;
+    public static int RTRANS_POS = 150;
 
     //public static Vec4 SwerveWheelOffsets = new Vec4(-2.4828562817478184, -2.237612437685438, -0.6482802389555943, -3.533453402390716);
     /*
@@ -102,15 +104,15 @@ public class RobotVars {
     public static double DiffyROff = 0;
 
     public static boolean KILLMYSELF = true;
-    public static double DiffyWaitUpTurn = 0.88;
+    public static double DiffyWaitUpTurn = 0.93;
     public static double DiffyWaitDownTurn = 0.93;
     public static double DiffyPreloadUp = 1.21;
     public static double DiffyUpSafe = 1.2;
     public static double DiffyAUp = -0.13; /// Unghi cu pixel sus
     public static double DiffyADown = 0.105; /// Unghi fara pixel jos
     public static double DiffyUp = 1.03; /// Pozitie cu pixel sus
-    public static double DiffyDown = 0.5;
-    public static double DiffyPrepDown = 0.638; /// Pozitie sta jos asteapta
+    public static double DiffyDown = 0.505;
+    public static double DiffyPrepDown = 0.643; /// Pozitie sta jos asteapta
     public static double DiffyHoldDown = 0.627;
 
     public static double DiffyMidUp = 0.72;
@@ -127,12 +129,15 @@ public class RobotVars {
     public static double Diffy__MAC = 6;
     public static double Diffy__MDC = 1.3;
 
-    public static double ClownFInchis = 0.30;
+    public static double ClownFInchis = 0.7;
+    public static double ClownFVeryInchis = 0.73;
     public static double ClownFDeschis = 0.0;
-    public static double ClownNInchis = 0.709;
+    public static double ClownNInchis = 0.71;
+    public static double ClownNVeryInchis = 0.76;
     public static double ClownNDeschis = 0.11;
     public static double ClownWait1 = 0.1;
-    public static double ClownWait2 = 0.14;
+    public static double ClownWait2 = 0.05;
+    public static double ClownWait3 = 0.1;
     public static double ClownWait4 = 0.15;
     public static double ClownWaitDown1 = 0.05;
     public static double ClownWaitDown2 = 0.08;
@@ -153,7 +158,7 @@ public class RobotVars {
     public static Vec4 IntakeStack12 = new Vec4(0.395, 0.16, 0.395, 0.18); // Get1 - 2
     public static Vec4 IntakeStack34 = new Vec4(0.395, 0.195, 0.395, 0.21); // Get3 - 4
     public static Vec4 IntakeStack56 = new Vec4(0.395, 0.23, 0.395, 0.26); // Get5 - 6
-    public static Vec4 IntakeHANGHANG = new Vec4(0.5, 0.49, 0.395, 0.26); // Get5 - 6
+    public static Vec4 IntakeHANGHANG = new Vec4(0.5, 0.49, 0.395, 0.35); // Get5 - 6
     public static int __IntakeSetStatus = 20;
 
     public static boolean __LOG_STATUS = false;
@@ -187,8 +192,8 @@ public class RobotVars {
 
     public static String CameraName = "Anticamera";
     public static OpenCvCameraRotation CameraOrientation = OpenCvCameraRotation.UPSIDE_DOWN;
-    public static int CameraGain = 60;
-    public static int CameraExposure = 60;
+    public static int CameraGain = 1;
+    public static int CameraExposure = 20;
 
     public static String QrName = "Löten";
     public static int QrExposure = 1;

@@ -118,6 +118,8 @@ class Clown(name: String) {
                     .sl(ClownWait1)
                     .aa { close(); intake.status = SUpulLuiCostacu }
                     .sl(ClownWait2)
+                    .aa { slides.setTarget(RTRANS_POS) }
+                    .sl(ClownWait3)
                     .aa { ampUp.setMotion(DiffyPrepDown, DiffyUp, 0.0); }
                     .wt {
                         ampUp.update(); targetPos = ampUp.position
@@ -151,6 +153,21 @@ class Clown(name: String) {
         } /// Sex
 
         run {
+            goUp2Traj.aa { close(); intake.status = SUpulLuiCostacu }
+                    .sl(ClownWait2)
+                    .aa { slides.setTarget(RTRANS_POS) }
+                    .sl(ClownWait3)
+                    .aa { ampUp.setMotion(DiffyPrepDown, DiffyUp, 0.0) }
+                    .wt {
+                        ampUp.update(); targetPos = ampUp.position
+                        if (targetPos > DiffyWaitUpTurn) {
+                            targetAngle = DiffyAUp; gelenk?.position = GelenkCenter + curState * GelenkDif; curState = nextA
+                        }
+                        epsEq(ampUp.position, ampUp.finalPosition)
+                    }
+                    .aa { targetAngle = DiffyAUp; targetPos = DiffyUp }
+
+            /*
             goUp2Traj.aa {
                 intake.status = SUpulLuiCostacu
                 curState = nextA
@@ -166,6 +183,7 @@ class Clown(name: String) {
                         targetAngle = DiffyAUp
                         targetPos = DiffyUp
                     }
+             */
         } /// Go Up Already Taken
 
         run {
@@ -295,7 +313,9 @@ class Clown(name: String) {
     fun goUpp() {
         if (USE_DIFFY) {
             killextrathreads()
-            threads.add(goUppTraj.runAsyncDiffy())
+            if (curState < -5) {
+                threads.add(goUppTraj.runAsyncDiffy())
+            }
         }
     }
 

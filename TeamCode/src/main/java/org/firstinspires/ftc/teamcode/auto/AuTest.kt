@@ -13,14 +13,19 @@ import org.firstinspires.ftc.teamcode.auto.AUTest.v1
 import org.firstinspires.ftc.teamcode.auto.AUTest.v2
 import org.firstinspires.ftc.teamcode.pp.Trajectory
 import org.firstinspires.ftc.teamcode.utils.Pose
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.initma
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
+import org.firstinspires.ftc.teamcode.utils.RobotVars
+import org.firstinspires.ftc.teamcode.utils.RobotVars.__IsAuto
 import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
 import org.firstinspires.ftc.teamcode.utils.Vec2d
+import kotlin.math.PI
 
 @Config
 object AUTest {
@@ -28,13 +33,13 @@ object AUTest {
     var sp = Pose(0.0, 0.0, 0.0)
 
     @JvmField
-    var ep = Pose(200.0, 100.0, 0.0)
+    var ep = Pose(0.0, 0.0, 2.2)
 
     @JvmField
-    var v1 = Vec2d(100.0, -0.1)
+    var v1 = Vec2d(0.0, -0.1)
 
     @JvmField
-    var v2 = Vec2d(80.0, -1.4)
+    var v2 = Vec2d(0.0, -1.4)
 
     @JvmField
     var peru = Vec2d(30.0, 40.0)
@@ -82,6 +87,11 @@ class AuTest : LinearOpMode() {
         }
              */
 
+        __IsAuto = true
+        RobotVars.TimmyToClose = false
+        log("TimmyToCLose", false)
+        RobotVars.TimmyCurOff = PI
+        RobotFuncs.send_log()
         endma()
     }
 }

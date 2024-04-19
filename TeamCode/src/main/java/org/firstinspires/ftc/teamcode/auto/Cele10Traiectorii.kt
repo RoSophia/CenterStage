@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.auto
 
 import org.firstinspires.ftc.teamcode.auto.AutoVars.GOUPDISTBLUE
 import org.firstinspires.ftc.teamcode.auto.AutoVars.GOUPDISTRED
+import org.firstinspires.ftc.teamcode.auto.AutoVars.INTAKEWAIT2
 import org.firstinspires.ftc.teamcode.auto.AutoVars.INTAKEWAIT3
 import org.firstinspires.ftc.teamcode.auto.AutoVars.KMS
+import org.firstinspires.ftc.teamcode.auto.AutoVars.SLEEPY_TIME
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPreload
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPut
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitStack1
@@ -37,6 +39,7 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyUp
 import org.firstinspires.ftc.teamcode.utils.RobotVars.DiffyUpSafe
 import org.firstinspires.ftc.teamcode.utils.RobotVars.GelenkCenter
 import org.firstinspires.ftc.teamcode.utils.RobotVars.GelenkDif
+import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakeRevPower
 import org.firstinspires.ftc.teamcode.utils.RobotVars.RBOT_POS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.RMID_POS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.__ShortCentre
@@ -91,26 +94,31 @@ object Cele10Traiectorii {
 
     private fun si(i: Int, j: Int) = i - 2 * j
 
-    private fun longFirst(ts: TrajectorySequence, i: Int, v: LongVals) = ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
-            .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
-            .at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
-                    .addActionE(100.0) { intake.status = SStack6 }
-                    .addActionE(30.0) { __UPDATE_SENSORS = true })
-            .aa { intake.sets(4 - 2 * i) }
-            .sl(WaitStack1)
-            .aa { intake.sets(3 - 2 * i) }
-            .slc(WaitStack2, ::endfl, WaitStack2Min)
-            .failsafeMove(if (i == 0) ({ intake.status = SStack2 }) else ({ intake.status = SIntake }), ::endfl, ts.lastS++, ts.lastS++, failsafe1, failsafe2)
-            .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
-            .at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
-                    .addActionT(0.6) { intake.status = SInvert }
-                    .addActionE(10.0) { intake.status = SUpulLuiCostacu })
-            .at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
-                    .addActionS(0.0) { clown.goUp(-2) }
-                    .addActionE(60.0) { pp.nextQRH = if (AutoRed) -1.57 else 1.57; pp.checkQR = true }
-                    .addActionE(20.0) { slides.setTarget(RMID_POS) })
-            .aa { clown.open() }
-            .sl(WaitPut)
+    private fun longFirst(ts: TrajectorySequence, i: Int, v: LongVals): TrajectorySequence {
+        ts.at(v.cBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
+                .addActionE(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
+                .at(v.cBackdropStack[1].s(ts).so(v.stackOffset * i).ce().st(0.6).t
+                        .addActionE(100.0) { intake.status = SStack6 }
+                        .addActionE(30.0) { __UPDATE_SENSORS = true })
+                .aa { intake.sets(4 - 2 * i) }
+                .sl(WaitStack1)
+                .aa { intake.sets(3 - 2 * i) }
+        if (i == 0) {
+            ts.sl(1.5)
+        }
+        return ts.slc(WaitStack2, ::endfl, WaitStack2Min)
+                .failsafeMove(if (i == 0) ({ intake.status = SStack2 }) else ({ intake.status = SIntake }), ::endfl, ts.lastS++, ts.lastS++, failsafe1, failsafe2)
+                .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
+                .at(v.bStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
+                        .addActionT(0.6) { intake.status = SInvert }
+                        .addActionE(40.0) { intake.status = SUpulLuiCostacu }
+                        .addActionE(20.0) { clown.goUp(-2) })
+                .at(v.bStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).ce().t
+                        .addActionE(60.0) { pp.nextQRH = if (AutoRed) -1.57 else 1.57; pp.checkQR = true }
+                        .addActionE(20.0) { slides.setTarget(RMID_POS) })
+                .aa { clown.open() }
+                .sl(WaitPut)
+    }
 
     private fun longSecond(ts: TrajectorySequence, i: Int, v: LongVals) =
             ts.at(v.xBackdropStack[0].s(ts).so(v.stackOffset * i).cb().t
@@ -121,12 +129,12 @@ object Cele10Traiectorii {
                     .aa { intake.status = SStack4; }
                     .sl(WaitStack2Min)
                     .aa { clown.catchPixel() }
-                    .at(v.xStackBackdrop[0].s(ts).so(v.cBackdropOffset * i - Pose(10.0, 0.0, 0.0)).cb().t
+                    .at(v.xStackBackdrop[0].s(ts).ss(v.cBackdropStack[2].ep - Pose(0.0, -10.0, 0.0)).so(v.cBackdropOffset * i).cb().t
                             .addActionT(0.6) { intake.status = SInvert })
                     .at(v.xStackBackdrop[1].s(ts).so(v.cBackdropOffset * i).cc().t
-                            .addActionE(10.0) { intake.status = SUpulLuiCostacu })
+                            .addActionE(10.0) { intake.status = SUpulLuiCostacu }
+                            .addActionE(0.0) { clown.goUp(-2) })
                     .at(v.xStackBackdrop[2].s(ts).so(v.cBackdropOffset * i).ce().t
-                            .addActionS(0.0) { clown.goUp(-2) }
                             .addActionE(20.0) { slides.setTarget(RMID_POS) })
                     .aa { clown.open() }
                     .sl(WaitPut)
@@ -178,11 +186,11 @@ object Cele10Traiectorii {
     }
 
     private fun antilonggput(ts: TrajectorySequence, i: Int, v: LongVals) = ts
-            .at(v.zzCStackBackdrop[0].s(ts).so(v.cBackdropOffset * (i - 1)).cb().t
+            .at(v.zzCStackBackdrop[0].s(ts).ss(v.zzDBackdropStack[2].ep - Pose(0.0, 15.0, 0.0)).so(v.cBackdropOffset * (i - 1)).cb().t
                     .addActionT(0.5) { intake.status = SUp }
                     .addActionT(0.8) { intake.status = SUpulLuiCostacu })
-            .at(v.zzCStackBackdrop[1].s(ts).so(v.cBackdropOffset * (i - 1)).cc().t)
-            .aa { clown.goUp((if (AutoResult == 0) -2 else 2) * if (AutoRed) -1 else 1) }
+            .at(v.zzCStackBackdrop[1].s(ts).so(v.cBackdropOffset * (i - 1)).cc().t
+                    .addActionE(10.0) { clown.goUp((if (AutoResult == 0) -2 else 2) * if (AutoRed) -1 else 1) })
             .at(if (i == 0) {
                 v.zzCStackBackdrop[2].s(ts).sx(v.cBackdropPosX[AutoResult])
             } else {
@@ -221,6 +229,7 @@ object Cele10Traiectorii {
                 .slc(WaitStack2, ::endfl, WaitStack2Min)
                 .failsafeMove({ intake.status = SStack4 }, ::endfl, 2, 5, failsafe1, failsafe2)
                 .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
+                .sl (SLEEPY_TIME)
 
         antilonggput(ts, 0, v)
         for (i in 1 until 4) {
@@ -281,6 +290,7 @@ object Cele10Traiectorii {
 
     private fun returnShort(ts: TrajectorySequence, i: Int, v: ShortVals) = ts
             .at(v.cStackBackdrop[0].s(ts).so(v.dBackdropOffset * i).cb().t
+                    .addActionT(INTAKEWAIT2) { intake.intake.power = IntakeRevPower }
                     .addActionT(INTAKEWAIT3) { intake.status = SUp; __UPDATE_SENSORS = false })
             .aa { intake.status = SIntake; clown.open() }
             .at(v.cStackBackdrop[1].s(ts).so(v.dBackdropOffset * i).cc().t
@@ -289,8 +299,8 @@ object Cele10Traiectorii {
                     .addActionE((if (AutoRed) GOUPDISTRED else GOUPDISTBLUE) + 20) { intake.status = SUpulLuiCostacu }
                     .addActionE(if (AutoRed) GOUPDISTRED else GOUPDISTBLUE) { clown.goUp(-1); })
             .at(v.cStackBackdrop[2].s(ts).so(v.dBackdropOffset * i).ce().t
-                    .addActionE(50.0) { pp.nextQRH = if (AutoRed) -1.57 else 1.57; pp.checkQR = true }
-                    .addActionE(30.0) { slides.setTarget(RMID_POS) })
+                    .addActionE(80.0) { pp.nextQRH = if (AutoRed) -1.57 else 1.57; pp.checkQR = true }
+                    .addActionE(70.0) { slides.setTarget(RMID_POS) })
 
     private fun returnShortCenter(ts: TrajectorySequence, i: Int, v: ShortVals) = ts
             .at(if (i < 2) {
@@ -326,6 +336,9 @@ object Cele10Traiectorii {
         val ts = shortPreload(TrajectorySequence(), v)
 
         for (i in 0 until 3) {
+            if (i == 1) {
+                ts.sl(SLEEPY_TIME)
+            }
             ts.gt { if (etime.seconds() < 24.0) ts.lastS else 1000 }
             ts.st(ts.lastS++)
 
@@ -356,7 +369,7 @@ object Cele10Traiectorii {
         ts.st(1000)
         ts.at(v.putPark.s(ts).t
                 .addActionS(0.0) { clown.open() }
-                .addActionS(50.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
+                .addActionS(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
         return ts
     }
 
@@ -405,7 +418,7 @@ object Cele10Traiectorii {
         ts.st(1000)
         ts.at(v.putPark.s(ts).t
                 .addActionS(0.0) { clown.open() }
-                .addActionS(50.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
+                .addActionS(0.0) { clown.goDown(); slides.setTarget(RBOT_POS) })
         return ts
     }
 }
