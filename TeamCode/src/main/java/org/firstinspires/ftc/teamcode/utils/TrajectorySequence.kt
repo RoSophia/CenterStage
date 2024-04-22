@@ -5,15 +5,11 @@ import org.firstinspires.ftc.teamcode.auto.AutoVars
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.pp.TrajCoef
 import org.firstinspires.ftc.teamcode.pp.Trajectory
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
-import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
-import org.firstinspires.ftc.teamcode.utils.RobotVars.IntakeRevPower
 import org.firstinspires.ftc.teamcode.utils.RobotVars.___KILL_DIFFY_THREADS
 import java.util.Vector
-import kotlin.concurrent.thread
 
 /// -x = Goto: x
 /// 1 = Trajectory

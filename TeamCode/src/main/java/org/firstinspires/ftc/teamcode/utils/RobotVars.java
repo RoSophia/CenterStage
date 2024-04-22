@@ -129,9 +129,9 @@ public class RobotVars {
     public static double Diffy__MAC = 6;
     public static double Diffy__MDC = 1.3;
 
-    public static double ClownFInchis = 0.7;
-    public static double ClownFVeryInchis = 0.73;
-    public static double ClownFDeschis = 0.0;
+    public static double ClownFInchis = 0.76;
+    public static double ClownFVeryInchis = 0.80;
+    public static double ClownFDeschis = 0.12;
     public static double ClownNInchis = 0.71;
     public static double ClownNVeryInchis = 0.76;
     public static double ClownNDeschis = 0.11;
@@ -192,7 +192,7 @@ public class RobotVars {
 
     public static String CameraName = "Anticamera";
     public static OpenCvCameraRotation CameraOrientation = OpenCvCameraRotation.UPSIDE_DOWN;
-    public static int CameraGain = 1;
+    public static int CameraGain = 2;
     public static int CameraExposure = 20;
 
     public static String QrName = "Löten";

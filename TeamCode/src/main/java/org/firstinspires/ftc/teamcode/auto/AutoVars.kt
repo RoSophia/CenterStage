@@ -63,22 +63,22 @@ object Auto {
     @JvmField
     var longBlue = LongVals(
             aStartPreload = Vec3T(
-                    TrajCoef(Pose(-89.0, -1.0, 1.4), phead, pvel, Vec2d(40.0, 50.0)),
-                    TrajCoef(Pose(-102.0, 35.0, 1.8), phead, pvel, Vec2d(40.0, 50.0)),
+                    TrajCoef(Pose(-79.0, -11.0, 1.4), phead, pvel, Vec2d(40.0, 50.0)),
+                    TrajCoef(Pose(-102.0, 32.0, 1.8), phead, pvel, Vec2d(40.0, 50.0)),
                     TrajCoef(Pose(-110.0, 29.0, 2.7), phead, pvel, Vec2d(40.0, 50.0))),
             bPreloadStack = Vec3T(
-                    TrajCoef(Pose(-129.0, 44.0, 1.59), Vec2d(), Vec2d(30.0, -2.0), Vec2d(0.2, 0.3), 0.9, Vec2d(50.0, 50.0)),
-                    TrajCoef(Pose(-129.0, 44.0, 1.59), Vec2d(), Vec2d(30.0, -2.0), Vec2d(0.2, 0.3), 0.9, Vec2d(50.0, 50.0)),
-                    TrajCoef(Pose(-129.0, 44.0, 1.59), Vec2d(30.0, -2.0), Vec2d(30.0, -2.0), Vec2d(0.2, 0.3), 0.9, Vec2d(50.0, 50.0))),
+                    TrajCoef(Pose(-129.0, 44.1, 1.53), Vec2d(), Vec2d(30.0, -2.0), Vec2d(0.2, 0.3), 0.9, Vec2d(50.0, 50.0)),
+                    TrajCoef(Pose(-129.0, 44.1, 1.53), Vec2d(), Vec2d(30.0, -2.0), Vec2d(0.2, 0.3), 0.9, Vec2d(50.0, 50.0)),
+                    TrajCoef(Pose(-129.0, 44.1, 1.53), Vec2d(30.0, -2.0), Vec2d(30.0, -2.0), Vec2d(0.2, 0.3), 0.9, Vec2d(50.0, 50.0))),
             bStackBackdrop = Vec2T(
-                    TrajCoef(Pose(-138.0, -133.0, 1.57), Vec2d(0.7, 0.7), 0.9),
-                    TrajCoef(Pose(-75.0, -226.0, 1.57), Vec2d(60.0, -1.57), Vec2d(23.0, 1.57), Vec2d(0.0, 0.1), 0.9, Vec2d(50.0, 60.0))),
+                    TrajCoef(Pose(-134.0, -133.0, 1.57), Vec2d(0.7, 0.7), 0.9),
+                    TrajCoef(Pose(-75.0, -230.5, 1.50), Vec2d(60.0, -1.57), Vec2d(35.0, 1.57), Vec2d(0.0, 0.1), 0.9, Vec2d(50.0, 60.0))),
             cBackdropOffset = Pose(0.0, 0.5, 0.0),
-            cBackdropPosX = Vec3(-62.0, -67.0, -80.0),
+            cBackdropPosX = Vec3(-59.0, -67.0, -78.7),
             cBackdropStack = Vec2T(
                     TrajCoef(Pose(-132.0, -163.0, 1.57), Vec2d(40.0, 1.57), Vec2d(60.0, -1.3), 0.9),
-                    TrajCoef(Pose(-136.0, 45.0, 1.57), Vec2d(30.0, -1.57), Vec2d(), 0.9, Vec2d(50.0, 80.0))),
-            stackOffset = Pose(0.0, 0.5, 0.0),
+                    TrajCoef(Pose(-128.0, 45.0, 1.57), Vec2d(30.0, -1.57), Vec2d(), 0.9, Vec2d(66.0, 80.0))),
+            stackOffset = Pose(1.1, 0.5, 0.0),
             xBackdropStack = Vec3T(
                     TrajCoef(Pose(-126.0, -163.0, 1.57), Vec2d(30.0, 1.57), Vec2d(60.0, -1.3), 0.9),
                     TrajCoef(Pose(-127.0, 7.0, 1.57), 0.9, Vec2d(0.0, 0.0)),
@@ -87,8 +87,7 @@ object Auto {
                     TrajCoef(Pose(-130.0, 7.0, 1.57), 0.9),
                     TrajCoef(Pose(-129.0, -133.0, 1.57), 0.9),
                     TrajCoef(Pose(-72.0, -224.0, 1.57), Vec2d(40.0, -1.57), Vec2d(23.0, 1.57), 0.9, Vec2d(35.0, 60.0))),
-            //zBackdropPark = TrajCoef(Pose(-122.0, -237.0, 1.57), Vec2d(30.0, 1.9), Vec2d(30.0, 1.9), 0.8),
-            zBackdropPark = TrajCoef(Pose(-30.0, -237.0, 1.57), Vec2d(30.0, 1.1), Vec2d(30.0, 1.1), 0.8),
+            zBackdropPark = TrajCoef(Pose(-70.0, -233.0, 1.57), Vec2d(30.0, 1.1), Vec2d(30.0, 1.1), 0.8),
             zzAPreload = Vec3T(
                     TrajCoef(Pose(-68.0, -10.0, 1.57), phead, pvel, Vec2d(40.0, 40.0)),
                     TrajCoef(Pose(-73.0, 0.0, 0.8), phead, pvel, Vec2d(40.0, 40.0)),
@@ -108,7 +107,7 @@ object Auto {
     var longRed = LongVals(
             aStartPreload = Vec3T(
                     TrajCoef(Pose(-80.0, 4.0, -1.4), phead, pvel, Vec2d(34.0, 50.0)),
-                    TrajCoef(Pose(-107.0, -34.0, -1.8), phead, pvel, Vec2d(20.0, 80.0)),
+                    TrajCoef(Pose(-104.0, -34.0, -1.8), phead, pvel, Vec2d(20.0, 80.0)),
                     TrajCoef(Pose(-110.0, -31.0, -2.7), phead, pvel, Vec2d(34.0, 50.0))),
             bPreloadStack = Vec3T(
                     TrajCoef(Pose(-132.0, -46.1, -1.57), Vec2d(), Vec2d(20.0, 2.0), Vec2d(0.2, 0.3), 0.9, Vec2d(40.0, 40.0)),
@@ -120,9 +119,9 @@ object Auto {
             cBackdropOffset = Pose(),
             cBackdropPosX = Vec3(-68.0, -76.0, -92.0),
             cBackdropStack = Vec2T(
-                    TrajCoef(Pose(-137.5, 186.0, -1.57), Vec2d(40.0, -1.6), Vec2d(20.0, 1.57), 0.9),
-                    TrajCoef(Pose(-130.0, -45.0, -1.57), Vec2d(), Vec2d(20.0, -2.7), 0.9, Vec2d(60.0, 60.0))),
-            stackOffset = Pose(-1.0, 0.0, 0.0),
+                    TrajCoef(Pose(-137.5, 186.0, -1.57), Vec2d(10.0, -1.6), Vec2d(10.0, 1.57), 0.9),
+                    TrajCoef(Pose(-131.0, -52.0, -1.57), Vec2d(), Vec2d(20.0, -2.7), 0.9, Vec2d(60.0, 60.0))),
+            stackOffset = Pose(-1.8, 0.0, 0.0),
             xBackdropStack = Vec3T(
                     TrajCoef(Pose(-130.0, 166.0, -1.57), Vec2d(30.0, -1.57), Vec2d(60.0, 1.3), 0.9),
                     TrajCoef(Pose(-129.0, -46.0, -1.57), 0.9, Vec2d(0.0, 0.0)),
@@ -131,8 +130,8 @@ object Auto {
                     TrajCoef(Pose(-135.0, -4.0, -1.57), 0.9),
                     TrajCoef(Pose(-136.0, 136.0, -1.57), 0.9),
                     TrajCoef(Pose(-74.0, 225.0, -1.57), Vec2d(40.0, 1.57), Vec2d(23.0, -1.57), 0.9, Vec2d(50.0, 60.0))),
-            zBackdropPark = TrajCoef(Pose(-135.0, 235.0, -1.57), Vec2d(30.0, -1.9), Vec2d(30.0, -1.9), 0.7),
-            //zBackdropPark = TrajCoef(Pose(-30.0, 227.0, -1.57),  Vec2d(20.0, -1.2), Vec2d(30.0, -1.2),0.8),
+            //zBackdropPark = TrajCoef(Pose(-135.0, 235.0, -1.57), Vec2d(30.0, -1.9), Vec2d(30.0, -1.9), 0.7),
+            zBackdropPark = TrajCoef(Pose(-30.0, 227.0, -1.57),  Vec2d(20.0, -1.2), Vec2d(30.0, -1.2),0.8),
             zzAPreload = Vec3T(
                     TrajCoef(Pose(-80.0, 4.0, -1.57), phead, pvel, Vec2d(40.0, 40.0)),
                     TrajCoef(Pose(-75.0, -6.0, -0.8), phead, pvel, Vec2d(40.0, 40.0)),
@@ -257,7 +256,7 @@ object AutoVars {
     var KMS = 0.2
 
     @JvmField
-    var SLEEPY_TIME = 3.0
+    var SLEEPY_TIME = 1.8
 
     @JvmField
     var failsafe1 = Pose(0.0, -20.0, 0.0)

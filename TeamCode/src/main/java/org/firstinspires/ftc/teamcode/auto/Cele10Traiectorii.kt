@@ -45,7 +45,6 @@ import org.firstinspires.ftc.teamcode.utils.RobotVars.RMID_POS
 import org.firstinspires.ftc.teamcode.utils.RobotVars.__ShortCentre
 import org.firstinspires.ftc.teamcode.utils.RobotVars.__UPDATE_SENSORS
 import org.firstinspires.ftc.teamcode.utils.TrajectorySequence
-import org.firstinspires.ftc.teamcode.utils.Vec2d
 
 /***
  * ⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶
@@ -103,9 +102,6 @@ object Cele10Traiectorii {
                 .aa { intake.sets(4 - 2 * i) }
                 .sl(WaitStack1)
                 .aa { intake.sets(3 - 2 * i) }
-        if (i == 0) {
-            ts.sl(1.5)
-        }
         return ts.slc(WaitStack2, ::endfl, WaitStack2Min)
                 .failsafeMove(if (i == 0) ({ intake.status = SStack2 }) else ({ intake.status = SIntake }), ::endfl, ts.lastS++, ts.lastS++, failsafe1, failsafe2)
                 .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
@@ -155,6 +151,7 @@ object Cele10Traiectorii {
                 .aa { intake.status = SStack5 }
                 .slc(WaitStack2, ::endfl, WaitStack2Min)
                 .failsafeMove({ intake.status = SStack4 }, ::endfl, 2, 5, failsafe1, failsafe2)
+                .sl(SLEEPY_TIME)
                 .aa { clown.catchPixel(); __UPDATE_SENSORS = false }
                 .at(v.bStackBackdrop[0].s(ts).cb().t
                         .addActionT(0.6) { intake.status = SInvert }

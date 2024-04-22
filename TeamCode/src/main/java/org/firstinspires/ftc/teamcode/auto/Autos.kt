@@ -4,12 +4,14 @@ import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.auto.AutoFuncs.setupAuto
+import org.firstinspires.ftc.teamcode.auto.AutoVars.SLEEPY_TIME
 import org.firstinspires.ftc.teamcode.auto.Cele10Traiectorii.getCycleFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFShort
 import org.firstinspires.ftc.teamcode.auto.Cele10Traiectorii.getCycleTrajLong
 import org.firstinspires.ftc.teamcode.auto.Cele10Traiectorii.getCycleTrajLongFFFFFFFFFFFFFFFFF
 import org.firstinspires.ftc.teamcode.auto.Cele10Traiectorii.getCycleTrajShort
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
 
+/*
 @Autonomous(name = "CorrectRedLong", group = "CRed")
 @Photon
 class RedAuto: LinearOpMode() {
@@ -22,12 +24,28 @@ class RedShortAuto: LinearOpMode() {
     override fun runOpMode() { setupAuto(this, isRed = true, isShort = true) { getCycleTrajShort(Auto.shortRed) } }
 }
 
-@Autonomous(name = "CorrectBlueLong", group = "CBlue")
+ */
+
+@Autonomous(name = "CorrectBlueLong SHAAAARK", group = "CBlue")
 @Photon
 class BlueAuto: LinearOpMode() {
-    override fun runOpMode() = setupAuto(this, isRed = false, isShort = false) { getCycleTrajLong(Auto.longBlue) }
+    override fun runOpMode() {
+        SLEEPY_TIME = 5.0
+        setupAuto(this, isRed = false, isShort = false) { getCycleTrajLong(Auto.longBlue) }
+    }
 }
 
+@Autonomous(name = "CorrectBlueLong Işí", group = "CBlue")
+@Photon
+class BlueAuto2: LinearOpMode() {
+    override fun runOpMode() {
+        SLEEPY_TIME = 2.0
+        setupAuto(this, isRed = false, isShort = false) { getCycleTrajLong(Auto.longBlue) }
+    }
+
+}
+
+/*
 @Autonomous(name = "CorrectBlueShort", group = "CBlue")
 @Photon
 class BlueShortAuto: LinearOpMode() {
@@ -57,3 +75,5 @@ class RedLongSHITAuto: LinearOpMode() {
 class RedShortSHITAuto: LinearOpMode() {
     override fun runOpMode() { setupAuto(this, isRed = true, isShort = true) { getCycleFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFShort(Auto.shortRed) } }
 }
+
+ */

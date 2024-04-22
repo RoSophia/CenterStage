@@ -139,7 +139,7 @@ object PP {
     var PidFinalLong = PIDFC(0.1, 0.0, 0.0, 0.0)
 
     @JvmField
-    var PidAngle = PIDFC(0.28, 0.0, 0.0, 0.0)
+    var PidAngle = PIDFC(0.22, 0.0, 0.0, 0.0)
 
     @JvmField
     var LookaheadScale: Vec2d = Vec2d(50.0, 30.0)

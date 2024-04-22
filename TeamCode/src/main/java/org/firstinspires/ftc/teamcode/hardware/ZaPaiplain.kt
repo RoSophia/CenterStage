@@ -40,10 +40,10 @@ import kotlin.math.max
 object CameraControls {
     @JvmField
     var Squares = Vec4vi(
-            DDoubleV4i(Vec4i(65, 185, 100, 80), Vec4i(405, 200, 100, 80)),
-            DDoubleV4i(Vec4i(30, 190, 100, 80), Vec4i(375, 190, 100, 80)),
-            DDoubleV4i(Vec4i(10, 170, 100, 80), Vec4i(340, 175, 100, 80)),
-            DDoubleV4i(Vec4i(75, 190, 100, 80), Vec4i(410, 210, 100, 80)),
+            DDoubleV4i(Vec4i(65, 185, 110, 80), Vec4i(405, 200, 110, 80)),
+            DDoubleV4i(Vec4i(30, 160, 110, 80), Vec4i(360, 178, 110, 80)),
+            DDoubleV4i(Vec4i(10, 170, 110, 80), Vec4i(340, 175, 110, 80)),
+            DDoubleV4i(Vec4i(75, 190, 110, 80), Vec4i(410, 210, 110, 80)),
     )
 
     @JvmField
