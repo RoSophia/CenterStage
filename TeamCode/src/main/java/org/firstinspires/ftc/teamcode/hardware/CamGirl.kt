@@ -97,6 +97,22 @@ class CamGirl(
         lom.telemetry.update()
     }
 
+    fun updExposure(exposure: Int) {
+        if (opened) {
+            if (camera.exposureControl.mode != ExposureControl.Mode.Manual) {
+                camera.exposureControl.mode = ExposureControl.Mode.Manual
+                sleep(50)
+            }
+            camera.exposureControl.setExposure(exposure.toLong(), TimeUnit.MILLISECONDS)
+        }
+    }
+
+    fun updGain(exposure: Double) {
+        if (opened) {
+            camera.gainControl.gain = gain
+        }
+    }
+
     fun stop() {
         if (opened) {
             camera.closeCameraDeviceAsync {

@@ -71,12 +71,12 @@ object Auto {
                     TrajCoef(Pose(-129.0, 44.1, 1.53), Vec2d(), Vec2d(30.0, -2.0), Vec2d(0.2, 0.3), 0.9, Vec2d(50.0, 50.0)),
                     TrajCoef(Pose(-129.0, 44.1, 1.53), Vec2d(30.0, -2.0), Vec2d(30.0, -2.0), Vec2d(0.2, 0.3), 0.9, Vec2d(50.0, 50.0))),
             bStackBackdrop = Vec2T(
-                    TrajCoef(Pose(-134.0, -133.0, 1.57), Vec2d(0.7, 0.7), 0.9),
-                    TrajCoef(Pose(-75.0, -230.5, 1.50), Vec2d(60.0, -1.57), Vec2d(35.0, 1.57), Vec2d(0.0, 0.1), 0.9, Vec2d(50.0, 60.0))),
+                    TrajCoef(Pose(-135.0, -133.0, 1.57), Vec2d(0.7, 0.7), 0.9),
+                    TrajCoef(Pose(-75.0, -227.5, 1.50), Vec2d(60.0, -1.57), Vec2d(35.0, 1.57), Vec2d(0.0, 0.1), 0.9, Vec2d(50.0, 60.0))),
             cBackdropOffset = Pose(0.0, 0.5, 0.0),
             cBackdropPosX = Vec3(-59.0, -67.0, -78.7),
             cBackdropStack = Vec2T(
-                    TrajCoef(Pose(-132.0, -163.0, 1.57), Vec2d(40.0, 1.57), Vec2d(60.0, -1.3), 0.9),
+                    TrajCoef(Pose(-132.0, -163.0, 1.63), Vec2d(40.0, 1.57), Vec2d(60.0, -1.3), 0.9),
                     TrajCoef(Pose(-128.0, 45.0, 1.57), Vec2d(30.0, -1.57), Vec2d(), 0.9, Vec2d(66.0, 80.0))),
             stackOffset = Pose(1.1, 0.5, 0.0),
             xBackdropStack = Vec3T(
@@ -256,7 +256,7 @@ object AutoVars {
     var KMS = 0.2
 
     @JvmField
-    var SLEEPY_TIME = 1.8
+    var SLEEPY_TIME = 0.0
 
     @JvmField
     var failsafe1 = Pose(0.0, -20.0, 0.0)

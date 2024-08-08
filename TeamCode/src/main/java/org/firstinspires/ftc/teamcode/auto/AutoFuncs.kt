@@ -8,10 +8,12 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoRed
 import org.firstinspires.ftc.teamcode.hardware.CameraControls.AutoResult
+import org.firstinspires.ftc.teamcode.hardware.CameraControls.DO_I_EVEN_PROCESS_FRAME
 import org.firstinspires.ftc.teamcode.hardware.Intakes.SAUTONOMUS
 import org.firstinspires.ftc.teamcode.pp.PP.JustDraw
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.aprilTag
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.cam
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.controller
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.dashboard
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.endma
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.hardwareMap
@@ -21,12 +23,16 @@ import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.logst
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.lom
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pipeline
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.preinit
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.send_log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.startma
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.telemetry
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.update
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.visionPortal
+import org.firstinspires.ftc.teamcode.utils.RobotVars.CameraExposure
+import org.firstinspires.ftc.teamcode.utils.RobotVars.CameraGain
 import org.firstinspires.ftc.teamcode.utils.RobotVars.QrExposure
 import org.firstinspires.ftc.teamcode.utils.RobotVars.QrGain
 import org.firstinspires.ftc.teamcode.utils.RobotVars.QrThreads
@@ -87,7 +93,36 @@ object AutoFuncs {
         initma(lom, true)
         initAuto()
         intake.status = SAUTONOMUS
-        lom.waitForStart()
+        while (!lom.isStarted) {
+            if (controller.C1A == controller.JUST_PRESSED) {
+                DO_I_EVEN_PROCESS_FRAME = !DO_I_EVEN_PROCESS_FRAME
+            }
+            if (controller.C1DU == controller.JUST_PRESSED) {
+                CameraExposure += 5
+                cam?.updExposure(CameraExposure)
+            }
+            if (controller.C1DD == controller.JUST_PRESSED) {
+                CameraExposure -= 5
+                cam?.updExposure(CameraExposure)
+            }
+            if (controller.C1DL == controller.JUST_PRESSED) {
+                CameraGain += 5
+                cam?.updExposure(CameraGain)
+            }
+            if (controller.C1DR == controller.JUST_PRESSED) {
+                CameraGain -= 5
+                cam?.updExposure(CameraGain)
+            }
+
+            if (!DO_I_EVEN_PROCESS_FRAME) {
+                telemetry.addLine("Current exposure: ${CameraExposure}/${cam?.camera?.exposureControl?.getMaxExposure(TimeUnit.MILLISECONDS)}")
+                telemetry.addLine("Current gain: ${CameraGain}/${cam?.camera?.gainControl?.maxGain}")
+                telemetry.addLine("Dpad Up/Down -> Exposure (default 20)")
+                telemetry.addLine("Dpad Left/Right -> Gain (default 2)")
+                telemetry.update()
+            }
+            controller.update()
+        }
         val res = AutoResult // Pun asta aici sa nu faca amuzant inchiderea camerei
         if (USE_CAMERA) {
             cam?.stop()
