@@ -169,7 +169,7 @@ class TrajectorySequence {
         if (t.type == 4) {
             val resc = t.conditional()
             for (i in 0 until steps.size) {
-                //log("Searching for $resc got ${steps[i].type}", resc)
+                // log("Searching for $resc got ${steps[i].type}", resc)
                 if (steps[i].type == -resc) {
                     ls = i
                     e = steps[ls]

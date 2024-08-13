@@ -4,7 +4,6 @@ import org.firstinspires.ftc.teamcode.auto.AutoVars.GOUPDISTBLUE
 import org.firstinspires.ftc.teamcode.auto.AutoVars.GOUPDISTRED
 import org.firstinspires.ftc.teamcode.auto.AutoVars.INTAKEWAIT2
 import org.firstinspires.ftc.teamcode.auto.AutoVars.INTAKEWAIT3
-import org.firstinspires.ftc.teamcode.auto.AutoVars.KMS
 import org.firstinspires.ftc.teamcode.auto.AutoVars.SLEEPY_TIME
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPreload
 import org.firstinspires.ftc.teamcode.auto.AutoVars.WaitPut
@@ -31,6 +30,7 @@ import org.firstinspires.ftc.teamcode.utils.Pose
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.clown
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.etime
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.intake
+import org.firstinspires.ftc.teamcode.utils.RobotFuncs.log
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.pp
 import org.firstinspires.ftc.teamcode.utils.RobotFuncs.slides
 import org.firstinspires.ftc.teamcode.utils.RobotVars.ClownFDeschis
@@ -164,7 +164,7 @@ object Cele10Traiectorii {
                 .sl(WaitPut)
 
         for (i in 0 until 3) {
-            ts.gt { if (etime.seconds() < 23.2) ts.lastS else 1000 }
+            ts.gt { if (etime.seconds() < 23.2) { log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", ts.lastS); ts.lastS } else 1000 }
             ts.st(ts.lastS++)
             if (i <= 1) {
                 longFirst(ts, i, v)

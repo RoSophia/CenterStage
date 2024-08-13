@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Config
 public class RobotVars {
-    public static boolean USE_TESTING = false;
+    public static boolean USE_TESTING = true;
     public static boolean USE_TELE = true;
     public static boolean USE_CAMERA = true;
     public static boolean USE_LOCALIZER = true;
@@ -152,10 +152,10 @@ public class RobotVars {
 
     public static double IntakePower = -1.0;
     public static double IntakeRevPower = 1.0;
-    public static Vec4 IntakeGet = new Vec4(0.388, 0.145, 0.395, 0.3); // Get 1 2 Up 1 2
+    public static Vec4 IntakeGet = new Vec4(0.39, 0.16, 0.395, 0.3); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetUp = new Vec4(0.388, 0.2, 0.55, 0.45); // Get 1 2 Up 1 2
     public static Vec4 IntakeGetCostac = new Vec4(0.42, 0.35, 0.40, 0.16); // Get 1 2 Up 1 2
-    public static Vec4 IntakeStack12 = new Vec4(0.395, 0.16, 0.395, 0.18); // Get1 - 2
+    public static Vec4 IntakeStack12 = new Vec4(0.39, 0.16, 0.394, 0.18); // Get1 - 2
     public static Vec4 IntakeStack34 = new Vec4(0.395, 0.195, 0.395, 0.21); // Get3 - 4
     public static Vec4 IntakeStack56 = new Vec4(0.395, 0.23, 0.395, 0.26); // Get5 - 6
     public static Vec4 IntakeHANGHANG = new Vec4(0.5, 0.49, 0.395, 0.35); // Get5 - 6

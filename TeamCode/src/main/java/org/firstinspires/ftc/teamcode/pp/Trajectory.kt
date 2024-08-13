@@ -75,7 +75,7 @@ class TrajCoef(@JvmField var sp: Pose, @JvmField var ep: Pose, @JvmField var v1:
     val t: Trajectory get() = Trajectory(this)
     fun sv1(v: Vec2d): TrajCoef { v1 = v; return this }
     fun st(t: Double): TrajCoef { timeout = t; return this }
-    fun sx(x: Double): TrajCoef { ep.x = x; return this }
+    fun sx(x: Double): TrajCoef { val tc = this.duplicate(); tc.ep.x = x; return tc }
     fun sex(x: Double): TrajCoef { sp = sp.duplicate(); sp.x = x; return this }
     fun so(p: Pose): TrajCoef { ep += p; return this }
     fun se(p: Pose): TrajCoef { ep = p; return this }
