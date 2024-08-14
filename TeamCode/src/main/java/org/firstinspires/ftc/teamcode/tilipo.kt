@@ -37,7 +37,6 @@ object tilipo {
             startma()
             //lom.gamepad2.ledQueue.add(st)
             var curstackp = 6
-
             while (!lom.isStopRequested) {
                 if (controller.C1A == controller.PRESSED) {
                     swerve.locked = true

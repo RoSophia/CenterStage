@@ -129,10 +129,10 @@ public class RobotVars {
     public static double Diffy__MAC = 6;
     public static double Diffy__MDC = 1.3;
 
-    public static double ClownFInchis = 0.76;
+    public static double ClownFInchis = 0.77;
     public static double ClownFVeryInchis = 0.80;
     public static double ClownFDeschis = 0.12;
-    public static double ClownNInchis = 0.71;
+    public static double ClownNInchis = 0.75;
     public static double ClownNVeryInchis = 0.76;
     public static double ClownNDeschis = 0.11;
     public static double ClownWait1 = 0.1;
@@ -144,8 +144,8 @@ public class RobotVars {
     public static double ClownWaitDown4 = 0.20;
     public static double ClownWaitDown5 = 0.30;
 
-    public static int SensorsMinDistFar = 160;
-    public static int SensorsMinDistNear = 95;
+    public static int SensorsMinDistFar = 180;
+    public static int SensorsMinDistNear = 75;
 
     public static double GelenkCenter = 0.495;
     public static double GelenkDif = 0.10;

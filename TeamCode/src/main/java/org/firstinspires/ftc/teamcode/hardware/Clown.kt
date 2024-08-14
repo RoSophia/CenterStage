@@ -72,7 +72,9 @@ class Clown(name: String) {
 
 
     fun sensorReadout(): Int {
-        //log("SensorReadout", res)
+        log("SensorReadoutNEAR", sensorNearDist > SensorsMinDistNear)
+        log("SensorReadoutFAR", sensorFarDist > SensorsMinDistFar)
+
         return (if (sensorNearDist > SensorsMinDistNear) 2 else 0) or
                 (if (sensorFarDist > SensorsMinDistFar) 1 else 0)
     }
