@@ -121,7 +121,7 @@ object Auto {
         cBackdropStack = Vec2T(
             TrajCoef(Pose(-137.0, 185.0, -1.57), Vec2d(10.0, -1.7), Vec2d(10.0, 1.57), 0.9),
             TrajCoef(Pose(-126.5, -45.0, -1.57), Vec2d(), Vec2d(20.0, -2.7), 0.9, Vec2d(60.0, 80.0))), //-128, -47
-        stackOffset = Pose(-1.43, -0.82, 0.0), //scad x-u ma duc spre perete, scad y tot in perete (spre stack)
+        stackOffset = Pose(-1.43, -0.8, 0.0), //scad x-u ma duc spre perete, scad y tot in perete (spre stack)
         xBackdropStack = Vec3T(
             TrajCoef(Pose(-130.0, 166.0, -1.57), Vec2d(30.0, -1.57), Vec2d(60.0, 1.3), 0.9),
             TrajCoef(Pose(-129.0, -38.0, -1.57), 0.9, Vec2d(0.0, 0.0)),
