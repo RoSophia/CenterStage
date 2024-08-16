@@ -41,7 +41,7 @@ object CameraControls {
     @JvmField
     var Squares = Vec4vi(
             ///        Left    X       Y      XSize  YSize           X      Y      XSize   YSize
-            DDoubleV4i(Vec4i(65, 185, 110, 80), Vec4i(405, 210, 110, 80)), // Blue Long
+            DDoubleV4i(Vec4i(0, 185, 110, 80), Vec4i(335, 210, 110, 80)), // Blue Long
             DDoubleV4i(Vec4i(30, 160, 110, 80), Vec4i(360, 210, 110, 80)), // Red Long
             DDoubleV4i(Vec4i(10, 170, 110, 80), Vec4i(340, 175, 110, 80)), // Blue Short
             DDoubleV4i(Vec4i(75, 190, 110, 80), Vec4i(410, 210, 110, 80)), // Red Short
